@@ -3,7 +3,6 @@ SDMCTL = $022F ;Disable screen DMA
 VCOUNT = $D40B
 WSYNC  = $D40A
 COLOR4 = $D01A
-CONSOL = $D01F  ;Function-Keys
 
       ORG $4000 ;Start of code 
 
