@@ -11,5 +11,5 @@ loop	lda string,Y
 		cpy MAXLEN
 		bne loop
 pause 	jmp pause
-string	.byte $0,$40,"Hello 6502 World !",$40,$FF
+string	.byte $0,$40,"  Hello 6502 World !  ",$40,$FF
 		.byte "please terminate your strings with $FF",$FF
