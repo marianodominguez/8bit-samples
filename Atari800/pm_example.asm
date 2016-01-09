@@ -14,7 +14,7 @@ ICBLH =    $0349
 ICAX1 =    $034A
 ICAX2 =    $034B
 CIOV  =    $E456
-GRACTL=		53277
+GRACTL=	   53277
 
 ; sys equates
 RAMTOP =	106
@@ -36,22 +36,22 @@ HPOSP0 =   $D000     ; Horizontal position Player 0
 start	LDA RAMTOP
 		STA TMPTOP
 		SEC
-		SBC #8		;reserve 8 pages
-		STA RAMTOP	;new ramtop
-		STA PMBASE  ;
-		STA XLOC+1  ;erase PM ram
+		SBC #8			;reserve 8 pages
+		STA RAMTOP		;new ramtop
+		STA PMBASE  	;
+		STA XLOC+1  	;erase PM ram
 		LDA #0
 		STA XLOC
 		
 ; reset gr. 0
 		LDA #0
 		PHA
-		LDX #$60 	;screen
-		LDA #$C 	; CLOSE
+		LDX #$60 		;screen
+		LDA #$C 		; CLOSE
 		STA ICCOM,X
-		JSR CIOV 	;do close
+		JSR CIOV 		;do close
 		LDX #$60
-		LDA #3 		;open
+		LDA #3 			;open
 		STA ICCOM,X
 		LDA #name&255
 		STA ICBAL,X
@@ -70,7 +70,7 @@ start	LDA RAMTOP
 		LDA #50
 		STA INITY
 		LDA #46
-		STA 559 ; SDMCTL
+		STA 559 	;SDMCTL
 ;pm area clear
 		LDY	#0
 clear
@@ -81,7 +81,7 @@ clear
 		INC XLOC+1  ; next page
 		LDA XLOC+1
 		CMP TMPTOP
-		BEQ clear ; one extra page
+		BEQ clear 	;one extra page
 		BCC clear		
 ; copy player data
 		LDA	RAMTOP
@@ -95,15 +95,15 @@ insert
 		LDA player,Y
 		STA (YLOC),Y
 		INY
-		CPY #8	;player Size
+		CPY #8			;player Size
 		BNE insert
 		LDA INITX
 		STA HPOSP0
 		STA XLOC
-		LDA #68  ;color red
+		LDA #68  		;color red
 		STA PCOLR0
-		LDA #3	;enable player
-		STA GRACTL ; resolution
+		LDA #3			;enable player
+		STA GRACTL 		; resolution
 MAIN
 		JSR RDSTK     ; Read stick - move player
 		LDX #5        ; To control the
