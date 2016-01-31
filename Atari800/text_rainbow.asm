@@ -18,17 +18,18 @@ offset = $D0
 	icl "SystemEquates.asm"
 	icl "graph_macros.asm"
 	
-start 
-	  print string, #5, #10 
+start graphics #2+16
+	  print string, #10, #10
 	  ;LDA #0 ;Disable screen DMA 
       ;STA SDMCTL
 
-loop  LDA VCOUNT ;Load VCOUNT 
+loop  jmp loop
+	  LDA VCOUNT ;Load VCOUNT 
       CLC 
       ADC RTCLOK ;Add counter 
       STA WSYNC 
       STA COLOR4 ;Change FG color 
-      JMP loop 
+      ;JMP loop 
   		
 string 	.byte $0,$40,"  Hello 6502 World !  ",$40,$FF
  		.byte "please terminate your strings with $FF",$FF
