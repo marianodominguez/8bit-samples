@@ -1,4 +1,4 @@
-# example for 6502 JS simulator
+;Example for 6502.js
 
 define SCREEN $0200
 define PTRL $A0 #unused page 0
@@ -6,25 +6,27 @@ define PTRH $A1
 CLC
 LDA #$02
 STA PTRH
-LDX #$00
-LDA #$00
+LDY #$00
+LDX #$00 ;counter for color
+LDA #$00 
 STA PTRL
 
 loop:
 LDA PTRL
-TAY
-TXA
+TAY ; store current position
+TXA 
 STA PTRL
 TYA
-INX
-ADC #$01
 LDY #0
+INX
 STA (PTRL),Y
+ADC #$01
 LDA PTRH
 BCC nocarry
+CLC
 ADC #$01
 STA PTRH
-CLC
 nocarry:
-CMP #$05 
+CMP #$06
 BMI loop
+BRK
