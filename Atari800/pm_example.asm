@@ -28,7 +28,7 @@ YLOC   =   $CC
 INITX  =   $D0       ; Initial X value
 INITY  =   $D1       ; Initial Y value
 STOTOP =   $100      ; Temporary storage (ADRESS)
-STICK  =   $D300     ; PORTA - Hardware STICK(0) location
+STICK  =   $d300     ; PORTA - Hardware STICK(0) location
 HPOSP0 =   $D000     ; Horizontal position Player 0
 
 		ORG $600
