@@ -19,7 +19,7 @@ offset = $D0
 	icl "graph_macros.asm"
 	
 start ; reset gr. 2
-		LDA #7			;mode
+		LDA #2			;mode
 		PHA
 		LDX #$60		;screen
 		LDA #$C			; CLOSE
@@ -40,16 +40,7 @@ start ; reset gr. 2
 		STA ICAX1,X
 		JSR CIOV
 	  	print string, #10, #10
-	  	;LDA #0 ;Disable screen DMA 
-      	;STA SDMCTL
-
-loop  
-		  LDA VCOUNT ;Load VCOUNT 
-		  CLC 
-		  ADC RTCLOK ;Add counter 
-		  STA WSYNC 
-		  STA COLOR1 ;Change FG color 
-		  JMP loop 
+pause 	jmp pause
 			
 string 	.byte $0,$40,"  Hello 6502 World !  ",$40,$FF
  		.byte "please terminate your strings with $FF",$FF

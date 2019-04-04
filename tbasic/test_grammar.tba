@@ -1,0 +1,29 @@
+10 --
+20 REM this is a comment
+30 . this is also a comment
+40 pi=3.1415: Rem but not this
+60 for x=0 to 100
+65 plot 200,0:drawto 100,20:dr. 30,34
+70 next x
+90 print "this works"
+100 ? "this prints also " + X + " works"
+110 PR. "this is a not REM, fix"
+150 C. 2,0,0:graphics 0: gr. 4
+160 -move 100,10,10
+170 print TIME$: A$=CHR$(123) : cls
+190 print INKEY$:%put "x"
+200 #label
+300 GO# label
+320 Gos. 1000
+310 BGET "D:xxx.tt":A$=STR$(112)
+500 IF a=0 THEN
+600 print LOG(a)
+610 ENDIF
+620 CLOA. "D:new.bas"
+630 cl. "E:"
+700 G. #label
+800 IN. a,b
+900 i. x
+1000 ret.
+10120 DATA 14,11,10,110,100,100,84,86
+10130 D. 82,83,85,87,92,76,79,72

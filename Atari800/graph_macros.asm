@@ -21,7 +21,7 @@ loop:
 pexit:	nop
 	.endm
 	
-;use CIO to set graphice mode
+;use CIO to set graphics mode
 .macro graphics mode
 ; reset gr. 0
 		lda :mode
