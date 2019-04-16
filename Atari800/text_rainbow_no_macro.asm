@@ -1,5 +1,7 @@
+    opt l+h+f-
+
 ; WUDSN IDE Atari Rainbow Example, add labels
-;SDMCTL = $022F ;Disable screen DMA 
+;SDMCTL = $022F ;Disable screen DMA
 ;VCOUNT = $D40B
 ;WSYNC  = $D40A
 ;COLOR1 = $D017
@@ -7,17 +9,17 @@
 ;COLOR3 = $D019
 ;COLOR4 = $D01A
 ;RTCLOK = $14
-	
+
 ;SAVMSC 	=	$58
-MAXLEN 	=	100
+MAXLEN 	  =	100
 
-;text offset  		
-offset = $D0
+;text offset
+offset    = $D0
 
-    org $4000 ;Start of code 
+    org $4000 ;Start of code
 	icl "SystemEquates.asm"
 	icl "graph_macros.asm"
-	
+
 start ; reset gr. 2
 		LDA #2			;mode
 		PHA
@@ -41,7 +43,7 @@ start ; reset gr. 2
 		JSR CIOV
 	  	print string, #10, #10
 pause 	jmp pause
-			
+
 string 	.byte $0,$40,"  Hello 6502 World !  ",$40,$FF
  		.byte "please terminate your strings with $FF",$FF
  		 run start ;Define run address
