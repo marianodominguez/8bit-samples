@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tcpser -d /dev/ttyUSB0 -s 9600 -i "&k0" -l7 -n l29=bbs.fozztexx.com:6502 \
+tcpser -d /dev/ttyUSB0 -s 9600 -i "&k0" -l5 -n l29=bbs.fozztexx.com:6502 \
 -n veteran=bbs.sfhqbbs.org:3523 -n resist=broadway1.lorexddns.net:23 \
 -n alcatraz=alcatrazbbs.ddns.net:9000 -n cth=cth.dtdns.net \
 -n ptime=ptbbs.ddns.net:8000 -n darkforce=darkforce-bbs.dyndns.org:520 \
