@@ -1,0 +1,86 @@
+100 REM BASIC Month 4: Lunar Corps
+110 REM http://reddit.com/r/RetroBattlestations
+120 REM Original written by FozzTexx
+130 REM ZX Spectrum version by papa_robot
+200 REM Clear screen and setup variables
+205 LET w=7: LET b=1: let PEAK=3
+210 BORDER 0: PAPER 0: INK w: CLS: RANDOMIZE:PRINT AT 0,12;
+220 LET k$ = " /\\_"
+230 LET COLS = 31: LET ROWS = 24
+300 GO SUB 2510
+310 LET YS = SQR(2) * SQR(ROWS - TL + ZL) - 1
+320 LET XE = INT((ZE - ZS) / 2) + ZS
+330 LET XV = XE / YS: LET YV = 0
+340 LET X = 1: LET Y = 1
+400 GO SUB 2010:LET l$ = s$
+410 GO SUB 2010:LET m$ = s$:LET a$ = e$
+420 FOR I = 1 TO YS
+430 LET s$ = a$:GO SUB 1510
+440 LET YV = YV + 1
+450 LET X = X + XV: LET Y = Y + YV
+460 LET s$ = l$:IF I >= YS-2 THEN LET s$ = m$
+470 GO SUB 1510
+480 FOR J = 1 TO 400: NEXT J
+490 NEXT I
+500 LET s$ = a$:GO SUB 1510
+510 LET X = (ZE - ZS) / 2 + ZS - 1:LET Y = ROWS - TL + ZL - 1
+520 LET s$ = l$:GO SUB 1510
+530 LET s$ = "The Eagle has landed":LET X = (COLS - LEN(s$)) / 2:LET Y = ROWS / 2:GO SUB 1510
+999 END
+1500 REM Draw sprite in s$ at X,Y
+1510 IF Y < 1 OR Y > ROWS OR X < 1 OR X > COLS THEN  RETURN
+1520 REM Set the left margin to the X position
+1530 PRINT AT X,Y; s$;
+1540 REM POKE 32,0
+1550 RETURN
+2000 REM Load a sprite from DATA into s$
+2010 LET s$ = "":LET e$ = "":LET SR = 0:LET SC = 0
+2020 READ T$,S$:IF LEN(s$) > 0 THEN LET s$ = s$ + CHR$(13)
+2030 LET s$ = s$ + S$:LET SR = SR + 1:IF LEN(S$) > SC THEN LET SC = LEN(S$)
+2040 LET b$ = "":FOR I = 1 TO LEN(S$):LET b$ = b$ + " ":NEXT I
+2050 IF LEN(e$) > 0 THEN LET e$ = e$ + CHR$(13)
+2060 LET e$ = e$ + b$
+2070 IF T$ <> "SE" THEN GO TO 2020
+2080 RETURN
+2500 REM Draw lunar surface
+2510 LET DIDUP = 0:LET r$ = "":FOR I = 1 TO COLS + 4:LET r$ = r$ + " ":NEXT I
+2520 LET ZS = 0:LET ZE = 0:LET TL = 0
+2530 LET s$ = "  ":LET UP = DIDUP: IF NOT UP AND r$(3) <> " " THEN LET UP = 1
+2540 IF NOT DIDUP AND UP THEN LET DIDUP = UP
+2550 LET Z1 = 0:LET Z2 = 0
+2560 FOR I = 3 TO COLS + 2:PRINT CHR$(I+32);CHR$(8);
+2570 LET C$ = s$(I-2):LET D$ = s$(I-1)
+2580 LET E$ = r$(I-1):LET F$ = r$(I)
+2590 LET G$ = r$(I+1):LET H$ = r$(I+2)
+2600 IF PEAK = 0 AND r$(I-1 TO I+2) = "    " THEN LET PEAK = INT ( RND * 3 ): LET PEAK = PEAK + ( PEAK = 2 ): LET PEAK = PEAK * INT (RND * 2)
+2610 IF D$ = "/" AND F$ = " " THEN LET PEAK = 2
+2620 IF (C$ = "_" OR C$ = "\\") AND D$ = " " THEN LET PEAK = 0
+2630 IF F$ <> " " THEN LET PEAK = 0
+2640 IF (E$ = "\\" OR E$ = "_") AND F$ = " " THEN LET PEAK = 2
+2650 IF D$ = "_" AND H$ = "/" THEN LET PEAK = 3
+2660 IF (D$ = "\\" OR D$ = " " OR D$ = "_r") AND F$ = " " AND (G$ = "_" OR G$ = "/") THEN LET PEAK = 1
+2670 IF D$ = "\\" AND H$ <> " " THEN LET PEAK = 3
+2680 IF (G$ = "/" OR G$ = "_") THEN LET PEAK = 1
+2690 IF F$ <> " " THEN LET PEAK = 0
+2700 IF UP AND PEAK <> 2 THEN LET PEAK = 0
+2710 IF PEAK = 1 THEN LET UP = 1
+2720 IF PEAK = 2 THEN LET UP = 0
+2730 LET P$ = k$(PEAK + 1):PRINT P$;:LET s$ = s$ + P$
+2740 IF PEAK = 3 AND NOT Z1 THEN LET Z1 = I
+2750 IF PEAK <> 3 AND D$ = "_" THEN LET Z2 = I
+2760 IF Z1 AND Z2 THEN LET Z3 = Z1:LET Z4 = Z2:LET Z1 = 0:LET Z2 = 0:IF Z4 - Z3 >= 3 AND Z3 > ZS THEN LET ZS = Z3:LET ZE = Z4:LET ZL = TL
+2770 IF PEAK <> 3 OR (C$ = "_" AND D$ = "_") THEN LET PEAK = 0
+2780 NEXT I
+2790 LET r$ = s$
+2800 LET C2 = 0
+2810 FOR I = 3 TO COLS+2
+2820 IF r$(I) = " " THEN LET C2 = C2 + 1
+2830 NEXT I
+2840 LET TL = TL + 1
+2850 IF C2 < COLS THEN PRINT:GOTO 2530
+2860 LET ZS = ZS - 2:LET ZE = ZE - 2: RETURN
+9000 DATA SP,"(I)"
+9010 DATA SE,"/T\\"
+9020 DATA SP,"(I)"
+9030 DATA SP,"/T\\"
+9040 DATA SE," V "
