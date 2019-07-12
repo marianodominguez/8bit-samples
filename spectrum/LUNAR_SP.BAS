@@ -30,7 +30,7 @@
 1500 REM Draw sprite in s$ at X,Y
 1510 IF Y < 1 OR Y > ROWS OR X < 1 OR X > COLS THEN  RETURN
 1520 REM Set the left margin to the X position
-1530 PRINT AT Y,X;"":PRINT AT Y,X; s$;
+1530 PRINT AT Y,X: PRINT AT Y,X; s$;
 1540 REM POKE 32,0
 1550 RETURN
 2000 REM Load a sprite from DATA into s$
