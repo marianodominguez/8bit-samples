@@ -2,46 +2,55 @@
 110 REM http://reddit.com/r/RetroBattlestations
 120 REM Original written by FozzTexx
 130 REM ZX Spectrum version by papa_robot
+
 200 REM Clear screen and setup variables
-205 LET w=7: LET b=1: LET PEAK=0: LET T$="": LET o$=""
-210 BORDER 0: PAPER 0: INK w: CLS: RANDOMIZE:PRINT AT 18,0;"";
+205 LET w=7: LET b=1: LET PEAK=0: LET T$="": LET o$="": LET cut=-1
+210 BORDER 0: PAPER 0: INK w: CLS: RANDOMIZE:PRINT AT 21,0;"";
 220 LET k$ = " /\\_"
-230 LET COLS = 31: LET ROWS = 23
+230 LET COLS = 31: LET ROWS = 21
+
 300 GO SUB 2510
 310 LET YS = SQR(2) * SQR(ROWS - TL + ZL) - 1
 320 LET XE = INT( (ZE - ZS) / 2) + ZS
 330 LET XV = XE / YS: LET YV = 0
 340 LET X = 1: LET Y = 1
+
 400 GO SUB 2010:LET l$ = s$
 410 GO SUB 2010:LET m$ = s$:LET a$ = m$
 420 FOR I = 1 TO YS
-430 LET s$ = a$: GO SUB 1510
+430 LET s$ = a$: LET cut=3 : GO SUB 1510
 440 LET YV = YV + 1
 450 LET X = X + XV: LET Y = Y + YV
 460 LET s$ = l$:IF I >= YS-2 THEN LET s$ = m$
-470 GO SUB 1510
-480 FOR J = 1 TO 400: NEXT J
+470 LET cut = 3: GO SUB 1510
+480 FOR J = 1 TO 40: NEXT J
 490 NEXT I
-500 LET s$ = a$:GO SUB 1510
+500 LET s$ = a$:LET cut = 3:GO SUB 1510
 510 LET X = (ZE - ZS) / 2 + ZS - 1:LET Y = ROWS - TL + ZL - 1
 520 LET s$ = l$:GO SUB 1510
-530 LET s$ = "The Eagle has landed":LET X = (COLS - LEN(s$)) / 2:LET Y = ROWS / 2:GO SUB 1510
+530 LET cut = -1: LET s$ = "The Eagle has landed":LET X = (COLS - LEN(s$)) / 2:LET Y = ROWS / 2:GO SUB 1510
+
 999 STOP
+
 1500 REM Draw sprite in s$ at X,Y
 1510 IF Y < 1 OR Y > ROWS OR X < 1 OR X > COLS THEN  RETURN
-1520 REM Set the left margin to the X position
-1530 PRINT AT Y,X: PRINT AT Y,X; s$;
+1512 LET of=0
+1520 IF cut>0 THEN FOR j=1 TO LEN(s$) STEP cut: PRINT AT Y + of,X; s$(j TO j + cut);: of=of+1 :NEXT j:RETURN
+1530 PRINT AT Y,X; s$;
 1540 REM POKE 32,0
 1550 RETURN
+
 2000 REM Load a sprite from DATA into s$
 2010 LET s$ = "":LET m$ = "":LET SR = 0:LET SC = 0
-2020 READ T$,o$ :IF LEN(s$) > 0 THEN LET s$ = s$ + CHR$(13)
+2015 LET q$=""
+2020 READ T$,o$ :IF LEN(s$) > 0 THEN LET s$ = s$ + q$
 2030 LET s$ = s$ + o$:LET SR = SR + 1:IF LEN(S$) > SC THEN LET SC = LEN(S$)
 2040 LET b$ = "":FOR I = 1 TO LEN(S$):LET b$ = b$ + " ":NEXT I
-2050 IF LEN(m$) > 0 THEN LET m$ = m$ + CHR$(13)
+2050 IF LEN(m$) > 0 THEN LET m$ = m$ + q$
 2060 LET m$ = m$ + b$
 2070 IF T$ <> "SE" THEN GO TO 2020
 2080 RETURN
+
 2500 REM Draw lunar surface
 2510 LET DIDUP = 0:LET r$ = "":FOR I = 1 TO COLS + 4:LET r$ = r$ + " ": NEXT I
 2520 LET ZS = 0:LET ZE = 0:LET TL = 0
@@ -81,6 +90,7 @@
 2845 POKE 23692,5
 2850 IF C2 < COLS THEN PRINT:GOTO 2530
 2860 LET ZS = ZS - 2:LET ZE = ZE - 2: RETURN
+
 9000 DATA "SP","(I)"
 9010 DATA "SE","/T\\"
 9020 DATA "SP","(I)"
