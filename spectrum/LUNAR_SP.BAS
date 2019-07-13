@@ -35,7 +35,7 @@
 1500 REM Draw sprite in s$ at X,Y
 1510 IF Y < 1 OR Y > ROWS OR X < 1 OR X > COLS THEN  RETURN
 1512 LET of=0
-1520 IF cut>0 THEN FOR j=1 TO LEN(s$) STEP cut: PRINT AT Y + of,X; s$(j TO j + cut);: of=of+1 :NEXT j:RETURN
+1520 IF cut>0 THEN FOR j=1 TO LEN(s$) STEP cut: PRINT AT Y + of,X; s$(j TO j + cut);: LET of=of+1 :NEXT j:RETURN
 1530 PRINT AT Y,X; s$;
 1540 REM POKE 32,0
 1550 RETURN
