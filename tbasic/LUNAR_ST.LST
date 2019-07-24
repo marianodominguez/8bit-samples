@@ -1,0 +1,213 @@
+REM BASIC Month 4: Lunar Corps
+REM http://reddit.com/r/RetroBattlestations
+REM written by FozzTexx
+REM Atari ST version by papa_robot
+REM Clear screen and setup variables
+FULLW 2
+RANDOMIZE
+CLEARW 2
+CLS
+TITLEW #2,"/u/papa_robot 14-Jul-2019"
+PRINT AT(0,20);""
+peaks$=" /\_"
+cols=78
+rows=23
+cut=0
+GOSUB drlunar
+ys=SQR(2)*SQR(rows-tl+zl)-1
+xe=INT((ze-zs)/2)+zs
+xv=xe/ys
+yv=0
+x=1
+y=1
+GOSUB lsprite
+lm$=sp$
+GOSUB lsprite
+ml$=sp$
+le$=se$
+FOR i=1 TO ys
+  sp$=le$
+  cut=3
+  GOSUB dsprite
+  yv=yv+1
+  x=x+xv
+  y=y+yv
+  sp$=lm$
+  IF i>=ys-2
+    sp$=ml$
+  ENDIF
+  cut=3
+  GOSUB dsprite
+  PAUSE 50
+NEXT i
+cut=3
+sp$=le$
+GOSUB dsprite
+x=(ze-zs)/2+zs-1
+y=rows-tl+zl-1
+cut=3
+sp$=lm$
+GOSUB dsprite
+cut=-1
+sp$="The Eagle has landed"
+x=(cols-LEN(sp$))/2
+y=rows/2
+GOSUB dsprite
+wait:
+key$=INKEY$
+IF key$=""
+  GOTO wait
+ENDIF
+END
+PROCEDURE dsprite
+  REM Draw sprite in SP$ at X,Y
+  IF y<1 OR y>rows OR x<1 OR x>cols
+    GOTO endpr
+  ENDIF
+  offs=0
+  IF cut>0 THEN
+    FOR j=1 TO LEN(sp$) STEP cut
+      PRINT AT(x,y+offs);MID$(sp$,j,cut);
+      offs=offs+1
+    NEXT j
+  ELSE
+    PRINT AT(x,y);sp$;
+  ENDIF
+endpr:
+RETURN
+PROCEDURE lsprite
+  REM Load a sprite from DATA into SP$
+  sp$=""
+  se$=""
+  sr=0
+  sc=0
+rloop:
+  READ t$,s$
+  sp$=sp$+s$
+  sr=sr+1
+  IF LEN(s$)>sc
+    sc=LEN(s$)
+  ENDIF
+  bl$=""
+  FOR i=1 TO LEN(s$)
+    bl$=bl$+" "
+  NEXT i
+  se$=se$+bl$
+  IF t$<>"SE"
+    GOTO rloop
+  ENDIF
+RETURN
+REM Draw lunar surface
+PROCEDURE drlunar
+  didup=0
+  l1$=""
+  FOR i=1 TO cols+4
+    l1$=l1$+" "
+  NEXT i
+  zs=0
+  ze=0
+  tl=0
+dloop:
+  l2$="  "
+  up=didup
+  IF up=0 AND MID$(l1$,3,1)<>" "
+    up=1
+  ENDIF
+  IF didup=0 AND up<>0
+    didup=up
+  ENDIF
+  z1=0
+  z2=0
+  FOR i=3 TO cols+2
+    PRINT ".";CHR$(8);
+    c1$=MID$(l2$,i-2,1)
+    c2$=MID$(l2$,i-1,1)
+    c3$=MID$(l1$,i-1,1)
+    c4$=MID$(l1$,i,1)
+    c5$=MID$(l1$,i+1,1)
+    c6$=MID$(l1$,i+2,1)
+    IF peak=0 AND "    "=MID$(l1$,i-1,4)
+      peak=INT(RND*3)
+      peak=peak-(peak=2)
+      peak=peak*INT(RND*2)
+    ENDIF
+    IF c2$="/" AND c4$=" "
+      peak=2
+    ENDIF
+    IF (c1$="_" OR c1$="\") AND c2$=" "
+      peak=0
+    ENDIF
+    IF c4$<>" "
+      peak=0
+    ENDIF
+    IF (c3$="\" OR c3$="_") AND c4$=" "
+      peak=2
+    ENDIF
+    IF c2$="_" AND c6$="/"
+      peak=3
+    ENDIF
+    IF (c2$="\" OR c2$=" " OR c2$="_") AND c4$=" " AND (c5$="_" OR c5$="/")
+      peak=1
+    ENDIF
+    IF c2$="\" AND c6$<>" "
+      peak=3
+    ENDIF
+    IF (c5$="/" OR c5$="_")
+      peak=1
+    ENDIF
+    IF c4$<>" "
+      peak=0
+    ENDIF
+    IF up<>0 AND peak<>2
+      peak=0
+    ENDIF
+    IF peak=1
+      up=1
+    ENDIF
+    IF peak=2
+      up=0
+    ENDIF
+    p$=MID$(peaks$,peak+1,1)
+    PRINT p$;
+    l2$=l2$+p$
+    IF peak=3 AND z1=0
+      z1=i
+    ENDIF
+    IF peak<>3 AND c2$="_"
+      z2=i
+    ENDIF
+    IF z1<>0 AND z2<>0 THEN
+      z3=z1
+      z4=z2
+      z1=0
+      z2=0
+      IF z4-z3>=3 AND z3>zs
+        zs=z3
+        ze=z4
+        zl=tl
+      ENDIF
+    ENDIF
+    IF peak<>3 OR (c1$="_" AND c2$="_")
+      peak=0
+    ENDIF
+  NEXT i
+  l1$=l2$
+  c2=0
+  FOR i=3 TO cols+2
+    IF " "=MID$(l1$,i,1)
+      c2=c2+1
+    ENDIF
+  NEXT i
+  tl=tl+1
+  IF c2<cols
+    PRINT ""
+    GOTO dloop
+  ENDIF
+  zs=zs-2
+  ze=ze-2
+RETURN
+DATA "SP","(I)"
+DATA "SE","/T\"
+DATA "SP","(I)"
+DATA "SP","/T\"
+DATA "SE"," V "
