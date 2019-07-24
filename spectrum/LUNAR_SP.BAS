@@ -4,7 +4,7 @@
 130 REM ZX Spectrum version by papa_robot
 
 200 REM Clear screen and setup variables
-205 LET w=7: LET b=1: LET PEAK=0: LET T$="": LET o$="": LET cut=-1
+205 LET w=7: LET b=1: LET PEAK=0: LET T$="": LET o$=""
 210 BORDER 0: PAPER 0: INK w: CLS: RANDOMIZE:PRINT AT 21,0;"";
 220 LET k$ = " /\\_"
 230 LET COLS = 31: LET ROWS = 22
@@ -18,36 +18,44 @@
 400 GO SUB 2010:LET l$ = s$
 410 GO SUB 2010:LET m$ = s$:LET a$ = n$
 420 FOR I = 1 TO YS
-430 LET s$ = a$: LET cut=3 : GO SUB 1510
+430 LET s$ = a$: GO SUB 1510
 440 LET YV = YV + 1
 450 LET X = X + XV: LET Y = Y + YV
 460 LET s$ = l$:IF I >= YS-2 THEN LET s$ = m$
-470 LET cut = 3: GO SUB 1510
+470 GO SUB 1510
 480 FOR J = 1 TO 40: NEXT J
 490 NEXT I
-500 LET s$ = a$:LET cut = 3:GO SUB 1510
+500 LET s$ = a$:GO SUB 1510
 510 LET X = (ze - zs) / 2 + zs - 1:LET Y = ROWS - TL + zl - 1
 520 LET s$ = l$:GO SUB 1510
-530 LET cut = -1: LET s$ = "The Eagle has landed":LET X = (COLS - LEN(s$)) / 2:LET Y = ROWS / 2:GO SUB 1510
-540 LET cut = -1: LET s$ = "/u/papa_robot":LET X = (COLS - LEN(s$)) / 2:LET Y = 2:GO SUB 1510
-550 LET cut = -1: LET s$ = "13-Jul-2019":LET X = (COLS - LEN(s$)) / 2:LET Y = 3:GO SUB 1510
+530 LET s$ = "The Eagle has landed":LET X = (COLS - LEN(s$)) / 2:LET Y = ROWS / 2:GO SUB 1510
+540 LET s$ = "/u/papa_robot":LET X = (COLS - LEN(s$)) / 2:LET Y = 2:GO SUB 1510
+550 LET s$ = "13-Jul-2019":LET X = (COLS - LEN(s$)) / 2:LET Y = 3:GO SUB 1510
 998 IF INKEY$ = "" THEN GO TO 998
 999 STOP
 
 1500 REM Draw sprite in s$ at X,Y
-1510 IF Y < 1 OR Y > ROWS OR X < 1 OR X > COLS THEN  RETURN
-1512 LET of=0
-1520 IF cut>0 THEN FOR j=1 TO LEN(s$) STEP cut: PRINT AT Y + of,X; s$(j TO j + cut-1);: LET of=of+1 : NEXT j:RETURN
-1530 PRINT AT Y,X; s$;
-1540 REM POKE 32,0
-1550 RETURN
+1510 LET SE=1:LET SB=1
+1520 IF Y<1 OR Y>ROWS OR X<1 OR X>COLS THEN RETURN
+1525 PRINT AT Y,X;
+1530 IF s$(SE)=CHR$(13) THEN GO TO 1540
+1533 IF SE>LEN(s$) THEN LET SE=0:GO TO 1540
+1535 LET SE=SE+1:GOTO 1530
+1540 IF SE=0 THEN LET SE=LEN(s$)+1
+1550 PRINT AT Y,X;
+1560 LET SL=SE-SB:IF SL+X-1>COLS THEN LET SL=COLS-X+1
+1570 PRINT s$(SB TO SL);
+1580 IF SE>=LEN(s$) THEN RETURN
+1590 IF s$(SE)=CHR$(13) THEN LET SE=SE+1
+1600 LET SB=SE:LET Y=Y+1:GO TO 1530
+1900 RETURN
 
 2000 REM Load a sprite from DATA into s$
 2010 LET s$ = "":LET n$ = "":LET SR = 0:LET SC = 0
-2020 READ T$,o$
-2030 LET s$ = s$ + o$:LET SR = SR + 1:IF LEN(S$) > SC THEN LET SC = LEN(S$)
-2040 LET b$ = "":FOR I = 1 TO LEN(S$):LET b$ = b$ + " ":NEXT I
-2050 REM
+2020 READ T$,o$:IF LEN(s$)>0 THEN LET s$=s$+CHR$(13)
+2030 LET s$ = s$ + o$:LET SR = SR + 1:IF LEN(o$) > SC THEN LET SC = LEN(o$)
+2040 LET b$ = "":FOR I = 1 TO LEN(o$):LET b$ = b$ + " ":NEXT I
+2050 IF LEN(n$) > 0 THEN LET n$ = n$ + CHR$(13)
 2060 LET n$ = n$ + b$
 2070 IF T$ <> "SE" THEN GO TO 2020
 2080 RETURN
