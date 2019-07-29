@@ -12,7 +12,6 @@ PRINT AT(0,20);""
 peaks$=" /\_"
 cols=78
 rows=23
-cut=0
 GOSUB drlunar
 ys=SQR(2)*SQR(rows-tl+zl)-1
 xe=INT((ze-zs)/2)+zs
@@ -27,7 +26,6 @@ ml$=sp$
 le$=se$
 FOR i=1 TO ys
   sp$=le$
-  cut=3
   GOSUB dsprite
   yv=yv+1
   x=x+xv
@@ -36,19 +34,15 @@ FOR i=1 TO ys
   IF i>=ys-2
     sp$=ml$
   ENDIF
-  cut=3
   GOSUB dsprite
   PAUSE 50
 NEXT i
-cut=3
 sp$=le$
 GOSUB dsprite
 x=(ze-zs)/2+zs-1
 y=rows-tl+zl-1
-cut=3
 sp$=lm$
 GOSUB dsprite
-cut=-1
 sp$="The Eagle has landed"
 x=(cols-LEN(sp$))/2
 y=rows/2
@@ -61,18 +55,31 @@ ENDIF
 END
 PROCEDURE dsprite
   REM Draw sprite in SP$ at X,Y
-  IF y<1 OR y>rows OR x<1 OR x>cols
+  se=1
+  sb=1
+  yl=y
+ploop:
+  IF yl<1 OR yl>rows OR x<1 OR x>cols
     GOTO endpr
   ENDIF
-  offs=0
-  IF cut>0 THEN
-    FOR j=1 TO LEN(sp$) STEP cut
-      PRINT AT(x,y+offs);MID$(sp$,j,cut);
-      offs=offs+1
-    NEXT j
-  ELSE
-    PRINT AT(x,y);sp$;
+  se=INSTR(sb,sp$,CHR$(13))
+  IF se<=0
+    se=LEN(sp$)+1
   ENDIF
+  sl=se-sb
+  IF sl+x-1>cols
+    sl=cols-x+1
+  ENDIF
+  PRINT AT(x,yl);MID$(sp$,sb,sl);
+  IF se>=LEN(sp$)
+    GOTO endpr
+  ENDIF
+  IF MID$(sp$,se,1)=CHR$(13)
+    se=se+1
+  ENDIF
+  sb=se
+  yl=yl+1
+  GOTO ploop
 endpr:
 RETURN
 PROCEDURE lsprite
@@ -83,6 +90,9 @@ PROCEDURE lsprite
   sc=0
 rloop:
   READ t$,s$
+  IF LEN(sp$)>0
+    sp$=sp$+CHR$(13)
+  ENDIF
   sp$=sp$+s$
   sr=sr+1
   IF LEN(s$)>sc
@@ -92,6 +102,9 @@ rloop:
   FOR i=1 TO LEN(s$)
     bl$=bl$+" "
   NEXT i
+  IF LEN(se$)>0
+    se$=se$+CHR$(13)
+  ENDIF
   se$=se$+bl$
   IF t$<>"SE"
     GOTO rloop

@@ -6,6 +6,7 @@
 200 REM Clear screen and setup variables
 205 LET w=7: LET b=1: LET PEAK=0: LET T$="": LET o$=""
 210 BORDER 0: PAPER 0: INK w: CLS: RANDOMIZE:PRINT AT 21,0;"";
+215 REM Important: If Typing this program, replace the double "\\" for single
 220 LET k$ = " /\\_"
 230 LET COLS = 31: LET ROWS = 22
 
@@ -30,27 +31,27 @@
 520 LET s$ = l$:GO SUB 1510
 530 LET s$ = "The Eagle has landed":LET X = (COLS - LEN(s$)) / 2:LET Y = ROWS / 2:GO SUB 1510
 540 LET s$ = "/u/papa_robot":LET X = (COLS - LEN(s$)) / 2:LET Y = 2:GO SUB 1510
-550 LET s$ = "13-Jul-2019":LET X = (COLS - LEN(s$)) / 2:LET Y = 3:GO SUB 1510
+550 LET s$ = "28-Jul-2019":LET X = (COLS - LEN(s$)) / 2:LET Y = 3:GO SUB 1510
 998 IF INKEY$ = "" THEN GO TO 998
 999 STOP
 
 1500 REM Draw sprite in SP$ at X,Y
-1510 LET SE = 1:LET SB = 1
-1520 IF X < 1 OR X > COLS OR Y < 1 OR Y > ROWS THEN RETURN
+1510 LET SE = 1:LET SB = 1:LET YL=Y
+1520 IF X < 1 OR X > COLS OR YL < 1 OR YL > ROWS THEN RETURN
 1530 LET SE = SB
-1535 LET q$="": IF SE<=LEN(s$) THEN LET q$=s$(SE)
-1540 LET SE = SE + 1:IF SE <= LEN(s$) AND q$ <> "." THEN GO TO 1540
+1535 LET q$="":LET SE = SE + 1:IF SE<=LEN(s$) THEN LET q$=s$(SE)
+1540 IF SE <= LEN(s$) AND q$ <> CHR$(13) THEN GO TO 1535
 1560 LET SL = SE - SB:IF SL + X - 1 > COLS THEN LET SL = COLS - X + 1
-1570 PRINT AT Y,X; s$(SB TO SE-1);
+1570 PRINT AT YL,X; s$(SB TO SB+SL-1);
 1580 IF SE >= LEN(s$) THEN RETURN
-1590 LET SB = SE + 1:LET Y = Y + 1:GOTO 1520
+1590 LET SB = SE + 1:LET YL = YL + 1:GOTO 1520
 
 2000 REM Load a sprite from DATA into s$
 2010 LET s$ = "":LET n$ = "":LET SR = 0:LET SC = 0
-2020 READ T$,o$:IF LEN(s$)>0 THEN LET s$=s$+"."
+2020 READ T$,o$:IF LEN(s$)>0 THEN LET s$=s$+CHR$(13)
 2030 LET s$ = s$ + o$:LET SR = SR + 1:IF LEN(o$) > SC THEN LET SC = LEN(o$)
 2040 LET b$ = "":FOR I = 1 TO LEN(o$):LET b$ = b$ + " ":NEXT I
-2050 IF LEN(n$) > 0 THEN LET n$ = n$ + "."
+2050 IF LEN(n$) > 0 THEN LET n$ = n$ + CHR$(13)
 2060 LET n$ = n$ + b$
 2070 IF T$ <> "SE" THEN GO TO 2020
 2080 RETURN
