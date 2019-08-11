@@ -18,8 +18,8 @@ offset = $D0
 	icl "SystemEquates.asm"
 	icl "graph_macros.asm"
 	
-start graphics #2+16
-	  print string, #10, #10
+start graphics #0
+	  print message, #10, #10
 	  ;LDA #0 ;Disable screen DMA 
       ;STA SDMCTL
 
@@ -31,6 +31,6 @@ loop  jmp loop
       STA COLOR4 ;Change FG color 
       ;JMP loop 
   		
-string 	.byte $0,$40,"  Hello 6502 World !  ",$40,$FF
+message .byte $0,$40,"  Hello 6502 World !  ",$40,$FF
  		.byte "please terminate your strings with $FF",$FF
  		 run start ;Define run address

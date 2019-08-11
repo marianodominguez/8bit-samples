@@ -1,0 +1,18 @@
+; count 255 chars in screen
+org 32768
+
+screen: equ $4000
+
+start:
+ld  HL,screen
+
+ld  BC,6144
+ld  D,0
+loop:
+ld  (HL),D
+inc HL
+inc D
+dec BC
+cp  #100
+jr  NZ,loop
+ret

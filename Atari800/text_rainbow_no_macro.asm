@@ -21,7 +21,7 @@ offset    = $D0
 	icl "graph_macros.asm"
 
 start ; reset gr. 2
-		LDA #2			;mode
+		LDA #1			;mode
 		PHA
 		LDX #$60		;screen
 		LDA #$C			; CLOSE
@@ -41,7 +41,7 @@ start ; reset gr. 2
 		ORA #$C
 		STA ICAX1,X
 		JSR CIOV
-	  	print string, #10, #10
+	  	print string, #1, #1
 pause 	jmp pause
 
 string 	.byte $0,$40,"  Hello 6502 World !  ",$40,$FF
