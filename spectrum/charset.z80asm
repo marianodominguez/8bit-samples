@@ -9,10 +9,16 @@ ld  HL,screen
 ld  BC,6144
 ld  D,0
 loop:
+ld  a,0
 ld  (HL),D
 inc HL
 inc D
+ld  a,D
+cp  #127
+jr  NZ,cont
+ld  D,0
+ld  a,0
+cont:
 dec BC
-cp  #100
 jr  NZ,loop
 ret
