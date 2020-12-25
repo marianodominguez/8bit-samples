@@ -19,7 +19,7 @@ L LDA $F1
 d INX
   SBC #2
   BCS d
-  STX $f2
+  STX $F2
   
   LDA $F0 ; color = x xor y/2
   EOR $F2
@@ -48,9 +48,9 @@ Y LDY #0
 E RTS
 
 M SEC
-i SBC #14
+i SBC #15
   BCS i
-  ADC #14
+  ADC #15
   RTS
   
 ;.END
