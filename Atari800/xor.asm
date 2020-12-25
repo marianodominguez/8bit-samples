@@ -3,43 +3,44 @@
   JSR $EF9C ;graphics mode
   
   LDA #0
-  STA $0 ;x
-  STA $2 ;y
-  STA $4 ;color
+  LDY #0
+  STA $F0 ;x
+  STA $F1 ;y
+  STA $F2 ;color
   
-L LDA $2 
+L LDA $F1 
   STA 84 ;row
-  LDA $0
+  LDA $F0
   STA 85 ;col low
   
-  ;LDA $0 ;c=x xor y
-  ;EOR $1
-  ;TAY
-  LDA $4
-  ADC #1
-  CMP #14
+  LDY $F2
+  INY
+  STY $F2
+  CPY #14
   BNE N
-  LDA #0
-  STA $4
+  LDY #0
+  STY $F2
 
-N STA 763   ;color reg
+N STY 763   ;color reg
 C JSR $F1D8 ;call OS PLOT
   JSR X
   JMP L
 
-X LDA $0
+X LDA $F0
+  CLC
   ADC #1
-  STA 0
+  STA $F0
   CMP #80
   BNE E
 Y LDA #0
-  STA $0
-  LDA $2
+  CLC
+  STA $F0
+  LDA $F1
   ADC #1
-  STA $2
+  STA $F1
   CMP #192
   BNE E
   LDA #0
-  STA $2
+  STA $F1
 E RTS
 ;.END
