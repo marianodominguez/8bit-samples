@@ -26,21 +26,19 @@ C JSR $F1D8 ;call OS PLOT
   JSR X
   JMP L
 
-X LDA $F0
-  CLC
-  ADC #1
-  STA $F0
-  CMP #80
+X LDX $F0
+  INX
+  STX $F0
+  CPX #80
   BNE E
-Y LDA #0
-  CLC
-  STA $F0
-  LDA $F1
-  ADC #1
-  STA $F1
-  CMP #192
+Y LDX #0
+  STX $F0
+  LDX $F1
+  INX
+  STX $F1
+  CPX #192
   BNE E
-  LDA #0
-  STA $F1
+  LDX #0
+  STX $F1
 E RTS
 ;.END
