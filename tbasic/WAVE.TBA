@@ -1,0 +1,6 @@
+10 graphics 7+16
+20 for X=0 to 159
+30 Y = 80 - 50 * sin(X/50)
+40 color 1:plot X,Y
+60 next X
+80 GOTO 10
