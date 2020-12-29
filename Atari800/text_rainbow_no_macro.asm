@@ -55,7 +55,7 @@ gr		PHA
 		JSR CIOV
 		RTS
 
-screen  .byte $53,$3A,$9B
+screen  .by "S:",$9B
 string 	.byte $0,$40,"Hello 6502 World !",$40,$9B
  		.byte "please terminate your strings with $9B",$9B
  		 run start ;Define run address
