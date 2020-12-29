@@ -1,36 +1,27 @@
-; WUDSN IDE Atari Rainbow Example, add labels
-;SDMCTL = $022F ;Disable screen DMA 
-;VCOUNT = $D40B
-;WSYNC  = $D40A
-;COLOR1 = $D017
-;COLOR2 = $D018
-;COLOR3 = $D019
-;COLOR4 = $D01A
-;RTCLOK = $14
-	
-;SAVMSC 	=	$58
-MAXLEN 	=	100
-
-;text offset  		
-offset = $D0
 
     org $4000 ;Start of code 
 	icl "SystemEquates.asm"
 	icl "graph_macros.asm"
+
+cc=$F1
 	
-start graphics #0
+start graphics #2
 	  print message, #10, #10
 	  ;LDA #0 ;Disable screen DMA 
       ;STA SDMCTL
-
-loop  jmp loop
-	  LDA VCOUNT ;Load VCOUNT 
-      CLC 
-      ADC RTCLOK ;Add counter 
-      STA WSYNC 
-      STA COLOR4 ;Change FG color 
-      ;JMP loop 
+	  LDA #0
+	  LDY #0
+	  STA cc	  
+loop  LDA VCOUNT ;Load VCOUNT
+      CLC
+      ADC cc ;Add counter
+      STY cc
+	  INY
+st    STA WSYNC 
+      STA COLOR0 ;Change FG color
+      STA COLOR2 ;Change win 
+      JMP loop 
   		
-message .byte $0,$40,"  Hello 6502 World !  ",$40,$FF
- 		.byte "please terminate your strings with $FF",$FF
+message .byte $0,$40,"Hello 6502 World !  ",$40,$9B
+ 		.byte "please terminate your strings with $9B",$9B
  		 run start ;Define run address

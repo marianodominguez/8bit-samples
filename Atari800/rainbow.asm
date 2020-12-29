@@ -15,5 +15,3 @@ loop  LDA VCOUNT ;Load VCOUNT
       STA WSYNC 
       STA COLOR4 ;Change background color 
       JMP loop 
-
-      run start ;Define run address

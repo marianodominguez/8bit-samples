@@ -12,14 +12,14 @@ CDTMA2  EQU     $228
 ;STORE VECTOR TO BLINK ROUTINE
         LDA     #BLINK&$00FF
         STA     CDTMA2
-        LDA     #HIGH BLINK
+        LDA     #BLINK/256
         STA     CDTMA2+1
         LDA     PERIOD
         STA     CDTMV2
         RTS
-PERIOD  ORG     ORG+1
-MASK    ORG     ORG+1
-FLIP    ORG     ORG+1
+PERIOD  =  *+1
+MASK    =  *+1
+FLIP    =  *+1
 ;BLINK ROUTINE
 BLINK   LDA     CHACT
         AND     MASK

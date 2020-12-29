@@ -1,6 +1,10 @@
 ; Text mode gr.0 prints a string at x,y
+MAXLEN 	  =	100
+;text offset  		
+offset = $F0
 
 .macro print str, x, y
+		clc
 		lda SAVMSC
 		adc :x
 		;adc :y+80
@@ -12,14 +16,14 @@
 		lda #0
 loop:	
 		lda :str,Y
-		cmp #$FF
+		cmp #$9B
 		beq pexit
-		sta (offset),Y
+		sta (SAVMSC),Y
 		iny
-		cpy MAXLEN
+		cpy #MAXLEN
 		bne loop
 pexit:	nop
-	.endm
+.endm
 	
 ;use CIO to set graphics mode
 .macro graphics mode
@@ -44,7 +48,7 @@ pexit:	nop
 		ora #$0C
 		sta ICAX1,X
 		jsr CIOV
-name   .BYTE "S:",$9B
+name   .byte $53,$3A,$9B
 .endm
 
 
