@@ -35,10 +35,10 @@ STOCOL =   $CD
 ;    stored respectively in
 ;   X reg.,accumulator,Y reg.
 SETCOL
-       ASL A         ; Need to multiply
-       ASL A         ; hue by 16, and
-       ASL A         ; add it to lumimance.
-       ASL A         ; Now hue is * 16
+       ASL          ; Need to multiply
+       ASL          ; hue by 16, and
+       ASL          ; add it to lumimance.
+       ASL          ; Now hue is * 16
        STA STORE1    ; temporarily
        TYA           ; So we can add
        CLC           ; Before adding
@@ -172,5 +172,5 @@ LOCATE
 ; ******************************
 ; The screen's name
 ; ******************************
-NAME   .BYTE "S:",$9B
+NAME   .BY "S:",$9B
 

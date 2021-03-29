@@ -1,0 +1,454 @@
+Modules list:
+-------------
+hello.o:
+    CODE              Offs=000000  Size=0000C5  Align=00001  Fill=0000
+    RODATA            Offs=000000  Size=000010  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(_cursor.o):
+    BSS               Offs=000000  Size=000001  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(_hextab.o):
+    RODATA            Offs=000010  Size=000010  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(_longminstr.o):
+    RODATA            Offs=000020  Size=00000C  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(_printf.o):
+    CODE              Offs=0000C5  Size=0003A5  Align=00001  Fill=0000
+    BSS               Offs=000001  Size=00002B  Align=00001  Fill=0000
+    DATA              Offs=000000  Size=000003  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(_scrsize.o):
+    CODE              Offs=00046A  Size=000006  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(addysp.o):
+    CODE              Offs=000470  Size=00000E  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(axlong.o):
+    CODE              Offs=00047E  Size=00000D  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(bgcolor.o):
+    CODE              Offs=00048B  Size=000018  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(bordercolor.o):
+    CODE              Offs=0004A3  Size=00000A  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(callmain.o):
+    CODE              Offs=0004AD  Size=000017  Align=00001  Fill=0000
+    DATA              Offs=000003  Size=000004  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(cgetc.o):
+    CODE              Offs=0004C4  Size=000016  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(chline.o):
+    CODE              Offs=0004DA  Size=000017  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(clrscr.o):
+    CODE              Offs=0004F1  Size=00002A  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(condes.o):
+    CODE              Offs=00051B  Size=00000C  Align=00001  Fill=0000
+    DATA              Offs=000007  Size=000025  Align=00001  Fill=0000
+    ONCE              Offs=000000  Size=00000C  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(cprintf.o):
+    CODE              Offs=000527  Size=00002A  Align=00001  Fill=0000
+    BSS               Offs=00002C  Size=000001  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(cputc.o):
+    CODE              Offs=000551  Size=000068  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(crt0.o):
+    BSS               Offs=00002D  Size=000005  Align=00001  Fill=0000
+    STARTUP           Offs=000000  Size=000063  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(ctype.o):
+    RODATA            Offs=00002C  Size=000100  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(cvline.o):
+    CODE              Offs=0005B9  Size=00001F  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(decsp2.o):
+    CODE              Offs=0005D8  Size=00000D  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(decsp4.o):
+    CODE              Offs=0005E5  Size=00000D  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(decsp6.o):
+    CODE              Offs=0005F2  Size=00000D  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(exehdr.o):
+    EXEHDR            Offs=000000  Size=000002  Align=00001  Fill=0000
+    MAINHDR           Offs=000000  Size=000004  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(exetrailer.o):
+    AUTOSTRT          Offs=000000  Size=000006  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(gotoxy.o):
+    CODE              Offs=0005FF  Size=000011  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(incsp2.o):
+    CODE              Offs=000610  Size=000016  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(lneg.o):
+    CODE              Offs=000626  Size=00001E  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(lpush.o):
+    CODE              Offs=000644  Size=000021  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(ltoa.o):
+    CODE              Offs=000665  Size=000095  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(mul40.o):
+    CODE              Offs=0006FA  Size=000021  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(popa.o):
+    CODE              Offs=00071B  Size=00000C  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(popptr1.o):
+    CODE              Offs=000727  Size=00000E  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(push1.o):
+    CODE              Offs=000735  Size=000005  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(pusha.o):
+    CODE              Offs=00073A  Size=000016  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(pushax.o):
+    CODE              Offs=000750  Size=00001A  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(revers.o):
+    CODE              Offs=00076A  Size=000016  Align=00001  Fill=0000
+    BSS               Offs=000032  Size=000001  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(scrsize.o):
+    CODE              Offs=000780  Size=000013  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(setcursor.o):
+    CODE              Offs=000793  Size=00003A  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(shrax1.o):
+    CODE              Offs=0007CD  Size=000008  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(strlen.o):
+    CODE              Offs=0007D5  Size=000016  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(strlower.o):
+    CODE              Offs=0007EB  Size=000028  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(sub.o):
+    CODE              Offs=000813  Size=000015  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(system_check.o):
+    SYSCHK            Offs=000000  Size=0000F6  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(system_check_hdr.o):
+    SYSCHKHDR         Offs=000000  Size=000004  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(system_check_trailer.o):
+    SYSCHKTRL         Offs=000000  Size=000006  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(vcprintf.o):
+    CODE              Offs=000828  Size=00007A  Align=00001  Fill=0000
+    DATA              Offs=00002C  Size=000008  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(zerobss.o):
+    CODE              Offs=0008A2  Size=000023  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(zeropage.o):
+    ZEROPAGE          Offs=000000  Size=00001A  Align=00001  Fill=0000
+
+
+Segment list:
+-------------
+Name                   Start     End    Size  Align
+----------------------------------------------------
+AUTOSTRT              000000  000005  000006  00001
+EXEHDR                000000  000001  000002  00001
+MAINHDR               000000  000003  000004  00001
+SYSCHKHDR             000000  000003  000004  00001
+SYSCHKTRL             000000  000005  000006  00001
+ZEROPAGE              000082  00009B  00001A  00001
+STARTUP               002000  002062  000063  00001
+ONCE                  002063  00206E  00000C  00001
+CODE                  00206F  002933  0008C5  00001
+RODATA                002934  002A5F  00012C  00001
+DATA                  002A60  002A93  000034  00001
+BSS                   002A94  002AC6  000033  00001
+SYSCHK                002E00  002EF5  0000F6  00001
+
+
+Exports list by name:
+---------------------
+__AUTOSTART__             000001 REA    __BSS_LOAD__              002A94 RLA    
+__BSS_RUN__               002A94 RLA    __BSS_SIZE__              000033 REA    
+__CONSTRUCTOR_COUNT__     000000 REA    __CONSTRUCTOR_TABLE__     00206F RLA    
+__DESTRUCTOR_COUNT__      000000 REA    __DESTRUCTOR_TABLE__      002A60 RLA    
+__EXEHDR__                000001 REA    __LOWCODE_RUN__           002063 RLA    
+__LOWCODE_SIZE__          000000 REA    __MAIN_START__            002000 RLA    
+__RESERVED_MEMORY__       000000 REA    __STACKSIZE__             000800 REA    
+__STARTADDRESS__          002000 REA    __STARTUP__               000001 REA    
+__SYSCHKHDR__             000001 REA    __SYSCHKTRL__             000001 REA    
+__SYSCHK_END__            002EF6 RLA    __SYSCHK_LOAD__           002E00 RLA    
+__SYSTEM_CHECK__          002E47 REA    __ctype                   002960 RLA    
+__hextab                  002944 RLA    __longminstr              002954 RLA    
+__printf                  002227 RLA    _bgcolor                  0024FA RLA    
+_bordercolor              002512 RLA    _cgetc                    002533 RLA    
+_chline                   00254E RLA    _clrscr                   002560 RLA    
+_cprintf                  002596 RLA    _cputc                    0025C5 RLA    
+_cvlinexy                 002628 RLA    _gotoxy                   002671 RLA    
+_ltoa                     0026EC RLA    _main                     00206F RLA    
+_mul40                    002769 RLA    _revflag                  002AC6 RLA    
+_screensize               0027EF RLA    _strlen                   002844 RLA    
+_strlower                 00285A RLA    _ultoa                    00272D RLA    
+_vcprintf                 0028E1 RLA    addysp                    0024E0 RLA    
+addysp1                   0024DF RLA    axlong                    0024ED RLA    
+axulong                   0024F3 RLA    callmain                  00251C RLA    
+cputdirect                0025E3 RLA    cursor                    002A94 RLA    
+decsp2                    002647 RLA    decsp4                    002654 RLA    
+decsp6                    002661 RLA    donelib                   00258A RLA    
+gotoxy                    00266E RLA    incsp2                    002687 RLA    
+initlib                   002063 RLA    negeax                    002695 RLA    
+popa                      00278A RLA    popax                     00267F RLA    
+popptr1                   002796 RLA    ptr1                      00008A RLZ    
+ptr2                      00008C RLZ    ptr3                      00008E RLZ    
+ptr4                      000090 RLZ    push1                     0027A4 RLA    
+pusha                     0027AD RLA    pusha0                    0027C1 RLA    
+pushax                    0027C3 RLA    pusheax                   0026BC RLA    
+putchar                   002606 RLA    regbank                   000096 RLZ    
+screensize                0024D9 RLA    setcursor                 002802 RLA    
+shrax1                    00283C RLA    sp                        000082 RLZ    
+sreg                      000084 RLZ    start                     002001 RLA    
+tmp1                      000092 RLZ    tmp4                      000095 RLZ    
+tossuba0                  002882 RLA    zerobss                   002911 RLA    
+
+
+
+Exports list by value:
+----------------------
+__CONSTRUCTOR_COUNT__     000000 REA    __DESTRUCTOR_COUNT__      000000 REA    
+__LOWCODE_SIZE__          000000 REA    __RESERVED_MEMORY__       000000 REA    
+__AUTOSTART__             000001 REA    __EXEHDR__                000001 REA    
+__STARTUP__               000001 REA    __SYSCHKHDR__             000001 REA    
+__SYSCHKTRL__             000001 REA    __BSS_SIZE__              000033 REA    
+sp                        000082 RLZ    sreg                      000084 RLZ    
+ptr1                      00008A RLZ    ptr2                      00008C RLZ    
+ptr3                      00008E RLZ    ptr4                      000090 RLZ    
+tmp1                      000092 RLZ    tmp4                      000095 RLZ    
+regbank                   000096 RLZ    __STACKSIZE__             000800 REA    
+__MAIN_START__            002000 RLA    __STARTADDRESS__          002000 REA    
+start                     002001 RLA    __LOWCODE_RUN__           002063 RLA    
+initlib                   002063 RLA    __CONSTRUCTOR_TABLE__     00206F RLA    
+_main                     00206F RLA    __printf                  002227 RLA    
+screensize                0024D9 RLA    addysp1                   0024DF RLA    
+addysp                    0024E0 RLA    axlong                    0024ED RLA    
+axulong                   0024F3 RLA    _bgcolor                  0024FA RLA    
+_bordercolor              002512 RLA    callmain                  00251C RLA    
+_cgetc                    002533 RLA    _chline                   00254E RLA    
+_clrscr                   002560 RLA    donelib                   00258A RLA    
+_cprintf                  002596 RLA    _cputc                    0025C5 RLA    
+cputdirect                0025E3 RLA    putchar                   002606 RLA    
+_cvlinexy                 002628 RLA    decsp2                    002647 RLA    
+decsp4                    002654 RLA    decsp6                    002661 RLA    
+gotoxy                    00266E RLA    _gotoxy                   002671 RLA    
+popax                     00267F RLA    incsp2                    002687 RLA    
+negeax                    002695 RLA    pusheax                   0026BC RLA    
+_ltoa                     0026EC RLA    _ultoa                    00272D RLA    
+_mul40                    002769 RLA    popa                      00278A RLA    
+popptr1                   002796 RLA    push1                     0027A4 RLA    
+pusha                     0027AD RLA    pusha0                    0027C1 RLA    
+pushax                    0027C3 RLA    _screensize               0027EF RLA    
+setcursor                 002802 RLA    shrax1                    00283C RLA    
+_strlen                   002844 RLA    _strlower                 00285A RLA    
+tossuba0                  002882 RLA    _vcprintf                 0028E1 RLA    
+zerobss                   002911 RLA    __hextab                  002944 RLA    
+__longminstr              002954 RLA    __ctype                   002960 RLA    
+__DESTRUCTOR_TABLE__      002A60 RLA    __BSS_LOAD__              002A94 RLA    
+__BSS_RUN__               002A94 RLA    cursor                    002A94 RLA    
+_revflag                  002AC6 RLA    __SYSCHK_LOAD__           002E00 RLA    
+__SYSTEM_CHECK__          002E47 REA    __SYSCHK_END__            002EF6 RLA    
+
+
+
+Imports list:
+-------------
+__AUTOSTART__ (exetrailer.o):
+    [linker generated]        /usr/share/cc65/cfg/atari.cfg(7)
+__BSS_LOAD__ ([linker generated]):
+    exehdr.o                  atari/exehdr.s(4)
+__BSS_RUN__ ([linker generated]):
+    zerobss.o                 common/zerobss.s(8)
+    system_check.o            atari/system_check.s(23)
+__BSS_SIZE__ ([linker generated]):
+    zerobss.o                 common/zerobss.s(8)
+    system_check.o            atari/system_check.s(23)
+__CONSTRUCTOR_COUNT__ ([linker generated]):
+    condes.o                  runtime/condes.s(18)
+__CONSTRUCTOR_TABLE__ ([linker generated]):
+    condes.o                  runtime/condes.s(18)
+__DESTRUCTOR_COUNT__ ([linker generated]):
+    condes.o                  runtime/condes.s(19)
+__DESTRUCTOR_TABLE__ ([linker generated]):
+    condes.o                  runtime/condes.s(19)
+__EXEHDR__ (exehdr.o):
+    [linker generated]        /usr/share/cc65/cfg/atari.cfg(5)
+__LOWCODE_RUN__ ([linker generated]):
+    crt0.o                    atari/crt0.s(18)
+__LOWCODE_SIZE__ ([linker generated]):
+    crt0.o                    atari/crt0.s(18)
+__MAIN_START__ ([linker generated]):
+    exehdr.o                  atari/exehdr.s(4)
+__RESERVED_MEMORY__ ([linker generated]):
+    system_check.o            atari/system_check.s(25)
+    crt0.o                    atari/crt0.s(16)
+    [linker generated]        /usr/share/cc65/cfg/atari.cfg(25)
+__STACKSIZE__ ([linker generated]):
+    system_check.o            atari/system_check.s(24)
+    [linker generated]        /usr/share/cc65/cfg/atari.cfg(25)
+__STARTADDRESS__ ([linker generated]):
+    system_check.o            atari/system_check.s(20)
+__STARTUP__ (crt0.o):
+    hello.o                   hello.s(28)
+__SYSCHKHDR__ (system_check_hdr.o):
+    system_check.o            atari/system_check.s(28)
+__SYSCHKTRL__ (system_check_trailer.o):
+    system_check.o            atari/system_check.s(28)
+__SYSCHK_END__ (system_check.o):
+    system_check_hdr.o        atari/system_check_hdr.s(7)
+__SYSCHK_LOAD__ ([linker generated]):
+    system_check_hdr.o        atari/system_check_hdr.s(7)
+__SYSTEM_CHECK__ (system_check.o):
+    system_check_trailer.o    atari/system_check_trailer.s(7)
+    [linker generated]        /usr/share/cc65/cfg/atari.cfg(6)
+__ctype (ctype.o):
+    strlower.o                common/strlower.s(13)
+__hextab (_hextab.o):
+    ltoa.o                    common/ltoa.s(10)
+__longminstr (_longminstr.o):
+    ltoa.o                    common/ltoa.s(10)
+__printf (_printf.o):
+    vcprintf.o                conio/vcprintf.s(9)
+_bgcolor (bgcolor.o):
+    hello.o                   hello.s(46)
+_bordercolor (bordercolor.o):
+    hello.o                   hello.s(47)
+_cgetc (cgetc.o):
+    hello.o                   hello.s(45)
+_chline (chline.o):
+    hello.o                   hello.s(48)
+_clrscr (clrscr.o):
+    hello.o                   hello.s(41)
+_cprintf (cprintf.o):
+    hello.o                   hello.s(44)
+_cputc (cputc.o):
+    vcprintf.o                conio/vcprintf.s(9)
+    hello.o                   hello.s(43)
+_cvlinexy (cvline.o):
+    hello.o                   hello.s(49)
+_gotoxy (gotoxy.o):
+    hello.o                   hello.s(42)
+_ltoa (ltoa.o):
+    _printf.o                 common/_printf.s(12)
+_main (hello.o):
+    callmain.o                runtime/callmain.s(11)
+_mul40 (mul40.o):
+    setcursor.o               atari/setcursor.s(7)
+    cputc.o                   atari/cputc.s(10)
+_revflag (revers.o):
+    cputc.o                   atari/cputc.s(12)
+_screensize (scrsize.o):
+    hello.o                   hello.s(50)
+_strlen (strlen.o):
+    _printf.o                 common/_printf.s(13)
+_strlower (strlower.o):
+    _printf.o                 common/_printf.s(13)
+_ultoa (ltoa.o):
+    _printf.o                 common/_printf.s(12)
+_vcprintf (vcprintf.o):
+    cprintf.o                 conio/cprintf.s(8)
+addysp (addysp.o):
+    cprintf.o                 conio/cprintf.s(8)
+addysp1 (addysp.o):
+    sub.o                     runtime/sub.s(8)
+axlong (axlong.o):
+    _printf.o                 common/_printf.s(11)
+axulong (axlong.o):
+    _printf.o                 common/_printf.s(11)
+callmain (callmain.o):
+    crt0.o                    atari/crt0.s(15)
+cputdirect (cputc.o):
+    chline.o                  atari/chline.s(9)
+cursor (_cursor.o):
+    setcursor.o               atari/setcursor.s(7)
+decsp2 (decsp2.o):
+    hello.o                   hello.s(246)
+decsp4 (decsp4.o):
+    lpush.o                   runtime/lpush.s(12)
+decsp6 (decsp6.o):
+    _printf.o                 common/_printf.s(11)
+donelib (condes.o):
+    crt0.o                    atari/crt0.s(14)
+gotoxy (gotoxy.o):
+    cvline.o                  atari/cvline.s(10)
+    cputc.o                   atari/cputc.s(10)
+    chline.o                  atari/chline.s(9)
+incsp2 (incsp2.o):
+    popptr1.o                 runtime/popptr1.s(8)
+    hello.o                   hello.s(246)
+initlib (condes.o):
+    crt0.o                    atari/crt0.s(14)
+negeax (lneg.o):
+    ltoa.o                    common/ltoa.s(9)
+popa (popa.o):
+    gotoxy.o                  atari/gotoxy.s(10)
+popax (incsp2.o):
+    ltoa.o                    common/ltoa.s(9)
+    _printf.o                 common/_printf.s(11)
+    vcprintf.o                conio/vcprintf.s(8)
+popptr1 (popptr1.o):
+    ltoa.o                    common/ltoa.s(9)
+    vcprintf.o                conio/vcprintf.s(8)
+    scrsize.o                 conio/scrsize.s(9)
+ptr1 (zeropage.o):
+    strlower.o                common/strlower.s(14)
+    popptr1.o                 runtime/popptr1.s(9)
+    ltoa.o                    common/ltoa.s(11)
+    _printf.o                 /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(12)
+    zerobss.o                 common/zerobss.s(9)
+    vcprintf.o                conio/vcprintf.s(10)
+    scrsize.o                 conio/scrsize.s(11)
+    cprintf.o                 conio/cprintf.s(9)
+    clrscr.o                  atari/clrscr.s(9)
+ptr2 (zeropage.o):
+    strlower.o                common/strlower.s(14)
+    strlen.o                  common/strlen.s(12)
+    ltoa.o                    common/ltoa.s(11)
+    _printf.o                 /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(12)
+    vcprintf.o                conio/vcprintf.s(10)
+    scrsize.o                 conio/scrsize.s(11)
+ptr3 (zeropage.o):
+    ltoa.o                    common/ltoa.s(11)
+    vcprintf.o                conio/vcprintf.s(10)
+ptr4 (zeropage.o):
+    cputc.o                   atari/cputc.s(11)
+push1 (push1.o):
+    _printf.o                 common/_printf.s(11)
+pusha (pusha.o):
+    hello.o                   hello.s(246)
+pusha0 (pushax.o):
+    push1.o                   runtime/push1.s(8)
+    hello.o                   hello.s(246)
+pushax (pushax.o):
+    callmain.o                runtime/callmain.s(11)
+    _printf.o                 common/_printf.s(11)
+    vcprintf.o                conio/vcprintf.s(8)
+    cprintf.o                 conio/cprintf.s(8)
+    hello.o                   hello.s(246)
+pusheax (lpush.o):
+    _printf.o                 common/_printf.s(11)
+putchar (cputc.o):
+    cvline.o                  atari/cvline.s(10)
+regbank (zeropage.o):
+    _printf.o                 /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(14)
+screensize (_scrsize.o):
+    scrsize.o                 conio/scrsize.s(10)
+setcursor (setcursor.o):
+    gotoxy.o                  atari/gotoxy.s(11)
+    cvline.o                  atari/cvline.s(10)
+    cputc.o                   atari/cputc.s(12)
+    clrscr.o                  atari/clrscr.s(10)
+    chline.o                  atari/chline.s(9)
+    cgetc.o                   atari/cgetc.s(10)
+shrax1 (shrax1.o):
+    hello.o                   hello.s(246)
+sp (zeropage.o):
+    decsp4.o                  runtime/decsp4.s(8)
+    popptr1.o                 runtime/popptr1.s(9)
+    lpush.o                   runtime/lpush.s(13)
+    decsp6.o                  runtime/decsp6.s(8)
+    addysp.o                  runtime/addysp.s(8)
+    _printf.o                 /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(11)
+    vcprintf.o                conio/vcprintf.s(10)
+    sub.o                     runtime/sub.s(9)
+    pushax.o                  runtime/pushax.s(8)
+    pusha.o                   runtime/pusha.s(8)
+    popa.o                    runtime/popa.s(8)
+    incsp2.o                  runtime/incsp2.s(8)
+    decsp2.o                  runtime/decsp2.s(8)
+    crt0.o                    /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(11)
+    cprintf.o                 conio/cprintf.s(9)
+    hello.o                   hello.s(10)
+sreg (zeropage.o):
+    lneg.o                    runtime/lneg.s(11)
+    ltoa.o                    common/ltoa.s(11)
+    lpush.o                   runtime/lpush.s(13)
+    axlong.o                  runtime/axlong.s(9)
+    _printf.o                 /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(11)
+start (crt0.o):
+    exetrailer.o              atari/exetrailer.s(4)
+tmp1 (zeropage.o):
+    ltoa.o                    common/ltoa.s(11)
+    _printf.o                 /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(13)
+    vcprintf.o                conio/vcprintf.s(10)
+    shrax1.o                  runtime/shrax1.s(8)
+    cvline.o                  atari/cvline.s(11)
+    chline.o                  atari/chline.s(10)
+tmp4 (zeropage.o):
+    mul40.o                   common/mul40.s(16)
+tossuba0 (sub.o):
+    hello.o                   hello.s(246)
+zerobss (zerobss.o):
+    crt0.o                    atari/crt0.s(15)
+

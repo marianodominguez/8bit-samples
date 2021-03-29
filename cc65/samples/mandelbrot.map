@@ -1,0 +1,992 @@
+Modules list:
+-------------
+mandelbrot.o:
+    CODE              Offs=000000  Size=0003D1  Align=00001  Fill=0000
+    RODATA            Offs=000000  Size=000075  Align=00001  Fill=0000
+    BSS               Offs=000000  Size=000019  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(_cursor.o):
+    BSS               Offs=000019  Size=000001  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(_directerrno.o):
+    CODE              Offs=0003D1  Size=00000A  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(_heap.o):
+    DATA              Offs=000000  Size=00000A  Align=00001  Fill=0000
+    ONCE              Offs=000000  Size=000010  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(_hextab.o):
+    RODATA            Offs=000075  Size=000010  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(_longminstr.o):
+    RODATA            Offs=000085  Size=00000C  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(_mappederrno.o):
+    CODE              Offs=0003DB  Size=000010  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(_oserror.o):
+    BSS               Offs=00001A  Size=000001  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(_printf.o):
+    CODE              Offs=0003EB  Size=0003A5  Align=00001  Fill=0000
+    BSS               Offs=00001B  Size=00002B  Align=00001  Fill=0000
+    DATA              Offs=00000A  Size=000003  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(_seterrno.o):
+    CODE              Offs=000790  Size=000009  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(addysp.o):
+    CODE              Offs=000799  Size=00000E  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(asreax1.o):
+    CODE              Offs=0007A7  Size=000010  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(asreax2.o):
+    CODE              Offs=0007B7  Size=000019  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(axlong.o):
+    CODE              Offs=0007D0  Size=00000D  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(callmain.o):
+    CODE              Offs=0007DD  Size=000017  Align=00001  Fill=0000
+    DATA              Offs=00000D  Size=000004  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(cgetc.o):
+    CODE              Offs=0007F4  Size=000016  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(clock.o):
+    CODE              Offs=00080A  Size=000022  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(close.o):
+    CODE              Offs=00082C  Size=00001E  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(clrscr.o):
+    CODE              Offs=00084A  Size=00002A  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(condes.o):
+    CODE              Offs=000874  Size=00000C  Align=00001  Fill=0000
+    DATA              Offs=000011  Size=000025  Align=00001  Fill=0000
+    ONCE              Offs=000010  Size=00000C  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(cprintf.o):
+    CODE              Offs=000880  Size=00002A  Align=00001  Fill=0000
+    BSS               Offs=000046  Size=000001  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(cputc.o):
+    CODE              Offs=0008AA  Size=000068  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(cputs.o):
+    CODE              Offs=000912  Size=000023  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(crt0.o):
+    BSS               Offs=000047  Size=000005  Align=00001  Fill=0000
+    STARTUP           Offs=000000  Size=000063  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(ctype.o):
+    RODATA            Offs=000091  Size=000100  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(decax1.o):
+    CODE              Offs=000935  Size=000007  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(decsp4.o):
+    CODE              Offs=00093C  Size=00000D  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(decsp6.o):
+    CODE              Offs=000949  Size=00000D  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(do_oserr.o):
+    CODE              Offs=000956  Size=000004  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(doesclrscr.o):
+    CODE              Offs=00095A  Size=000006  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(dosdetect.o):
+    DATA              Offs=000036  Size=000001  Align=00001  Fill=0000
+    ONCE              Offs=00001C  Size=00004B  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(errno.o):
+    BSS               Offs=00004C  Size=000002  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(exehdr.o):
+    EXEHDR            Offs=000000  Size=000002  Align=00001  Fill=0000
+    MAINHDR           Offs=000000  Size=000004  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(exetrailer.o):
+    AUTOSTRT          Offs=000000  Size=000006  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(fdtab.o):
+    DATA              Offs=000037  Size=00002C  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(fdtable.o):
+    CODE              Offs=000960  Size=000183  Align=00001  Fill=0000
+    BSS               Offs=00004E  Size=000006  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(fdtoiocb.o):
+    CODE              Offs=000AE3  Size=000022  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(findfreeiocb.o):
+    CODE              Offs=000B05  Size=000015  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(free.o):
+    CODE              Offs=000B1A  Size=0001D3  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(getdefdev.o):
+    CODE              Offs=000CED  Size=000064  Align=00001  Fill=0000
+    DATA              Offs=000063  Size=000007  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(getfd.o):
+    CODE              Offs=000D51  Size=000029  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(gotoxy.o):
+    CODE              Offs=000D7A  Size=000011  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(icmp.o):
+    CODE              Offs=000D8B  Size=00002E  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(incsp2.o):
+    CODE              Offs=000DB9  Size=000016  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(incsp4.o):
+    CODE              Offs=000DCF  Size=000005  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(inviocb.o):
+    CODE              Offs=000DD4  Size=000005  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(is_cmdline_dos.o):
+    CODE              Offs=000DD9  Size=000009  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(ladd.o):
+    CODE              Offs=000DE2  Size=000025  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(ldaxsp.o):
+    CODE              Offs=000E07  Size=000009  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(libref.o):
+/usr/share/cc65/lib/atari.lib(lmul.o):
+    CODE              Offs=000E10  Size=00005C  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(lneg.o):
+    CODE              Offs=000E6C  Size=00001E  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(lpush.o):
+    CODE              Offs=000E8A  Size=000021  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(lsub.o):
+    CODE              Offs=000EAB  Size=000027  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(ltoa.o):
+    CODE              Offs=000ED2  Size=000095  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(ludiv.o):
+    CODE              Offs=000F67  Size=00007A  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(lumod.o):
+    CODE              Offs=000FE1  Size=000019  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(malloc.o):
+    CODE              Offs=000FFA  Size=00010E  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(memset.o):
+    CODE              Offs=001108  Size=00005D  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(modfree.o):
+/usr/share/cc65/lib/atari.lib(modload.o):
+    CODE              Offs=001165  Size=000205  Align=00001  Fill=0000
+    RODATA            Offs=000191  Size=000008  Align=00001  Fill=0000
+    BSS               Offs=000054  Size=000023  Align=00001  Fill=0000
+    DATA              Offs=00006A  Size=000003  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(mul40.o):
+    CODE              Offs=00136A  Size=000021  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(negabs.o):
+    CODE              Offs=00138B  Size=000012  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(open.o):
+    CODE              Offs=00139D  Size=0000C0  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(oserror.o):
+    CODE              Offs=00145D  Size=00001A  Align=00001  Fill=0000
+    RODATA            Offs=000199  Size=000038  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(popa.o):
+    CODE              Offs=001477  Size=00000C  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(popptr1.o):
+    CODE              Offs=001483  Size=00000E  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(push1.o):
+    CODE              Offs=001491  Size=000005  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(pusha.o):
+    CODE              Offs=001496  Size=000016  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(pushax.o):
+    CODE              Offs=0014AC  Size=00001A  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(read.o):
+    CODE              Offs=0014C6  Size=0000DA  Align=00001  Fill=0000
+    BSS               Offs=000077  Size=000051  Align=00001  Fill=0000
+    EXTZP             Offs=000000  Size=000005  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(revers.o):
+    CODE              Offs=0015A0  Size=000016  Align=00001  Fill=0000
+    BSS               Offs=0000C8  Size=000001  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(rwcommon.o):
+    CODE              Offs=0015B6  Size=00002D  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(setcursor.o):
+    CODE              Offs=0015E3  Size=00003A  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(strlen.o):
+    CODE              Offs=00161D  Size=000016  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(strlower.o):
+    CODE              Offs=001633  Size=000028  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(subysp.o):
+    CODE              Offs=00165B  Size=00000D  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(system_check.o):
+    SYSCHK            Offs=000000  Size=0000F6  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(system_check_hdr.o):
+    SYSCHKHDR         Offs=000000  Size=000004  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(system_check_trailer.o):
+    SYSCHKTRL         Offs=000000  Size=000006  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi-kernel.o):
+    CODE              Offs=001668  Size=00007F  Align=00001  Fill=0000
+    RODATA            Offs=0001D1  Size=000004  Align=00001  Fill=0000
+    BSS               Offs=0000C9  Size=000028  Align=00001  Fill=0000
+    DATA              Offs=00006D  Size=000039  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi_clear.o):
+/usr/share/cc65/lib/atari.lib(tgi_colors.o):
+/usr/share/cc65/lib/atari.lib(tgi_done.o):
+    CODE              Offs=0016E7  Size=00000E  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi_getcolorcount.o):
+    CODE              Offs=0016F5  Size=000006  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi_geterror.o):
+    CODE              Offs=0016FB  Size=000017  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi_geterrormsg.o):
+    CODE              Offs=001712  Size=000013  Align=00001  Fill=0000
+    RODATA            Offs=0001D5  Size=0000E7  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi_getset.o):
+    CODE              Offs=001725  Size=00001F  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi_getxres.o):
+    CODE              Offs=001744  Size=000007  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi_getyres.o):
+    CODE              Offs=00174B  Size=000007  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi_init.o):
+    CODE              Offs=001752  Size=000058  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi_load.o):
+    CODE              Offs=0017AA  Size=000058  Align=00001  Fill=0000
+    DATA              Offs=0000A6  Size=00000A  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi_popxy.o):
+    CODE              Offs=001802  Size=000007  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi_setcolor.o):
+    CODE              Offs=001809  Size=00000E  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi_setpixel.o):
+    CODE              Offs=001817  Size=000009  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi_settextstyle.o):
+    CODE              Offs=001820  Size=000044  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(tgi_stddrv.o):
+    RODATA            Offs=0002BC  Size=000009  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(ucase_fn.o):
+    CODE              Offs=001864  Size=00005A  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(udiv.o):
+    CODE              Offs=0018BE  Size=00004F  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(umod.o):
+    CODE              Offs=00190D  Size=000011  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(umul8x16r24.o):
+    CODE              Offs=00191E  Size=00002E  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(vcprintf.o):
+    CODE              Offs=00194C  Size=00007A  Align=00001  Fill=0000
+    DATA              Offs=0000B0  Size=000008  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(zerobss.o):
+    CODE              Offs=0019C6  Size=000023  Align=00001  Fill=0000
+/usr/share/cc65/lib/atari.lib(zeropage.o):
+    ZEROPAGE          Offs=000000  Size=00001A  Align=00001  Fill=0000
+
+
+Segment list:
+-------------
+Name                   Start     End    Size  Align
+----------------------------------------------------
+AUTOSTRT              000000  000005  000006  00001
+EXEHDR                000000  000001  000002  00001
+MAINHDR               000000  000003  000004  00001
+SYSCHKHDR             000000  000003  000004  00001
+SYSCHKTRL             000000  000005  000006  00001
+ZEROPAGE              000082  00009B  00001A  00001
+EXTZP                 00009C  0000A0  000005  00001
+STARTUP               002000  002062  000063  00001
+ONCE                  002063  0020CF  00006D  00001
+CODE                  0020D0  003AB8  0019E9  00001
+SYSCHK                002E00  002EF5  0000F6  00001
+RODATA                003AB9  003D7F  0002C7  00001
+DATA                  003D80  003E37  0000B8  00001
+BSS                   003E38  003F28  0000F1  00001
+
+
+Exports list by name:
+---------------------
+__AUTOSTART__             000001 REA    __BSS_LOAD__              003E38 RLA    
+__BSS_RUN__               003E38 RLA    __BSS_SIZE__              0000F1 REA    
+__CONSTRUCTOR_COUNT__     000003 REA    __CONSTRUCTOR_TABLE__     0020CA RLA    
+__DESTRUCTOR_COUNT__      000001 REA    __DESTRUCTOR_TABLE__      003D7E RLA    
+__EXEHDR__                000001 REA    __LOWCODE_RUN__           002063 RLA    
+__LOWCODE_SIZE__          000000 REA    __MAIN_START__            002000 RLA    
+__RESERVED_MEMORY__       002000 REA    __STACKSIZE__             000800 REA    
+__STARTADDRESS__          002000 REA    __STARTUP__               000001 REA    
+__SYSCHKHDR__             000001 REA    __SYSCHKTRL__             000001 REA    
+__SYSCHK_END__            002EF6 RLA    __SYSCHK_LOAD__           002E00 RLA    
+__SYSTEM_CHECK__          002E47 REA    __ZP_START__              000082 RLA    
+__clocks_per_sec          0028ED RLA    __ctype                   003B4A RLA    
+__defdev                  003DE6 RLA    __directerrno             0024A1 RLA    
+__do_oserror              002A26 RLA    __dos_type                003DB6 RLA    
+__errno                   003E84 RLA    __getdefdev               002DBD  LAI   
+__heapend                 003D84 RLA    __heapfirst               003D86 RLA    
+__heaplast                003D88 RLA    __heapptr                 003D82 RLA    
+__hextab                  003B2E RLA    __inviocb                 002EA4 RLA    
+__is_cmdline_dos          002EA9 RLA    __longminstr              003B3E RLA    
+__mappederrno             0024AB RLA    __oserror                 003E52 RLA    
+__osmaperrno              00352D RLA    __printf                  0025AE RLA    
+__rwsetup                 003686 RLA    __seterrno                002860 RLA    
+_abs                      00345B RLA    _bzero                    0031D8 RLA    
+_cgetc                    0028C4 RLA    _clock                    0028DA RLA    
+_close                    0028FC RLA    _clrscr                   00291A RLA    
+_cprintf                  002950 RLA    _cputc                    00297F RLA    
+_cputs                    0029EC RLA    _doesclrscrafterexit      002A2A RLA    
+_exit                     002041 RLA    _free                     002BEA RLA    
+_ltoa                     002FBA RLA    _main                     00231F RLA    
+_malloc                   0030CA RLA    _mod_free                 002BEA REA    
+_mod_load                 003310 RLA    _mul40                    00343A RLA    
+_open                     00346D RLA    _read                     003596 RLA    
+_revflag                  003F00 RLA    _strlen                   0036ED RLA    
+_strlower                 003703 RLA    _tgi_clear                003DFF REA    
+_tgi_color                003F09 RLA    _tgi_colorcount           003F22 RLA    
+_tgi_done                 0037B7 RLA    _tgi_drv                  003F01 RLA    
+_tgi_error                003F03 RLA    _tgi_flags                003F28 RLA    
+_tgi_font                 003F0A RLA    _tgi_fontheight           003F25 RLA    
+_tgi_fontwidth            003F24 RLA    _tgi_getcolorcount        0037C5 RLA    
+_tgi_geterror             0037CB RLA    _tgi_geterrormsg          0037E2 RLA    
+_tgi_getxres              003814 RLA    _tgi_getyres              00381B RLA    
+_tgi_gmode                003F04 RLA    _tgi_init                 003822 RLA    
+_tgi_install              003738 RLA    _tgi_load_driver          00387A RLA    
+_tgi_setcolor             0038D9 RLA    _tgi_setpixel             0038E7 RLA    
+_tgi_settextstyle         0038F0 RLA    _tgi_stddrv               003D75 RLA    
+_tgi_textdir              003F0B RLA    _tgi_textscalew           003F0E RLA    
+_tgi_xmax                 003F1A RLA    _tgi_xres                 003F1E RLA    
+_tgi_ymax                 003F1C RLA    _tgi_yres                 003F20 RLA    
+_ultoa                    002FFB RLA    _vcprintf                 003A66 RLA    
+addysp                    00286A RLA    addysp1                   002869 RLA    
+asreax1                   002877 RLA    asreax2                   002887 RLA    
+axlong                    0028A0 RLA    axulong                   0028A6 RLA    
+callmain                  0028AD RLA    closeallfiles             00351E  LAI   
+clriocb                   002A77 RLA    cursor                    003E51 RLA    
+decax1                    002A05 RLA    decsp4                    002A0C RLA    
+decsp6                    002A19 RLA    detect                    00207F  LAI   
+donelib                   002944 RLA    fd_index                  003DB7 RLA    
+fd_table                  003DC3 RLA    fddecusage                002A84 RLA    
+fdt_to_fdi                002E21 RLA    fdtoiocb                  002BB3 RLA    
+fdtoiocb_down             002A30 RLA    findfreeiocb              002BD5 RLA    
+getlop                    003048 RLA    gotoxy                    002E4A RLA    
+incsp2                    002E91 RLA    incsp4                    002E9F RLA    
+initheap                  002063  LAI   initlib                   002073 RLA    
+ldaxysp                   002ED9 RLA    negeax                    002F3C RLA    
+newfd                     002AB2 RLA    popa                      003547 RLA    
+popax                     002E89 RLA    popptr1                   003553 RLA    
+ptr1                      00008A RLZ    ptr2                      00008C RLZ    
+ptr3                      00008E RLZ    ptr4                      000090 RLZ    
+push1                     003561 RLA    pusha                     00356A RLA    
+pusha0                    00357E RLA    pushax                    003580 RLA    
+pusheax                   002F63 RLA    regbank                   000096 RLZ    
+setcursor                 0036B3 RLA    sp                        000082 RLZ    
+sreg                      000084 RLZ    start                     002001 RLA    
+subysp                    00372B RLA    tgi_clear                 003DFF RLA    
+tgi_clear_ptr             0037AB RLA    tgi_color_white           000001 REZ    
+tgi_done                  003DF6 RLA    tgi_getdefpalette         003E11 RLA    
+tgi_geterror              003DF9 RLA    tgi_getset                0037F5 RLA    
+tgi_init                  003DF3 RLA    tgi_inv_arg               00378E RLA    
+tgi_libref                002041 RLA    tgi_popxy                 0038D2 RLA    
+tgi_setcolor              003E08 RLA    tgi_setdrawpage           003E05 RLA    
+tgi_setpalette            003E0B RLA    tgi_setpixel              003E14 RLA    
+tgi_setviewpage           003E02 RLA    tmp1                      000092 RLZ    
+tmp2                      000093 RLZ    tmp3                      000094 RLZ    
+tmp4                      000095 RLZ    tosaddeax                 002EB8 RLA    
+tosicmp                   002E5D RLA    tosmuleax                 002EE6 RLA    
+tossubeax                 002F81 RLA    tosudiv0ax                003037 RLA    
+tosudivax                 003990 RLA    tosumod0ax                0030B1 RLA    
+tosumoda0                 0039DD RLA    tosumul0ax                002EE0 RLA    
+ucase_fn                  003934 RLA    udiv16                    00399F RLA    
+udiv32                    00306C RLA    umul8x16r24               0039EE RLA    
+zerobss                   003A96 RLA    
+
+
+Exports list by value:
+----------------------
+__LOWCODE_SIZE__          000000 REA    __AUTOSTART__             000001 REA    
+__DESTRUCTOR_COUNT__      000001 REA    __EXEHDR__                000001 REA    
+__STARTUP__               000001 REA    __SYSCHKHDR__             000001 REA    
+__SYSCHKTRL__             000001 REA    tgi_color_white           000001 REZ    
+__CONSTRUCTOR_COUNT__     000003 REA    __ZP_START__              000082 RLA    
+sp                        000082 RLZ    sreg                      000084 RLZ    
+ptr1                      00008A RLZ    ptr2                      00008C RLZ    
+ptr3                      00008E RLZ    ptr4                      000090 RLZ    
+tmp1                      000092 RLZ    tmp2                      000093 RLZ    
+tmp3                      000094 RLZ    tmp4                      000095 RLZ    
+regbank                   000096 RLZ    __BSS_SIZE__              0000F1 REA    
+__STACKSIZE__             000800 REA    __MAIN_START__            002000 RLA    
+__RESERVED_MEMORY__       002000 REA    __STARTADDRESS__          002000 REA    
+start                     002001 RLA    _exit                     002041 RLA    
+tgi_libref                002041 RLA    __LOWCODE_RUN__           002063 RLA    
+initheap                  002063  LAI   initlib                   002073 RLA    
+detect                    00207F  LAI   __CONSTRUCTOR_TABLE__     0020CA RLA    
+_main                     00231F RLA    __directerrno             0024A1 RLA    
+__mappederrno             0024AB RLA    __printf                  0025AE RLA    
+__seterrno                002860 RLA    addysp1                   002869 RLA    
+addysp                    00286A RLA    asreax1                   002877 RLA    
+asreax2                   002887 RLA    axlong                    0028A0 RLA    
+axulong                   0028A6 RLA    callmain                  0028AD RLA    
+_cgetc                    0028C4 RLA    _clock                    0028DA RLA    
+__clocks_per_sec          0028ED RLA    _close                    0028FC RLA    
+_clrscr                   00291A RLA    donelib                   002944 RLA    
+_cprintf                  002950 RLA    _cputc                    00297F RLA    
+_cputs                    0029EC RLA    decax1                    002A05 RLA    
+decsp4                    002A0C RLA    decsp6                    002A19 RLA    
+__do_oserror              002A26 RLA    _doesclrscrafterexit      002A2A RLA    
+fdtoiocb_down             002A30 RLA    clriocb                   002A77 RLA    
+fddecusage                002A84 RLA    newfd                     002AB2 RLA    
+fdtoiocb                  002BB3 RLA    findfreeiocb              002BD5 RLA    
+_free                     002BEA RLA    _mod_free                 002BEA REA    
+__getdefdev               002DBD  LAI   __SYSCHK_LOAD__           002E00 RLA    
+fdt_to_fdi                002E21 RLA    __SYSTEM_CHECK__          002E47 REA    
+gotoxy                    002E4A RLA    tosicmp                   002E5D RLA    
+popax                     002E89 RLA    incsp2                    002E91 RLA    
+incsp4                    002E9F RLA    __inviocb                 002EA4 RLA    
+__is_cmdline_dos          002EA9 RLA    tosaddeax                 002EB8 RLA    
+ldaxysp                   002ED9 RLA    tosumul0ax                002EE0 RLA    
+tosmuleax                 002EE6 RLA    __SYSCHK_END__            002EF6 RLA    
+negeax                    002F3C RLA    pusheax                   002F63 RLA    
+tossubeax                 002F81 RLA    _ltoa                     002FBA RLA    
+_ultoa                    002FFB RLA    tosudiv0ax                003037 RLA    
+getlop                    003048 RLA    udiv32                    00306C RLA    
+tosumod0ax                0030B1 RLA    _malloc                   0030CA RLA    
+_bzero                    0031D8 RLA    _mod_load                 003310 RLA    
+_mul40                    00343A RLA    _abs                      00345B RLA    
+_open                     00346D RLA    closeallfiles             00351E  LAI   
+__osmaperrno              00352D RLA    popa                      003547 RLA    
+popptr1                   003553 RLA    push1                     003561 RLA    
+pusha                     00356A RLA    pusha0                    00357E RLA    
+pushax                    003580 RLA    _read                     003596 RLA    
+__rwsetup                 003686 RLA    setcursor                 0036B3 RLA    
+_strlen                   0036ED RLA    _strlower                 003703 RLA    
+subysp                    00372B RLA    _tgi_install              003738 RLA    
+tgi_inv_arg               00378E RLA    tgi_clear_ptr             0037AB RLA    
+_tgi_done                 0037B7 RLA    _tgi_getcolorcount        0037C5 RLA    
+_tgi_geterror             0037CB RLA    _tgi_geterrormsg          0037E2 RLA    
+tgi_getset                0037F5 RLA    _tgi_getxres              003814 RLA    
+_tgi_getyres              00381B RLA    _tgi_init                 003822 RLA    
+_tgi_load_driver          00387A RLA    tgi_popxy                 0038D2 RLA    
+_tgi_setcolor             0038D9 RLA    _tgi_setpixel             0038E7 RLA    
+_tgi_settextstyle         0038F0 RLA    ucase_fn                  003934 RLA    
+tosudivax                 003990 RLA    udiv16                    00399F RLA    
+tosumoda0                 0039DD RLA    umul8x16r24               0039EE RLA    
+_vcprintf                 003A66 RLA    zerobss                   003A96 RLA    
+__hextab                  003B2E RLA    __longminstr              003B3E RLA    
+__ctype                   003B4A RLA    _tgi_stddrv               003D75 RLA    
+__DESTRUCTOR_TABLE__      003D7E RLA    __heapptr                 003D82 RLA    
+__heapend                 003D84 RLA    __heapfirst               003D86 RLA    
+__heaplast                003D88 RLA    __dos_type                003DB6 RLA    
+fd_index                  003DB7 RLA    fd_table                  003DC3 RLA    
+__defdev                  003DE6 RLA    tgi_init                  003DF3 RLA    
+tgi_done                  003DF6 RLA    tgi_geterror              003DF9 RLA    
+_tgi_clear                003DFF REA    tgi_clear                 003DFF RLA    
+tgi_setviewpage           003E02 RLA    tgi_setdrawpage           003E05 RLA    
+tgi_setcolor              003E08 RLA    tgi_setpalette            003E0B RLA    
+tgi_getdefpalette         003E11 RLA    tgi_setpixel              003E14 RLA    
+__BSS_LOAD__              003E38 RLA    __BSS_RUN__               003E38 RLA    
+cursor                    003E51 RLA    __oserror                 003E52 RLA    
+__errno                   003E84 RLA    _revflag                  003F00 RLA    
+_tgi_drv                  003F01 RLA    _tgi_error                003F03 RLA    
+_tgi_gmode                003F04 RLA    _tgi_color                003F09 RLA    
+_tgi_font                 003F0A RLA    _tgi_textdir              003F0B RLA    
+_tgi_textscalew           003F0E RLA    _tgi_xmax                 003F1A RLA    
+_tgi_ymax                 003F1C RLA    _tgi_xres                 003F1E RLA    
+_tgi_yres                 003F20 RLA    _tgi_colorcount           003F22 RLA    
+_tgi_fontwidth            003F24 RLA    _tgi_fontheight           003F25 RLA    
+_tgi_flags                003F28 RLA    
+
+
+Imports list:
+-------------
+__AUTOSTART__ (exetrailer.o):
+    [linker generated]        /usr/share/cc65/cfg/atari.cfg(7)
+__BSS_LOAD__ ([linker generated]):
+    exehdr.o                  atari/exehdr.s(4)
+__BSS_RUN__ ([linker generated]):
+    _heap.o                   common/_heap.s(8)
+    zerobss.o                 common/zerobss.s(8)
+    system_check.o            atari/system_check.s(23)
+__BSS_SIZE__ ([linker generated]):
+    _heap.o                   common/_heap.s(8)
+    zerobss.o                 common/zerobss.s(8)
+    system_check.o            atari/system_check.s(23)
+__CONSTRUCTOR_COUNT__ ([linker generated]):
+    condes.o                  runtime/condes.s(18)
+__CONSTRUCTOR_TABLE__ ([linker generated]):
+    condes.o                  runtime/condes.s(18)
+__DESTRUCTOR_COUNT__ ([linker generated]):
+    condes.o                  runtime/condes.s(19)
+__DESTRUCTOR_TABLE__ ([linker generated]):
+    condes.o                  runtime/condes.s(19)
+__EXEHDR__ (exehdr.o):
+    [linker generated]        /usr/share/cc65/cfg/atari.cfg(5)
+__LOWCODE_RUN__ ([linker generated]):
+    crt0.o                    atari/crt0.s(18)
+__LOWCODE_SIZE__ ([linker generated]):
+    crt0.o                    atari/crt0.s(18)
+__MAIN_START__ ([linker generated]):
+    exehdr.o                  atari/exehdr.s(4)
+__RESERVED_MEMORY__ ([linker generated]):
+    system_check.o            atari/system_check.s(25)
+    crt0.o                    atari/crt0.s(16)
+__STACKSIZE__ ([linker generated]):
+    _heap.o                   common/_heap.s(8)
+    system_check.o            atari/system_check.s(24)
+    [linker generated]        /usr/share/cc65/cfg/atari.cfg(25)
+__STARTADDRESS__ ([linker generated]):
+    system_check.o            atari/system_check.s(20)
+__STARTUP__ (crt0.o):
+    mandelbrot.o              mandelbrot.s(29)
+__SYSCHKHDR__ (system_check_hdr.o):
+    system_check.o            atari/system_check.s(28)
+__SYSCHKTRL__ (system_check_trailer.o):
+    system_check.o            atari/system_check.s(28)
+__SYSCHK_END__ (system_check.o):
+    system_check_hdr.o        atari/system_check_hdr.s(7)
+__SYSCHK_LOAD__ ([linker generated]):
+    system_check_hdr.o        atari/system_check_hdr.s(7)
+__SYSTEM_CHECK__ (system_check.o):
+    system_check_trailer.o    atari/system_check_trailer.s(7)
+    [linker generated]        /usr/share/cc65/cfg/atari.cfg(6)
+__ZP_START__ ([linker generated]):
+    modload.o                 common/modload.s(42)
+__clocks_per_sec (clock.o):
+    mandelbrot.o              mandelbrot.s(53)
+__ctype (ctype.o):
+    strlower.o                common/strlower.s(13)
+__defdev (getdefdev.o):
+    ucase_fn.o                atari/ucase_fn.s(25)
+__directerrno (_directerrno.o):
+    open.o                    /build/cc65-cMn3ks/cc65-2.18/asminc/errno.inc(10)
+    inviocb.o                 /build/cc65-cMn3ks/cc65-2.18/asminc/errno.inc(10)
+__do_oserror (do_oserr.o):
+    read.o                    atari/read.s(8)
+    close.o                   atari/close.s(9)
+__dos_type (dosdetect.o):
+    getdefdev.o               atari/getdefdev.s(22)
+    is_cmdline_dos.o          atari/is_cmdline_dos.s(10)
+__errno (errno.o):
+    _seterrno.o               /build/cc65-cMn3ks/cc65-2.18/asminc/errno.inc(7)
+__heapend (_heap.o):
+    malloc.o                  /build/cc65-cMn3ks/cc65-2.18/asminc/_heap.inc(33)
+__heapfirst (_heap.o):
+    malloc.o                  /build/cc65-cMn3ks/cc65-2.18/asminc/_heap.inc(34)
+    free.o                    /build/cc65-cMn3ks/cc65-2.18/asminc/_heap.inc(34)
+__heaplast (_heap.o):
+    malloc.o                  /build/cc65-cMn3ks/cc65-2.18/asminc/_heap.inc(35)
+    free.o                    /build/cc65-cMn3ks/cc65-2.18/asminc/_heap.inc(35)
+__heapptr (_heap.o):
+    malloc.o                  /build/cc65-cMn3ks/cc65-2.18/asminc/_heap.inc(32)
+    free.o                    /build/cc65-cMn3ks/cc65-2.18/asminc/_heap.inc(32)
+__hextab (_hextab.o):
+    ltoa.o                    common/ltoa.s(10)
+__inviocb (inviocb.o):
+    read.o                    atari/read.s(8)
+    close.o                   atari/close.s(10)
+__is_cmdline_dos (is_cmdline_dos.o):
+    doesclrscr.o              atari/doesclrscr.s(10)
+__longminstr (_longminstr.o):
+    ltoa.o                    common/ltoa.s(10)
+__mappederrno (_mappederrno.o):
+    open.o                    /build/cc65-cMn3ks/cc65-2.18/asminc/errno.inc(10)
+    do_oserr.o                /build/cc65-cMn3ks/cc65-2.18/asminc/errno.inc(10)
+__oserror (_oserror.o):
+    _mappederrno.o            /build/cc65-cMn3ks/cc65-2.18/asminc/errno.inc(7)
+    _directerrno.o            /build/cc65-cMn3ks/cc65-2.18/asminc/errno.inc(7)
+    read.o                    atari/read.s(8)
+    open.o                    /build/cc65-cMn3ks/cc65-2.18/asminc/errno.inc(7)
+    close.o                   atari/close.s(9)
+__osmaperrno (oserror.o):
+    _mappederrno.o            /build/cc65-cMn3ks/cc65-2.18/asminc/errno.inc(8)
+__printf (_printf.o):
+    vcprintf.o                conio/vcprintf.s(9)
+__rwsetup (rwcommon.o):
+    read.o                    atari/read.s(8)
+__seterrno (_seterrno.o):
+    _mappederrno.o            /build/cc65-cMn3ks/cc65-2.18/asminc/errno.inc(9)
+    _directerrno.o            /build/cc65-cMn3ks/cc65-2.18/asminc/errno.inc(9)
+_abs (negabs.o):
+    mandelbrot.o              mandelbrot.s(51)
+_bzero (memset.o):
+    modload.o                 common/modload.s(41)
+_cgetc (cgetc.o):
+    mandelbrot.o              mandelbrot.s(58)
+_clock (clock.o):
+    mandelbrot.o              mandelbrot.s(54)
+_close (close.o):
+    open.o                    atari/open.s(16)
+    tgi_load.o                tgi/tgi_load.s(18)
+_clrscr (clrscr.o):
+    mandelbrot.o              mandelbrot.s(55)
+_cprintf (cprintf.o):
+    mandelbrot.o              mandelbrot.s(57)
+_cputc (cputc.o):
+    vcprintf.o                conio/vcprintf.s(9)
+    cputs.o                   conio/cputs.s(9)
+_cputs (cputs.o):
+    mandelbrot.o              mandelbrot.s(56)
+_doesclrscrafterexit (doesclrscr.o):
+    mandelbrot.o              mandelbrot.s(71)
+_exit (crt0.o):
+    libref.o                  atari/libref.s(6)
+    mandelbrot.o              mandelbrot.s(52)
+_free (free.o):
+    modload.o                 common/modload.s(41)
+    modfree.o                 common/modfree.s(36)
+_ltoa (ltoa.o):
+    _printf.o                 common/_printf.s(12)
+_main (mandelbrot.o):
+    callmain.o                runtime/callmain.s(11)
+_malloc (malloc.o):
+    modload.o                 common/modload.s(41)
+_mod_free (modfree.o):
+    tgi_load.o                /build/cc65-cMn3ks/cc65-2.18/asminc/modload.inc(66)
+_mod_load (modload.o):
+    tgi_load.o                /build/cc65-cMn3ks/cc65-2.18/asminc/modload.inc(60)
+_mul40 (mul40.o):
+    cputc.o                   atari/cputc.s(10)
+    setcursor.o               atari/setcursor.s(7)
+_open (open.o):
+    tgi_load.o                tgi/tgi_load.s(16)
+_read (read.o):
+    tgi_load.o                tgi/tgi_load.s(17)
+_revflag (revers.o):
+    cputc.o                   atari/cputc.s(12)
+_strlen (strlen.o):
+    _printf.o                 common/_printf.s(13)
+_strlower (strlower.o):
+    _printf.o                 common/_printf.s(13)
+_tgi_clear (tgi_clear.o):
+    mandelbrot.o              mandelbrot.s(65)
+_tgi_color (tgi-kernel.o):
+    tgi_setcolor.o            /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(120)
+_tgi_colorcount (tgi-kernel.o):
+    tgi_setcolor.o            /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(132)
+    tgi_getcolorcount.o       /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(132)
+_tgi_done (tgi_done.o):
+    tgi-kernel.o              /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(193)
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(193)
+    mandelbrot.o              mandelbrot.s(62)
+_tgi_drv (tgi-kernel.o):
+    tgi_load.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(115)
+    tgi_geterror.o            /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(115)
+_tgi_error (tgi-kernel.o):
+    tgi_load.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(116)
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(116)
+    tgi_geterror.o            /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(116)
+_tgi_flags (tgi-kernel.o):
+    tgi_settextstyle.o        /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(137)
+_tgi_font (tgi-kernel.o):
+    tgi_settextstyle.o        /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(121)
+_tgi_fontheight (tgi-kernel.o):
+    tgi_settextstyle.o        /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(135)
+_tgi_fontwidth (tgi-kernel.o):
+    tgi_settextstyle.o        /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(134)
+_tgi_getcolorcount (tgi_getcolorcount.o):
+    mandelbrot.o              mandelbrot.s(66)
+_tgi_geterror (tgi_geterror.o):
+    mandelbrot.o              mandelbrot.s(63)
+_tgi_geterrormsg (tgi_geterrormsg.o):
+    mandelbrot.o              mandelbrot.s(64)
+_tgi_getxres (tgi_getxres.o):
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(209)
+    mandelbrot.o              mandelbrot.s(68)
+_tgi_getyres (tgi_getyres.o):
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(210)
+    mandelbrot.o              mandelbrot.s(69)
+_tgi_gmode (tgi-kernel.o):
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(117)
+    tgi_done.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(117)
+_tgi_init (tgi_init.o):
+    mandelbrot.o              mandelbrot.s(61)
+_tgi_install (tgi-kernel.o):
+    tgi_load.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(214)
+_tgi_load_driver (tgi_load.o):
+    mandelbrot.o              mandelbrot.s(60)
+_tgi_setcolor (tgi_setcolor.o):
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(224)
+    mandelbrot.o              mandelbrot.s(67)
+_tgi_setpixel (tgi_setpixel.o):
+    mandelbrot.o              mandelbrot.s(70)
+_tgi_settextstyle (tgi_settextstyle.o):
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(230)
+_tgi_stddrv (tgi_stddrv.o):
+    mandelbrot.o              mandelbrot.s(59)
+_tgi_textdir (tgi-kernel.o):
+    tgi_settextstyle.o        /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(122)
+_tgi_textscalew (tgi-kernel.o):
+    tgi_settextstyle.o        /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(124)
+_tgi_xmax (tgi-kernel.o):
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(130)
+_tgi_xres (tgi-kernel.o):
+    tgi_getset.o              /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(128)
+    tgi_getxres.o             /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(128)
+_tgi_ymax (tgi-kernel.o):
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(131)
+_tgi_yres (tgi-kernel.o):
+    tgi_getset.o              /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(129)
+    tgi_getyres.o             /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(129)
+_ultoa (ltoa.o):
+    _printf.o                 common/_printf.s(12)
+_vcprintf (vcprintf.o):
+    cprintf.o                 conio/cprintf.s(8)
+addysp (addysp.o):
+    incsp4.o                  runtime/incsp4.s(8)
+    ucase_fn.o                atari/ucase_fn.s(28)
+    open.o                    atari/open.s(21)
+    cprintf.o                 conio/cprintf.s(8)
+    mandelbrot.o              mandelbrot.s(809)
+addysp1 (addysp.o):
+    ludiv.o                   runtime/ludiv.s(9)
+    lsub.o                    runtime/lsub.s(11)
+    lmul.o                    runtime/lmul.s(9)
+    ladd.o                    runtime/ladd.s(8)
+asreax1 (asreax1.o):
+    mandelbrot.o              mandelbrot.s(809)
+asreax2 (asreax2.o):
+    mandelbrot.o              mandelbrot.s(809)
+axlong (axlong.o):
+    _printf.o                 common/_printf.s(11)
+    mandelbrot.o              mandelbrot.s(809)
+axulong (axlong.o):
+    _printf.o                 common/_printf.s(11)
+callmain (callmain.o):
+    crt0.o                    atari/crt0.s(15)
+clriocb (fdtable.o):
+    open.o                    atari/open.s(17)
+cursor (_cursor.o):
+    setcursor.o               atari/setcursor.s(7)
+decax1 (decax1.o):
+    modload.o                 common/modload.s(40)
+    tgi_init.o                tgi/tgi_init.s(11)
+decsp4 (decsp4.o):
+    lpush.o                   runtime/lpush.s(12)
+decsp6 (decsp6.o):
+    _printf.o                 common/_printf.s(11)
+    mandelbrot.o              mandelbrot.s(809)
+donelib (condes.o):
+    crt0.o                    atari/crt0.s(14)
+fd_index (fdtab.o):
+    fdtoiocb.o                atari/fdtoiocb.s(10)
+    getfd.o                   atari/getfd.s(11)
+    fdtable.o                 atari/fdtable.s(10)
+fd_table (fdtab.o):
+    fdtoiocb.o                atari/fdtoiocb.s(10)
+    getfd.o                   atari/getfd.s(11)
+    fdtable.o                 atari/fdtable.s(10)
+fddecusage (fdtable.o):
+    open.o                    atari/open.s(18)
+fdt_to_fdi (getfd.o):
+    fdtable.o                 atari/fdtable.s(11)
+fdtoiocb (fdtoiocb.o):
+    rwcommon.o                atari/rwcommon.s(8)
+fdtoiocb_down (fdtable.o):
+    close.o                   atari/close.s(10)
+findfreeiocb (findfreeiocb.o):
+    open.o                    atari/open.s(19)
+getlop (ludiv.o):
+    lumod.o                   runtime/lumod.s(9)
+gotoxy (gotoxy.o):
+    cputc.o                   atari/cputc.s(10)
+    cputs.o                   conio/cputs.s(9)
+incsp2 (incsp2.o):
+    popptr1.o                 runtime/popptr1.s(8)
+incsp4 (incsp4.o):
+    open.o                    atari/open.s(20)
+initlib (condes.o):
+    crt0.o                    atari/crt0.s(14)
+ldaxysp (ldaxsp.o):
+    open.o                    atari/open.s(21)
+negeax (lneg.o):
+    ltoa.o                    common/ltoa.s(9)
+newfd (fdtable.o):
+    open.o                    atari/open.s(18)
+popa (popa.o):
+    tgi_settextstyle.o        tgi/tgi_settextstyle.s(10)
+    gotoxy.o                  atari/gotoxy.s(10)
+popax (incsp2.o):
+    memset.o                  common/memset.s(19)
+    rwcommon.o                atari/rwcommon.s(7)
+    ltoa.o                    common/ltoa.s(9)
+    _printf.o                 common/_printf.s(11)
+    vcprintf.o                conio/vcprintf.s(8)
+    tgi_settextstyle.o        tgi/tgi_settextstyle.s(10)
+popptr1 (popptr1.o):
+    tgi_popxy.o               tgi/tgi_popxy.s(10)
+    ltoa.o                    common/ltoa.s(9)
+    vcprintf.o                conio/vcprintf.s(8)
+    umod.o                    runtime/umod.s(8)
+    udiv.o                    runtime/udiv.s(9)
+ptr1 (zeropage.o):
+    memset.o                  common/memset.s(20)
+    malloc.o                  common/malloc.s(108)
+    free.o                    common/free.s(62)
+    tgi_getset.o              tgi/tgi_getset.s(12)
+    tgi-kernel.o              tgi/tgi-kernel.s(8)
+    strlower.o                common/strlower.s(14)
+    popptr1.o                 runtime/popptr1.s(9)
+    ltoa.o                    common/ltoa.s(11)
+    _printf.o                 /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(12)
+    zerobss.o                 common/zerobss.s(9)
+    vcprintf.o                conio/vcprintf.s(10)
+    umul8x16r24.o             /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(12)
+    udiv.o                    runtime/udiv.s(10)
+    tgi_settextstyle.o        /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(12)
+    tgi_init.o                tgi/tgi_init.s(12)
+    ludiv.o                   runtime/ludiv.s(10)
+    lmul.o                    runtime/lmul.s(10)
+    cputs.o                   conio/cputs.s(10)
+    cprintf.o                 conio/cprintf.s(9)
+    clrscr.o                  atari/clrscr.s(9)
+ptr2 (zeropage.o):
+    memset.o                  common/memset.s(20)
+    malloc.o                  common/malloc.s(108)
+    free.o                    common/free.s(62)
+    tgi_popxy.o               tgi/tgi_popxy.s(11)
+    tgi_getset.o              tgi/tgi_getset.s(12)
+    strlower.o                common/strlower.s(14)
+    strlen.o                  common/strlen.s(12)
+    ltoa.o                    common/ltoa.s(11)
+    _printf.o                 /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(12)
+    vcprintf.o                conio/vcprintf.s(10)
+    lumod.o                   runtime/lumod.s(10)
+    ludiv.o                   runtime/ludiv.s(10)
+ptr3 (zeropage.o):
+    memset.o                  common/memset.s(20)
+    malloc.o                  common/malloc.s(108)
+    free.o                    common/free.s(62)
+    ltoa.o                    common/ltoa.s(11)
+    vcprintf.o                conio/vcprintf.s(10)
+    umul8x16r24.o             /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(12)
+    ludiv.o                   runtime/ludiv.s(10)
+    lmul.o                    runtime/lmul.s(10)
+ptr4 (zeropage.o):
+    free.o                    common/free.s(62)
+    ucase_fn.o                atari/ucase_fn.s(27)
+    fdtable.o                 atari/fdtable.s(9)
+    cputc.o                   atari/cputc.s(11)
+    umod.o                    runtime/umod.s(9)
+    udiv.o                    runtime/udiv.s(10)
+    ludiv.o                   runtime/ludiv.s(10)
+    lmul.o                    runtime/lmul.s(10)
+push1 (push1.o):
+    _printf.o                 common/_printf.s(11)
+pusha (pusha.o):
+    tgi_init.o                tgi/tgi_init.s(11)
+    mandelbrot.o              mandelbrot.s(809)
+pusha0 (pushax.o):
+    push1.o                   runtime/push1.s(8)
+    tgi_load.o                tgi/tgi_load.s(14)
+    mandelbrot.o              mandelbrot.s(809)
+    mandelbrot.o              mandelbrot.s(809)
+pushax (pushax.o):
+    modload.o                 common/modload.s(40)
+    callmain.o                runtime/callmain.s(11)
+    _printf.o                 common/_printf.s(11)
+    vcprintf.o                conio/vcprintf.s(8)
+    tgi_load.o                tgi/tgi_load.s(13)
+    tgi_init.o                tgi/tgi_init.s(11)
+    cprintf.o                 conio/cprintf.s(8)
+    mandelbrot.o              mandelbrot.s(809)
+    mandelbrot.o              mandelbrot.s(809)
+pusheax (lpush.o):
+    _printf.o                 common/_printf.s(11)
+    mandelbrot.o              mandelbrot.s(809)
+    mandelbrot.o              mandelbrot.s(809)
+regbank (zeropage.o):
+    modload.o                 /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(14)
+    _printf.o                 /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(14)
+    mandelbrot.o              mandelbrot.s(10)
+setcursor (setcursor.o):
+    cputc.o                   atari/cputc.s(12)
+    gotoxy.o                  atari/gotoxy.s(11)
+    clrscr.o                  atari/clrscr.s(10)
+    cgetc.o                   atari/cgetc.s(10)
+sp (zeropage.o):
+    _heap.o                   common/_heap.s(9)
+    subysp.o                  runtime/subysp.s(9)
+    memset.o                  common/memset.s(20)
+    ldaxsp.o                  runtime/ldaxsp.s(8)
+    ucase_fn.o                atari/ucase_fn.s(27)
+    popptr1.o                 runtime/popptr1.s(9)
+    incsp2.o                  runtime/incsp2.s(8)
+    fdtable.o                 atari/fdtable.s(9)
+    decsp4.o                  runtime/decsp4.s(8)
+    _printf.o                 /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(11)
+    vcprintf.o                conio/vcprintf.s(10)
+    pushax.o                  runtime/pushax.s(8)
+    pusha.o                   runtime/pusha.s(8)
+    popa.o                    runtime/popa.s(8)
+    ludiv.o                   runtime/ludiv.s(10)
+    lsub.o                    runtime/lsub.s(12)
+    lpush.o                   runtime/lpush.s(13)
+    lmul.o                    runtime/lmul.s(10)
+    ladd.o                    runtime/ladd.s(9)
+    icmp.o                    runtime/icmp.s(9)
+    decsp6.o                  runtime/decsp6.s(8)
+    crt0.o                    /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(11)
+    cprintf.o                 conio/cprintf.s(9)
+    addysp.o                  runtime/addysp.s(8)
+    mandelbrot.o              mandelbrot.s(10)
+sreg (zeropage.o):
+    lneg.o                    runtime/lneg.s(11)
+    ltoa.o                    common/ltoa.s(11)
+    _printf.o                 /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(11)
+    umul8x16r24.o             /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(11)
+    umod.o                    runtime/umod.s(9)
+    udiv.o                    runtime/udiv.s(10)
+    lumod.o                   runtime/lumod.s(10)
+    ludiv.o                   runtime/ludiv.s(10)
+    lsub.o                    runtime/lsub.s(12)
+    lpush.o                   runtime/lpush.s(13)
+    lmul.o                    runtime/lmul.s(10)
+    ladd.o                    runtime/ladd.s(9)
+    icmp.o                    runtime/icmp.s(9)
+    clock.o                   atari/clock.s(10)
+    axlong.o                  runtime/axlong.s(9)
+    asreax2.o                 runtime/asreax2.s(8)
+    asreax1.o                 runtime/asreax1.s(8)
+    mandelbrot.o              mandelbrot.s(10)
+start (crt0.o):
+    exetrailer.o              atari/exetrailer.s(4)
+subysp (subysp.o):
+    ucase_fn.o                atari/ucase_fn.s(28)
+tgi_clear (tgi-kernel.o):
+    tgi_clear.o               /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(156)
+tgi_clear_ptr (tgi-kernel.o):
+    tgi_load.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(173)
+tgi_color_white (tgi_colors.o):
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(110)
+tgi_done (tgi-kernel.o):
+    tgi_done.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(153)
+tgi_getdefpalette (tgi-kernel.o):
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(162)
+tgi_geterror (tgi-kernel.o):
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(154)
+    tgi_geterror.o            /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(154)
+tgi_getset (tgi_getset.o):
+    tgi_setpixel.o            /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(176)
+tgi_init (tgi-kernel.o):
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(152)
+tgi_inv_arg (tgi-kernel.o):
+    tgi_setcolor.o            /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(178)
+tgi_libref (libref.o):
+    tgi-kernel.o              tgi/tgi-kernel.s(7)
+tgi_popxy (tgi_popxy.o):
+    tgi_getset.o              /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(182)
+tgi_setcolor (tgi-kernel.o):
+    tgi_setcolor.o            /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(159)
+tgi_setdrawpage (tgi-kernel.o):
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(158)
+tgi_setpalette (tgi-kernel.o):
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(160)
+tgi_setpixel (tgi-kernel.o):
+    tgi_setpixel.o            /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(163)
+tgi_setviewpage (tgi-kernel.o):
+    tgi_init.o                /build/cc65-cMn3ks/cc65-2.18/asminc/tgi-kernel.inc(157)
+tmp1 (zeropage.o):
+    ltoa.o                    common/ltoa.s(11)
+    getfd.o                   atari/getfd.s(10)
+    fdtable.o                 atari/fdtable.s(9)
+    _printf.o                 /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(13)
+    vcprintf.o                conio/vcprintf.s(10)
+    tgi_settextstyle.o        /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(13)
+    ladd.o                    runtime/ladd.s(9)
+    cputs.o                   conio/cputs.s(10)
+    asreax2.o                 runtime/asreax2.s(8)
+    asreax1.o                 runtime/asreax1.s(8)
+tmp2 (zeropage.o):
+    ucase_fn.o                atari/ucase_fn.s(24)
+    open.o                    /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(13)
+    fdtable.o                 atari/fdtable.s(9)
+    lmul.o                    runtime/lmul.s(10)
+tmp3 (zeropage.o):
+    ucase_fn.o                atari/ucase_fn.s(27)
+    open.o                    /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(13)
+    fdtable.o                 atari/fdtable.s(9)
+    lumod.o                   runtime/lumod.s(10)
+    ludiv.o                   runtime/ludiv.s(10)
+    lmul.o                    runtime/lmul.s(10)
+tmp4 (zeropage.o):
+    open.o                    /build/cc65-cMn3ks/cc65-2.18/asminc/zeropage.inc(13)
+    mul40.o                   common/mul40.s(16)
+    lumod.o                   runtime/lumod.s(10)
+    ludiv.o                   runtime/ludiv.s(10)
+    lmul.o                    runtime/lmul.s(10)
+tosaddeax (ladd.o):
+    mandelbrot.o              mandelbrot.s(809)
+tosicmp (icmp.o):
+    mandelbrot.o              mandelbrot.s(809)
+tosmuleax (lmul.o):
+    mandelbrot.o              mandelbrot.s(809)
+tossubeax (lsub.o):
+    mandelbrot.o              mandelbrot.s(809)
+    mandelbrot.o              mandelbrot.s(809)
+tosudiv0ax (ludiv.o):
+    mandelbrot.o              mandelbrot.s(809)
+tosudivax (udiv.o):
+    mandelbrot.o              mandelbrot.s(809)
+tosumod0ax (lumod.o):
+    mandelbrot.o              mandelbrot.s(809)
+tosumoda0 (umod.o):
+    mandelbrot.o              mandelbrot.s(809)
+tosumul0ax (lmul.o):
+    mandelbrot.o              mandelbrot.s(809)
+ucase_fn (ucase_fn.o):
+    open.o                    atari/open.s(24)
+udiv16 (udiv.o):
+    umod.o                    runtime/umod.s(8)
+udiv32 (ludiv.o):
+    lumod.o                   runtime/lumod.s(9)
+umul8x16r24 (umul8x16r24.o):
+    tgi_settextstyle.o        tgi/tgi_settextstyle.s(9)
+zerobss (zerobss.o):
+    crt0.o                    atari/crt0.s(15)
+
