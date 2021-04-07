@@ -28,90 +28,52 @@ STOCOL =   $CD
 X   	=  $F0
 Y   	=  $F1 
 
+XMAX=48
+YMAX=48
 
   ORG  	$400
-  LDA #7+16 ; gr mode
-  ;JSR $EF9C ;graphics mode
+  LDA #5+16; gr mode
   JSR GRAFIC
 
-  LDA #0  ;color registry
+  LDA #1  ;color registry
   STA STOCOL ;color
-  LDA #159
-  STA X
   LDA #0
+  STA X
   STA Y
   
-  LDA #0
-  LDY #0
-  LDX #0
-
-loop 
-  LDA Y 
+loop
   LDX STOCOL
   INX
   CPX #4
-  BNE line
+  BMI line
   LDX #0
 line 
   STX STOCOL
-  LDX #0 ;x
-  LDY #0 ;y
+  LDX X
+  INX
+  CPX #XMAX-1
+  BMI rx
+  LDX #0
+rx
+  STX X
+  LDY #0
   LDA #0
-  
   JSR PLOT ; set cursor
   LDY Y
   INY
-  INY
-  CPY #90
-  BNE dr
+  CPY #YMAX-1
+  BMI ry
   LDY #0
-dr
+ry
   STY Y
-  LDX X
+dr
   LDA #0
+  LDX #XMAX-1
+  LDY Y
   JSR DRAWTO
+  LDY #0
   JMP loop	
-	
-	
-; ******************************
-; The SETCOLOR routine
-; ******************************
-; Before calling this routine,
-; the registers should be set
-; just like the BASIC SETCOLOR:
-; SETCOLOR color,hue,luminance
-;    stored respectively in
-;   X reg.,accumulator,Y reg.
-SETCOL
-       ASL          ; Need to multiply
-       ASL          ; hue by 16, and
-       ASL          ; add it to lumimance.
-       ASL          ; Now hue is * 16
-       STA STORE1    ; temporarily
-       TYA           ; So we can add
-       CLC           ; Before adding
-       ADC STORE1    ; Now have sum
-       STA COLOR0,X  ; Actual SETCOLOR
-       RTS           ; All done
-; ******************************
-; The COLOR command
-; ******************************
-; For these routines, we will
-; simply store the current COLOR
-; in STOCOL, so the COLOR
-; command simply requires that
-; the accumulator hold the value
-; "n" in the command COLOR n
-COLOR
-       STA STOCOL    ; That's it!
-       RTS           ; All done
-; ******************************
-; The GRAPHICS command
-; ******************************
-; The "n" parameter of
-; a GRAPHICS n command will be
-; passed to this routine in the
-; accumulator
+
 GRAFIC
        PHA           ; Store on stack
        LDX #$60      ; IOCB6 for screen
@@ -136,12 +98,6 @@ GRAFIC
 ; ******************************
 ; The POSITION command
 ; ******************************
-; Identical to the BASIC
-; POSITION X,Y command.
-; Since X may be greater than
-; 255 in GRAPHICS 8, we need to
-; use the accumulator for the
-; high byte of X.
 POSITN
        STX COLCRS    ; Low byte of X
        STA COLCRS+1  ; High byte of X
@@ -150,8 +106,6 @@ POSITN
 ; ******************************
 ; The PLOT command
 ; ******************************
-; We'll use the X,Y, and A just
-; like in the POSITION command.
 PLOT
        JSR POSITN    ; To store info
        LDX #$60      ; For the screen
@@ -166,8 +120,6 @@ PLOT
 ; ******************************
 ; The DRAWTO command
 ; ******************************
-; We'll use the X,Y, and A just
-; like in the POSITION command
 DRAWTO
        JSR POSITN    ; To store info
        LDA STOCOL    ; Get COLOR
@@ -181,48 +133,5 @@ DRAWTO
        STA ICAX2,X   ; Auxiliary 2
        JSR CIOV      ; Draw the line
        RTS           ; All done
-; ******************************
-; The FILL command
-; ******************************
-; We'll use the X,Y, and A just
-; like in the POSITION command.
-; This is similar to DRAWTO
-FILL
-       JSR POSITN    ; To store info
-       LDA STOCOL    ; Get COLOR
-       STA ATACHR    ; Keep CIO happy
-       LDX #$60      ; The screen again
-       LDA #$12      ; For FILL
-       STA ICCOM,X   ; Command byte
-       LDA #$C       ; As in XIO
-       STA ICAX1,X   ; Auxiliary 1
-       LDA #0        ; Clear
-       STA ICAX2,X   ; Auxiliary 2
-       JSR CIOV      ; FILL the area
-       RTS           ; All done
-; ******************************
-; The LOCATE command
-; ******************************
-; We'll use the X,Y, and A just
-; like in the POSITION command
-; and the accumulator will
-; contain the LOCATEd color
-LOCATE
-       JSR POSITN    ; To store info
-       LDX #$60      ; The screen again
-       LDA #7        ; Get record
-       STA ICCOM,X   ; Command byte
-       LDA #0        ; Special case of
-       STA ICBLL,X   ; data transfer
-       STA ICBLH,X   ; in accumulator
-       JSR CIOV      ; Do the LOCATE
-       RTS           ; All done
-; ******************************
-; The screen's name
-; ******************************
+
 NAME   .BY "S:",$9B
-
-
-
-
-
