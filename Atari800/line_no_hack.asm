@@ -54,6 +54,7 @@ line
   CPX #XMAX-1
   BMI rx
   LDX #0
+  STX STOCOL
 rx
   STX X
   LDY #0
@@ -64,6 +65,7 @@ rx
   CPY #YMAX-1
   BMI ry
   LDY #0
+  STY STOCOL
 ry
   STY Y
 dr
