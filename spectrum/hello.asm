@@ -1,4 +1,7 @@
-    org $3000
+    org $8000
+    LD HL,Message
+    CALL PrintString
+    RET
 Print:
     PUSH HL
     PUSH BC
@@ -8,6 +11,7 @@ Print:
     CALL $1601
     POP AF
     PUSH AF
+    RST 16
     POP AF
     POP DE
     POP BC
@@ -21,4 +25,5 @@ PrintString:
     CALL Print
     JR PrintString
     RET
+
 Message: DB 'Hello World !!',255
