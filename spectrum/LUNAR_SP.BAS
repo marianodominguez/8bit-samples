@@ -30,8 +30,7 @@
 510 LET X = (ze - zs) / 2 + zs - 1:LET Y = ROWS - TL + zl - 1
 520 LET s$ = l$:GO SUB 1510
 530 LET s$ = "The Eagle has landed":LET X = (COLS - LEN(s$)) / 2:LET Y = ROWS / 2:GO SUB 1510
-540 LET s$ = "/u/papa_robot":LET X = (COLS - LEN(s$)) / 2:LET Y = 2:GO SUB 1510
-550 LET s$ = "28-Jul-2019":LET X = (COLS - LEN(s$)) / 2:LET Y = 3:GO SUB 1510
+
 998 IF INKEY$ = "" THEN GO TO 998
 999 STOP
 
@@ -44,7 +43,7 @@
 1560 LET SL = SE - SB:IF SL + X - 1 > COLS THEN LET SL = COLS - X + 1
 1570 PRINT AT YL,X; s$(SB TO SB+SL-1);
 1580 IF SE >= LEN(s$) THEN RETURN
-1590 LET SB = SE + 1:LET YL = YL + 1:GOTO 1520
+1590 LET SB = SE + 1:LET YL = YL + 1:GO TO 1520
 
 2000 REM Load a sprite from DATA into s$
 2010 LET s$ = "":LET n$ = "":LET SR = 0:LET SC = 0
@@ -93,7 +92,7 @@
 2830 NEXT I
 2840 LET TL = TL + 1
 2845 POKE 23692,5
-2850 IF C2 < COLS THEN PRINT:GOTO 2530
+2850 IF C2 < COLS THEN PRINT:GO TO 2530
 2860 LET zs = zs - 4:LET ze = ze - 4: RETURN
 
 9000 DATA "SP","(I)"
