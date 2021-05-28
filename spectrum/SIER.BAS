@@ -1,0 +1,7 @@
+10 INK 6:PAPER 0:CLS
+20 DIM x(3):DIM y(3):LET x=0: LET y=0
+25 LET x(1)=255:LET y(1)=175:LET x(2)=0:LET y(2)=0:LET x(3)=255:LET y(3)=0
+30 FOR i=0 TO 10000
+40 LET j=INT(RND*3)+1:LET x=(x+x(j))/2: LET y=(y+y(j))/2
+50 PLOT x,y
+60 NEXT i
