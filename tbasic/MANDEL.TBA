@@ -1,6 +1,6 @@
 100 REM BASIC Month 6: The Mandelbaum Set
 110 REM http://reddit.com/r/RetroBattlestations
-120 REM original written by FozzTexx
+120 REM rotiginal written by FozzTexx
 130 REM "XL version by /u/papa_robot"
 200 REM === Initialize variables and constants
 210 PI=3.14159265:DIM PT(128):DIM GO(8),CM(8):DIM SZ(23*20),RZ(2),NT(8),NM(8),OM(8)
@@ -10,7 +10,7 @@
 250 CM(6)=0:CM(7)=0:CM(8)=1
 260 GW=GO(2)*GO(2)/GO(1)
 270 TH=GO(2)+5:EXEC DLOAD:TH=TH+SZ(1)
-280 RZ(0)=320:RZ(1)=192:REM Width & height of screen
+280 RZ(0)=319:RZ(1)=189:REM Width & height of screen
 290 SX=(RZ(0)-RZ(0)*0.05)/GW:SY=(RZ(1)-RZ(1)*0.07)/TH
 300 SK=SX:IF SY<SK THEN SK=SY
 310 GRAPHICS 8+16:SETCOLOR 2,0,0:SETCOLOR 1,1,14:COLOR 1:POKE 77,0
@@ -35,6 +35,7 @@
 550 EXEC G
 560 IF HT>1 THEN GOTO 510
 570 EXEC O
+998 IF PEEK($D01F)<>6 THEN 998: REM wait until START is pressed
 999 END
 1000 REM === Update current transformation matrix
 1010 REM - Input: 3x3 matrix in 1D array NT
@@ -91,7 +92,7 @@
 2515 PROC DRAWL
 2520   X=X1:Y=Y1:EXEC TRANSFORM:A1=X:B1=Y
 2530   X=X2:Y=Y2:EXEC TRANSFORM:A2=X:B2=Y
-2540   IF A1<RZ(0) AND B1<RZ(1) AND A2<RZ(0) AND B2<RZ(1) THEN PLOT A1,B1:DRAWTO A2,B2
+2540   PLOT A1,B1:DRAWTO A2,B2
 2550 ENDPROC
 2600 REM === Load object from DATA
 2610 REM - Reads the next object from DATA and leaves size in array SZ
