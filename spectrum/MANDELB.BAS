@@ -2,37 +2,37 @@
 110 REM http://reddit.com/r/RetroBattlestations
 120 REM written by FozzTexx
 200 REM === Initialize variables and constants
-210 DIM PT(128):DIM GO(8):DIM CM(8):DIM RZ(230):DIM NT(8): DIM PT(8):DIM OM(8)
-220 GO(0) = 33:GO(1) = 138:GO(2) = 200
+210 DIM PT(128):DIM G(8):DIM CM(8):DIM RZ(230):DIM NT(8): DIM PT(8):DIM OM(8)
+220 G(0) = 33:G(1) = 138:G(2) = 200
 230 CM(0) = 1:CM(1) = 0:CM(2) = 0
 240 CM(3) = 0:CM(4) = 1:CM(5) = 0
 250 CM(6) = 0:CM(7) = 0:CM(8) = 1
-260 GW = GO(2) * GO(2) / GO(1)
-270 TH = GO(2) + 5:GO SUB 2630:TH = TH + SZ(1):GO SUB 2630:TH = TH + SZ(1)
+260 GW = G(2) * G(2) / G(1)
+270 TH = G(2) + 5:GO SUB 2630:TH = TH + SZ(1):GO SUB 2630:TH = TH + SZ(1)
 280 RZ(0) = 280:RZ(1) = 192:REM Width & height of screen
 290 SX = (RZ(0) - RZ(0) * 0.05) / GW:SY = (RZ(1) - RZ(1) * 0.07) / TH
 300 SK = SX:IF SY < SK THEN SK = SY
 
 310 PAPER 0:INK 6:CLS
 320 REM "What in holy hell?"
-330 X = -GW / 2:Y = -GO(2) / 2:GO SUB 2030:REM Translate
+330 X = -GW / 2:Y = -G(2) / 2:GO SUB 2030:REM Translate
 340 X = SK:Y = SK:GO SUB 2230:REM Scale
 350 X = RZ(0) / 2:Y = RZ(1) / 2:GO SUB 2030:REM Translate
 360 GO SUB 2820
 370 RESTORE:REM Reset reading of DATA back to first object
 380 GO SUB 2630:GO SUB 2720
 390 GO SUB 2630
-400 X = (GW - SZ(0)) * SK:Y = (GO(2) + SZ(1) + 5) * SK
+400 X = (GW - SZ(0)) * SK:Y = (G(2) + SZ(1) + 5) * SK
 410 GO SUB 2030:GO SUB 2720:GO SUB 2920
 420 GO SUB 2630
-430 GX = GO(1) / 2:GY = GO(2) / 2:GB = GY - GX:OO = GO(2) * GO(2) / GO(1) - GO(1)
+430 GX = G(1) / 2:GY = G(2) / 2:GB = GY - GX:OO = G(2) * G(2) / G(1) - G(1)
 440 GO SUB 4510
 
 500 REM "Step aside, string bean."
 510 X = -RZ(0) / 2:Y = -RZ(1) / 2:GO SUB 2030:REM Translate
 520 A = PI / 2:GO SUB 2130:REM Rotate
-530 X = GO(1) / GO(2):Y = X:GO SUB 2230:REM Scale
-540 X = RZ(0) / 2 + (GW / 2 - GO(1) / 2) * SK:Y = RZ(1) / 2:GO SUB 2030:REM Translate
+530 X = G(1) / G(2):Y = X:GO SUB 2230:REM Scale
+540 X = RZ(0) / 2 + (GW / 2 - G(1) / 2) * SK:Y = RZ(1) / 2:GO SUB 2030:REM Translate
 550 GO SUB 4510
 560 IF HT > 1 THEN GO TO 510
 570 GO SUB 4610
@@ -132,9 +132,9 @@
 3010 REM  - Input: Arc center at CX,CY; Start/end radians in SA,EA
 3020 REM "If you want to live in a butcher shop, I'm gonna treat you like a piece of meat."
 3030 IF (EA < SA) THEN EA = EA + 2 * PI
-3040 NW = SZ(0):NH = SZ(1):NS = GO(0) / NW:SH = NH * NS
-3050 RO = GO(1) / 2:RI = RO - GO(0)
-3060 AL = (EA - SA) * GO(1) / 2:SG = INT(AL / SH)
+3040 NW = SZ(0):NH = SZ(1):NS = G(0) / NW:SH = NH * NS
+3050 RO = G(1) / 2:RI = RO - G(0)
+3060 AL = (EA - SA) * G(1) / 2:SG = INT(AL / SH)
 3070 GA = (EA - SA) / SG
 3080 GC = COS(2 * PI - GA):GS = SIN(2 * PI - GA):ZC = COS(0):ZS = SIN(0)
 3090 F1 = CX + RI * GC:G1 = CY + RI * GS
@@ -155,11 +155,11 @@
 3230 ZI = 0
 3240 ZC = PT(ZI):ZI = ZI + 1:IF ZC = 0 THEN GO TO 3350
 3250 X1 = PT(ZI) * NS:ZI = ZI + 1
-3260 Y1 = PT(ZI) * NS * (L1 - 1 + (L2 - L1 - 1) * (X1 / GO(0))) / L2:ZI = ZI + 1
+3260 Y1 = PT(ZI) * NS * (L1 - 1 + (L2 - L1 - 1) * (X1 / G(0))) / L2:ZI = ZI + 1
 3270 X1 = X1 + CX + RI:Y1 = Y1 + CY
 3280 FOR ZJ = 1 TO ZC - 1
 3290 X2 = PT(ZI) * NS:ZI = ZI + 1
-3300 Y2 = PT(ZI) * NS * (L1 - 1 + (L2 - L1 - 1) * (X2 / GO(0))) / L2:ZI = ZI + 1
+3300 Y2 = PT(ZI) * NS * (L1 - 1 + (L2 - L1 - 1) * (X2 / G(0))) / L2:ZI = ZI + 1
 3310 X2 = X2 + CX + RI:Y2 = Y2 + CY
 3320 GO SUB 2520
 3330 X1 = X2:Y1 = Y2:NEXT ZJ
@@ -180,7 +180,7 @@
 4090 WD = ABS(WD):HT = ABS(HT)
 4100 NS = WD / NW:SH = INT(NH * NS)
 4110 SG = INT((HT + SH - 1) / SH):SH = HT / SG
-4120 SX = GO(0) / NW:SY = SH / NH
+4120 SX = G(0) / NW:SY = SH / NH
 4130 GO SUB 2820
 4140 AX = X1:AY = Y1:X = X1:Y = Y1:GO SUB 2330:OX = X:OY = Y
 4150 X = X2:Y = Y2:GO SUB 2330:XD = X - OX:YD = Y - OY
@@ -214,16 +214,16 @@
 
 4500 REM === G
 4510 CX = GX:CY = GY - GB:SA = 0:EA = PI:GO SUB 3030
-4520 X1 = GO(0):Y1 = GY - GB:X2 = 0:Y2 = GY + GB:GO SUB 4030
+4520 X1 = G(0):Y1 = GY - GB:X2 = 0:Y2 = GY + GB:GO SUB 4030
 4530 CX = GX:CY = GY + GB:SA = PI:EA = 0:GO SUB 3030
-4540 X1 = GO(1):Y1 = GY + GB:X2 = GX:Y2 = GY + GB - GO(0):GO SUB 4030
+4540 X1 = G(1):Y1 = GY + GB:X2 = GX:Y2 = GY + GB - G(0):GO SUB 4030
 4550 RETURN
 
 4600 REM === O
 4610 CX = GX + OO:CY = GY - GB:SA = 0:EA = PI:GO SUB 3030
-4620 X1 = GO(0) + OO:Y1 = GY - GB:X2 = OO:Y2 = GY + GB:GO SUB 4030
+4620 X1 = G(0) + OO:Y1 = GY - GB:X2 = OO:Y2 = GY + GB:GO SUB 4030
 4630 CX = GX + OO:CY = GY + GB:SA = PI:EA = 0:GO SUB 3030
-4640 X1 = GO(1) - GO(0) + OO:Y1 = GY + GB:X2 = GO(1) + OO:Y2 = GY - GB:GO SUB 4030
+4640 X1 = G(1) - G(0) + OO:Y1 = GY + GB:X2 = G(1) + OO:Y2 = GY - GB:GO SUB 4030
 4650 RETURN
 
 9000 REM "All aboard the pain train."

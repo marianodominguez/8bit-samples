@@ -1,0 +1,8 @@
+org 32768
+; load the screen memory address
+ld de,16384
+; draw 8 pixels
+ld a, 255
+ld (de), a  
+jr loop      ;loop forever!   
+end 32768
