@@ -3,7 +3,7 @@
 120 REM written by FozzTexx
 200 REM === Initialize variables and constants
 210 DIM PT(128):DIM GO(8):DIM CM(8):DIM RZ(230):DIM NT(8): DIM PT(8):DIM OM(8)
-220 LET GO(0) = 33:GO(1) = 138:GO(2) = 200
+220 LET GO(0) = 33:GO(1) = 138:LET GO(2) = 200
 230 LET CM(0) = 1:LET CM(1) = 0:LET CM(2) = 0
 240 LET CM(3) = 0:LET CM(4) = 1:LET CM(5) = 0
 250 LET CM(6) = 0:LET CM(7) = 0:LET CM(8) = 1
