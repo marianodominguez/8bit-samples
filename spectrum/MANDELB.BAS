@@ -1,11 +1,8 @@
 100 REM BASIC Month 6: The Mandelbaum Set
 110 REM http://reddit.com/r/RetroBattlestations
 120 REM written by FozzTexx
-130 REM "You think you're better than me?"
-140 LOMEM:24576
-
 200 REM === Initialize variables and constants
-210 DIM PT(128)
+210 DIM PT(128):DIM GO(8):DIM CM(8):DIM RZ(230):DIM NT(8): DIM PT(8):DIM OM(8)
 220 GO(0) = 33:GO(1) = 138:GO(2) = 200
 230 CM(0) = 1:CM(1) = 0:CM(2) = 0
 240 CM(3) = 0:CM(4) = 1:CM(5) = 0
