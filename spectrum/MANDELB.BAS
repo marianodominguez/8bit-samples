@@ -1,6 +1,7 @@
 100 REM BASIC Month 6: The Mandelbaum Set
 110 REM http://reddit.com/r/RetroBattlestations
-120 REM written by FozzTexx
+120 REM Original written by FozzTexx
+125 REM ZX spectrum veruon By u/papa_robot
 200 REM === Initialize variables and constants
 210 DIM T(128):DIM G(9):DIM M(9):DIM Z(230):DIM N(9):DIM O(9): DIM K(9)
 220 LET G(1) = 33:LET G(2) = 138:LET G(3) = 200
