@@ -7,7 +7,7 @@
 70 LET print=32400:LET B=32402:IF PEEK 23733=255 THEN LET print=65200:LET B=65202
 90 BORDER 0:PAPER 0:INK 4:CLS
 100 LET Y=8:LET X=15:LET Y1=8:LET X1=15:LET Z=1
-105 LET P$="zzzzzxxxxxppppppp pppp ppp llll llll zzzz zzz zz lllll xxxx xxxx xxxx      llll":LET I=1
+105 LET P$="zzzzzzzzz zzz zzz zzzzzxxxxxppppppp pppp ppp llll llll zzzz zzz zz lllll xxxx xxxx xxxx      llll pppppppppppppp    ppp ":LET I=1
 110 LET A$=P$(I TO I):LET I=I+1:PAUSE 1:IF I>=LEN P$ THEN LET I=1
 115 IF A$=" " THEN GO TO 200
 120 IF A$="z" AND X>0 THEN LET X1=X-1:LET Z=1
