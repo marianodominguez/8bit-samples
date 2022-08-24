@@ -1,0 +1,21 @@
+ org $8000
+st:
+ ld a,0
+ call $229b
+ ld (iy+$53),51
+ call $0D6B
+ ld  a,2
+ call $1601
+ ld  hl,line
+ call pr
+ ret
+pr: ld a,(hl)
+ cp '$'
+ jp z,pe
+ rst $10
+ inc hl
+ jp pr
+pe:
+ ret
+line:    
+ defb 'Hello, Z80 assembler. IN COLOR!!',13,'$'

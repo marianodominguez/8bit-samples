@@ -13,7 +13,7 @@ SL	LDA ST,X
 PR 	PLA
 	CMP #$FF
 	BNE OS
-	RTS
+wt	JMP wt
 OS 	STA (SC),Y
 	INY
 	JMP PR

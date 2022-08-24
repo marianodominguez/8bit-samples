@@ -14,14 +14,17 @@ L LDA $F1
   STA 85 ;col low
   
   LDY $F2
-  INY
-  STY $F2
   CPY #14
-  BNE N
-  LDY #0
-  STY $F2
-
-N STY 763   ;color reg
+  BPL dcr
+  INY
+  JMP N
+dcr
+  CPY #0
+  BEQ N
+  DEY
+  
+N STY $F2
+  STY 763   ;color reg
 C JSR $F1D8 ;call OS PLOT
   JSR X
   JMP L
