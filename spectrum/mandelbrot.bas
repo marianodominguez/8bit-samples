@@ -1,5 +1,5 @@
 cls
-dim za,zb,x0,y0
+dim za,zb
 for xs=0 to 255
     for ys=0 to 191
         x0=xs*(3.5/255)-2.5
