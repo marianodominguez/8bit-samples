@@ -5,5 +5,7 @@
 *.xex
 *.exe
 *.com
-a.bin
+*.bin
 *.tap
+*.txz
+*.dsk
