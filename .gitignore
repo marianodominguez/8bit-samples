@@ -10,3 +10,5 @@
 *.tzx
 *.dsk
 *.o
+*.exe
+*.xex
