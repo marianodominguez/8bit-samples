@@ -1,0 +1,103 @@
+REM BASIC Month 4: Lunar Corps
+REM http://reddit.com/r/RetroBattlestations
+REM Original written by FozzTexx
+
+REM ZX Basic version by papa_robot
+REM Clear screen and setup variables
+
+w=7: PEAK=0: dim o$,cs$,T$,s$,a$,q$,n$,l$,r$,C$,D$,E$,F$,G$,k$ as string
+dim TL as uinteger
+BORDER 0: PAPER 0: INK w: CLS: RANDOMIZE:PRINT AT 21,0;"";
+REM Important: If Typing this program, replace the double "\\" for single
+k$ = " /\\_"
+COLS = 31: ROWS = 22
+GO SUB lunar
+YS = SQR(2) * SQR(ROWS - TL + zl) - 1
+XE = INT( (ze - zs) / 2) + zs
+XV = XE / YS: YV = 0
+X = 1: Y = 1
+GO SUB load_s:l$ = s$
+GO SUB load_s:m$ = s$:a$ = n$
+FOR I = 1 TO INT(YS)
+s$ = a$: GO SUB pr
+YV = YV + 1
+X = X + XV: Y = Y + YV
+s$ = l$:IF I >= YS-2 THEN s$ = m$
+GO SUB pr
+FOR J = 1 TO 40: NEXT J
+NEXT I
+s$ = a$:GO SUB pr
+X = (ze - zs) / 2 + zs - 1:Y = ROWS - TL + zl - 1
+s$ = l$:GO SUB pr
+s$ = "The Eagle has landed":X = (COLS - LEN(s$)) / 2:Y = ROWS / 2:GO SUB pr
+
+wait: IF INKEY$ = "" THEN GO TO wait
+STOP
+REM Draw sprite in SP$ at X,Y
+pr: SE = 1:SB = 1:YL=Y
+nxl: IF X < 1 OR X > COLS OR YL < 1 OR YL > ROWS THEN RETURN
+SE = SB
+nx: q$="":SE = SE + 1:IF SE<=LEN(s$) THEN q$=s$(SE)
+IF SE <= LEN(s$) AND q$ <> CHR$(13) THEN GO TO nx
+SL = SE - SB:IF SL + X - 1 > COLS THEN SL = COLS - X + 1
+PRINT AT YL,X; s$(SB TO SB+SL-1);
+IF SE >= LEN(s$) THEN RETURN
+SB = SE + 1:YL = YL + 1:GO TO nxl
+
+load_s: REM Load a sprite from DATA into s$
+s$ = "":n$ = "":SR = 0:SC = 0
+rd_nxt: READ T$,o$:IF LEN(s$)>0 THEN s$=s$+CHR$(13)
+s$ = s$ + o$:SR = SR + 1:IF LEN(o$) > SC THEN SC = LEN(o$)
+cs$ = ""
+FOR I = 1 TO LEN(o$)
+cs$ = cs$ + " "
+NEXT I
+IF LEN(n$) > 0 THEN n$ = n$ + CHR$(13)
+n$ = n$ + cs$
+IF T$ <> "SE" THEN GO TO rd_nxt
+RETURN
+
+lunar: REM Draw lunar surface
+DIDUP = 0:r$ = "":FOR I = 1 TO COLS + 4:r$ = r$ + " ": NEXT I
+zs = 0:ze = 0:TL = 0
+lp: s$ = "  ":UP = DIDUP: IF NOT UP AND r$(3) <> " " THEN UP = 1
+IF NOT DIDUP AND UP THEN DIDUP = UP
+Z1 = 0:Z2 = 0
+FOR I = 3 TO COLS + 2:PRINT ".";CHR$(8);
+IF LEN(r$)<I+2 THEN r$=r$ + " "
+C$ = s$(I-2):D$ = s$(I-1)
+E$ = r$(I-1):F$ = r$(I)
+G$ = r$(I+1):H$ = r$(I+2)
+IF PEAK = 0 AND r$(I-1 TO I+2) = "    " THEN PEAK = INT ( RND * 3 ): PEAK = PEAK + ( PEAK = 2 ): PEAK = PEAK * INT (RND * 2)
+IF D$ = "/" AND F$ = " " THEN PEAK = 2
+IF (C$ = "_" OR C$ = "\\") AND D$ = " " THEN PEAK = 0
+IF F$ <> " " THEN PEAK = 0
+IF (E$ = "\\" OR E$ = "_") AND F$ = " " THEN PEAK = 2
+IF D$ = "_" AND H$ = "/" THEN PEAK = 3
+IF (D$ = "\\" OR D$ = " " OR D$ = "_") AND F$ = " " AND (G$ = "_" OR G$ = "/") THEN PEAK = 1
+IF D$ = "\\" AND H$ <> " " THEN PEAK = 3
+IF (G$ = "/" OR G$ = "_") THEN PEAK = 1
+IF F$ <> " " THEN PEAK = 0
+IF UP AND PEAK <> 2 THEN PEAK = 0
+IF PEAK = 1 THEN UP = 1
+IF PEAK = 2 THEN UP = 0
+P$ = k$(PEAK + 1):PRINT P$;:s$ = s$ + P$
+IF PEAK = 3 AND NOT Z1 THEN Z1 = I
+IF PEAK <> 3 AND D$ = "_" THEN Z2 = I
+IF Z1 AND Z2 THEN Z3 = Z1:Z4 = Z2:Z1 = 0:Z2 = 0:IF (Z4 - Z3) >= 3 AND Z3 > zs THEN zs = Z3:ze = Z4:zl = TL
+IF PEAK <> 3 OR (C$ = "_" AND D$ = "_") THEN PEAK = 0
+NEXT I
+r$ = s$
+C2 = 0
+FOR I = 3 TO COLS + 2
+IF r$(I) = " " THEN C2 = C2 + 1
+NEXT I
+TL = TL + 1
+POKE 23692,5
+IF C2 < COLS THEN PRINT:GO TO lp
+zs = zs - 4:ze = ze - 4: RETURN
+DATA "SP","(I)"
+DATA "SE","/T\\"
+DATA "SP","(I)"
+DATA "SP","/T\\"
+DATA "SE"," V "
