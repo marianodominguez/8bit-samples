@@ -1,0 +1,8 @@
+PAPER 0:INK 6:BORDER 0:CLS:dim a,h,p,x,y,v as uinteger
+DIM s(120):x=97:y=42:h=0:v=2:s(1)=12:s(2)=1:p=3
+GOSUB d1
+wa: GOTO wa
+d1: p=p-2:n=s(p):a=s(p+1)
+IF n=0 THEN u=x+h:w=y-v:PLOT x,y:DRAW u-x,w-y:x=u:y=w:RETURN
+d2: s(p)=n-1:s(p+1)=-1:s(p+2)=a:s(p+3)=n-1:s(p+4)=1:p=p+5: GOSUB d1:GOSUB d3: GOSUB d1:RETURN
+d3: p=p-1:a=s(p):t=-a*h:h=a*v:v=t:RETURN
