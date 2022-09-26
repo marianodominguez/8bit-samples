@@ -6,7 +6,7 @@ REM ZX Basic version by papa_robot
 REM Clear screen and setup variables
 
 w=7: PEAK=0: dim o$,cs$,T$,s$,a$,q$,n$,l$,r$,C$,D$,E$,F$,G$,k$ as string
-dim TL as uinteger
+dim TL,XV,XE,YV,SE,SB,SR,SC,C2,Z1,Z2,Z3,Z4 as integer
 BORDER 0: PAPER 0: INK w: CLS: RANDOMIZE:PRINT AT 21,0;"";
 REM Important: If Typing this program, replace the double "\\" for single
 k$ = " /\\_"
@@ -95,7 +95,7 @@ NEXT I
 TL = TL + 1
 POKE 23692,5
 IF C2 < COLS THEN PRINT:GO TO lp
-zs = zs - 4:ze = ze - 4: RETURN
+zs = zs - 3:ze = ze - 3: RETURN
 DATA "SP","(I)"
 DATA "SE","/T\\"
 DATA "SP","(I)"

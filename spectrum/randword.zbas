@@ -1,0 +1,6 @@
+dim v$="AEIOU "
+dim s$="BCCDGKLLLLMMMNNNNPRRRRRRSTTTVVWY"
+do
+a=int(RND*32):b=int(RND*6)
+print s$(a to a);v$(b to b);
+loop
