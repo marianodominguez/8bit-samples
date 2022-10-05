@@ -1,0 +1,5 @@
+1 GR. 0
+2 FOR X=10 TO 30:POS. X,4:PR. CHR$($12);:NEXT X
+3 POS. 10,5:?  CHR$($7C);"    THIS COMPUTER   ";CHR$($7C);
+4 POS. 10,6:? CHR$($7C);"   CAN'T RUN WIN 11    ";CHR$($7C);
+5 FOR X=10 TO 30:POS. X,7:PR. CHR$($12);:NEXT X
