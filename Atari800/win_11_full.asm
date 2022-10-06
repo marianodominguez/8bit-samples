@@ -17,14 +17,15 @@ start
 		ldy #>string
   		jsr print
  
-  		lda #79
+  		lda #80
   		sta offset
   		ldx #<string1
 		ldy #>string1
   		jsr print
 pause 	jmp pause
 
-print   lda SAVMSC
+print   clc
+		lda SAVMSC
 		adc offset
 		sta asc
 		stx strp
@@ -35,7 +36,7 @@ prn		lda (strp),Y
 		beq pre
 		sta (asc),Y
 		iny
-		cpy MAXLEN
+		cpy #MAXLEN
 		bne prn
 pre		rts
 string 	.byte $7C,"    This computer can't run Win11   ",$7C,$9B

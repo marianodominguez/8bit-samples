@@ -48,7 +48,7 @@ pexit:	nop
 		ora #$0C
 		sta ICAX1,X
 		jsr CIOV
-name   .byte $53,$3A,$9B
+name   .by $53,$3A,$9B
 .endm
 
 
