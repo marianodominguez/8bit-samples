@@ -6,10 +6,10 @@ AX1=$034A
 AX2=$034B
 CV=$E456
 
-	LDA #2
+ 	LDA #2
 	JSR  $EF9C
-L 	LDA M,Y
-	CMP #$9B
+ 	LDA M,Y
+ 	CMP #$9B
 	BEQ C
 	STA ($58),Y
 	INY

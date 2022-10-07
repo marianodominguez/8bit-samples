@@ -1,4 +1,4 @@
-{A}S LDA #9
+S LDA #9
 JSR $EF9C
 L LDA 1
 STA 84

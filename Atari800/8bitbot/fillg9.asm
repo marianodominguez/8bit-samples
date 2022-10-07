@@ -1,4 +1,4 @@
-{A}S LDA #9
+S LDA #9
 JSR $EF9C
 LDA #0
 LDY #0
