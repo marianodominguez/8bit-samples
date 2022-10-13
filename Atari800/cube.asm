@@ -25,9 +25,11 @@ ATACHR =   $02FB
 STORE1 =   $CC
 STOCOL =   $CD
 
-x   	=  $C0
-y   	=  $C1 
+xcord   =  $C0
+ycord   =  $C1 
 i		=  $C2
+tmp		=  $C3
+len		=  $C4
  
 XMAX	=	160
 YMAX	=	96
@@ -47,12 +49,12 @@ mainl
   STA STOCOL
   JSR DRWPLY
   LDX #5
-  LDY #4
+  LDY #3
   JSR TRANS
   LDA i
   ADC #1
   STA i
-  CMP #30
+  CMP #60
   BMI mainl
 wait
   JMP wait
@@ -62,61 +64,85 @@ delay
   BNE delay 
   RTS
 
+
+; **********
+; Translation tranfomation in place
+; registers x and y hold the maginitude
+; TODO: support negative traslation (signed)
+
 TRANS
-  STX x
-  STY y
+  STX xcord
+  STY ycord
   LDX #0
-lt
   LDA V,X
-  CMP #$FF
+  STA len
+  INX
+  CLC
+lt
+  CPX len
   BEQ endt
-  ADC x
+  BPL endt
+  LDA V,X
+  ADC xcord
+  BCS endt
   STA V,X
   INX
   LDA V,X
-  ADC y
+  ADC ycord
+  BCS endt
   STA V,X
   INX
   JMP lt
 endt
+  CLC
   RTS
 
-  
+;Draw a poligon stored in v pointer, end with FF
+;Format x1,y1,x2,y2,..,$ff
 
 DRWPLY
 ; read vertices  
   LDX #0
   LDY #$FF
+  LDA V,X ; get array length
+  STA len
+  INX
 loop
-  LDA V,X
-  CMP #$FF
+  CPX len
   BEQ endv
-  STA x
+  BPL endv
+  LDA V,X
+  STA xcord
   INX
   LDA V,X
-  STA y
+  STA ycord
   INX
-  TXA
-  PHA
+  STX tmp ;save index to use x for point cord
   LDA #0
-  CPY #$FF
+  CPY #$FF ;todo, this breaks in gr 8
   BNE line
-  LDX x
-  LDY y
+  LDX xcord
+  CPX #XMAX ; do not draw out of screen
+  BEQ endv
+  BPL endv
+  LDY ycord
+  CPX #YMAX ; do not draw out of screen
+  BEQ endv
+  BPL endv
   JSR PLOT
   JMP cont
+  LDY #00
 line
-  LDX x
-  LDY y
+  LDX xcord
+  LDY ycord
   JSR DRAWTO
 cont
-  PLA
-  TAX
+  LDX tmp
   JMP loop  
 endv 
   RTS
- 
-V	.BY 0,0,0,20,20,20,20,0,0,0,$FF
+
+V	.BY 10,0,0,0,20,20,20,20,0,0,0
 
 GRAFIC
        PHA           ; Store on stack
