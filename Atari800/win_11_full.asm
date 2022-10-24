@@ -1,6 +1,6 @@
 SAVMSC 	=	$58
 MAXLEN 	=	100
-  		org	$0600
+  		org	$0302
 strp    = $C0
 offset  = $C2
 asc		= $C4	

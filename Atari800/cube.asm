@@ -25,45 +25,63 @@ ATACHR =   $02FB
 STORE1 =   $CC
 STOCOL =   $CD
 
+; Program variables
 xcord   =  $C0
 ycord   =  $C1 
 i		=  $C2
 tmp		=  $C3
-len		=  $C4
- 
+len		=  $C4 
+firstv  =  $C6  ;0 for first vertex in polygon.
+
 XMAX	=	160
 YMAX	=	96
 
+
+; main program
   ORG  	$0600
   LDA	#7+16
   JSR	GRAFIC
   
   LDA #0
+  LDX #0
+  LDY #0
   STA i
 mainl
-  LDA #1
+  LDA #2 ;draw in color 2
   STA STOCOL
   JSR DRWPLY
-  JSR delay
-  LDA #0
+  ;tmp wait for start
+  ;jsr waitstart
+  JSR delay 
+
+  LDA #1 ; color registry, use background to erase
   STA STOCOL
   JSR DRWPLY
-  LDX #5
-  LDY #3
-  JSR TRANS
+  LDX #5    
+  LDY #5
+  JSR TRANS   ; traslation magitude in reg x,y
   LDA i
   ADC #1
   STA i
-  CMP #60
+  CMP #10    ; repeat 60 times
   BMI mainl
 wait
   JMP wait
 
+; *** end main program
+
+; delay routine
 delay
   DEY
   BNE delay 
   RTS
-
+;wait for start pressed
+waitstart
+  JSR delay
+  LDA $D01F
+  CMP #6
+  BNE waitstart 
+  RTS
 
 ; **********
 ; Translation tranfomation in place
@@ -97,13 +115,15 @@ endt
   CLC
   RTS
 
-;Draw a poligon stored in v pointer, end with FF
-;Format x1,y1,x2,y2,..,$ff
+;Draw a polygon stored in v pointer, start with poligon length
+;Format len, x1,y1,x2,y2
 
 DRWPLY
 ; read vertices  
   LDX #0
-  LDY #$FF
+  LDY #0
+  LDA #0
+  STA firstv
   LDA V,X ; get array length
   STA len
   INX
@@ -118,23 +138,26 @@ loop
   STA ycord
   INX
   STX tmp ;save index to use x for point cord
-  LDA #0
-  CPY #$FF ;todo, this breaks in gr 8
+  LDY firstv
   BNE line
+  LDY #1
+  STY firstv
   LDX xcord
   CPX #XMAX ; do not draw out of screen
-  BEQ endv
+  ;BEQ endv
   BPL endv
   LDY ycord
   CPX #YMAX ; do not draw out of screen
-  BEQ endv
+  ;BEQ endv
   BPL endv
+  LDA #0
   JSR PLOT
   JMP cont
-  LDY #00
+  LDY #0
 line
   LDX xcord
   LDY ycord
+  LDA #0 ; for gr8, hibyte of pos
   JSR DRAWTO
 cont
   LDX tmp
@@ -142,7 +165,7 @@ cont
 endv 
   RTS
 
-V	.BY 10,0,0,0,20,20,20,20,0,0,0
+V	.BY 10,1,1,1,20,20,20,20,1,1,1
 
 GRAFIC
        PHA           ; Store on stack
