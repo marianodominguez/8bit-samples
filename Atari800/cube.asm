@@ -52,7 +52,7 @@ mainl
   JSR DRWPLY
   ;tmp wait for start
   ;jsr waitstart
-  JSR delay 
+  ;JSR delay 
 
   LDA #1 ; color registry, use background to erase
   STA STOCOL
@@ -98,7 +98,7 @@ TRANS
   CLC
 lt
   CPX len
-  BEQ endt
+  ;BEQ endt
   BPL endt
   LDA V,X
   ADC xcord
@@ -144,11 +144,11 @@ loop
   STY firstv
   LDX xcord
   CPX #XMAX ; do not draw out of screen
-  ;BEQ endv
+  BEQ endv
   BPL endv
   LDY ycord
   CPX #YMAX ; do not draw out of screen
-  ;BEQ endv
+  BEQ endv
   BPL endv
   LDA #0
   JSR PLOT
@@ -165,7 +165,7 @@ cont
 endv 
   RTS
 
-V	.BY 10,1,1,1,20,20,20,20,1,1,1
+V	.BY 10,0,0,0,20,20,20,20,0,0,0
 
 GRAFIC
        PHA           ; Store on stack
