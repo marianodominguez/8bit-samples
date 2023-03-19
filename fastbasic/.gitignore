@@ -1,0 +1,5 @@
+*.xex
+*.o
+*.lst
+*.asm
+*.lbl
