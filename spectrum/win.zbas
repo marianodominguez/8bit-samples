@@ -1,0 +1,10 @@
+cls
+paper 0: ink 7
+print at 3,5;"                          "
+print at 4,5;"  THIS COMPUTER CAN'T RUN "
+print at 5,5;"        WINDOWS 11        "
+print at 6,5;"                          "
+print at 7,5;"        or want to.       "
+print at 8,5;"                          "
+paper 2
+print at 9,5;"       Learn Z80 asm      "
