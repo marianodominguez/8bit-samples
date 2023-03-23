@@ -1,0 +1,25 @@
+10 D=0
+20 Q=1:R=0:T=1:K=1:N=3:L=3
+30 WHILE D<30
+40   IF 4*Q+R-T<N*T
+50     PRINT N;
+55     IF D=0 THEN PRINT ".";
+60     D=D+1
+70     QT=Q
+80     Q=10*Q
+90     RT=R
+100     R=10*(R-N*T)
+110     N=INT((10*(3*QT+RT))/T)-10*N
+120   ELSE 
+130     QT=Q
+140     Q=Q*K
+145     RT=R
+150     R=(2*QT+R)*L
+155     TT=T
+160     T=T*L
+170     KT=K
+180     K=K+1
+190     N=INT((QT*(7*KT+2)+RT*L)/(TT*L))
+200     L=L+2
+210   ENDIF 
+220 WEND 
