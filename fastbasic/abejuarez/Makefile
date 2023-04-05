@@ -1,7 +1,7 @@
 target: all
 
-FBPATH=/Users/mariano/fastbasic/build/compiler
-SRC=$(PWD)
+FBPATH=/opt/fastbasic/
+SRC=.
 
 all: compile img atr
 
