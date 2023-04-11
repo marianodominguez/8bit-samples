@@ -8,14 +8,14 @@ while v%<2*PI%
   while u%<PI%
     cosu%=cos(u%)
   	sinu%=sin(u%)
-	cos7u%=cosu%*cosu%*cosu%*cosu%*cosu%*cosu%*cosu%
-	cos6u%=cosu%*cosu%*cosu%*cosu%*cosu%*cosu%
-	cos5u%=cosu%*cosu%*cosu%*cosu%*cosu%
-	cos4u%=cosu%*cosu%*cosu%*cosu%
-	cos3u%=cosu%*cosu%*cosu%
+	c7u%=cosu%*cosu%*cosu%*cosu%*cosu%*cosu%*cosu%
+	c6u%=cosu%*cosu%*cosu%*cosu%*cosu%*cosu%
+	c5u%=cosu%*cosu%*cosu%*cosu%*cosu%
+	c4u%=cosu%*cosu%*cosu%*cosu%
+	c3u%=cosu%*cosu%*cosu%
 	
-	x%=(-2/15)*cosu%*(3*cosv%-30*sinu%+90*cos4u%*sinu%-60*cos6u%*sinu%+5*cosu%*cosv%*sinu%)
-	y%=(-1/15)*sinu%*(3*cosv%-3*cosu%*cosu%*cosv%-48*cos4u%*cosv%+48*cos6u%*cosv%-60*sinu%+5*cosu%*cosv%*sinv%-5*cos3u%*cosv%*sinu%-80*cos5u%*cosv%*sinu%+80*cos7u%*cosv%*sinu%)
+	x%=(-2/15)*cosu%*(3*cosv%-30*sinu%+90*c4u%*sinu%-60*c6u%*sinu%+5*cosu%*cosv%*sinu%)
+	y%=(-1/15)*sinu%*(3*cosv%-3*cosu%*cosu%*cosv%-48*c4u%*cosv%+48*c6u%*cosv%-60*sinu%+5*cosu%*cosv%*sinv%-5*c3u%*cosv%*sinu%-80*c5u%*cosv%*sinu%+80*c7u%*cosv%*sinu%)
 	z%=(2/15)*(3+5*cosu%*sinu%)*sinv%
 	x%=25*x%:y%=25*y%:z%=25*z%
 	xp=int(-p1%*x%+p1%*y%)
