@@ -1,0 +1,31 @@
+10 graphics 8+16:setcolor 1,1,12:setcolor 2,0,0:color 1
+20 u=0.0:v=0.0:PI=3.141592
+30 p1=cos(PI/6):p2=cos(PI/2-p1)
+40 while v<2*PI
+50 poke 77,0
+60 cosv=cos(v)
+70 sinv=sin(v)
+100 while u<PI
+110 cosu=cos(u)
+120 sinu=sin(u)
+130	c7u=cosu*cosu*cosu*cosu*cosu*cosu*cosu
+140	c6u=cosu*cosu*cosu*cosu*cosu*cosu
+150	c5u=cosu*cosu*cosu*cosu*cosu
+160	c4u=cosu*cosu*cosu*cosu
+170	c3u=cosu*cosu*cosu
+180	x=(-2/15)*cosu*(3*cosv-30*sinu+90*c4u*sinu-60*c6u*sinu+5*cosu*cosv*sinu)
+190	y=(-1/15)*sinu*(3*cosv-3*cosu*cosu*cosv-48*c4u*cosv+48*c6u*cosv-60*sinu+5*cosu*cosv*sinv-5*c3u*cosv*sinu-80*c5u*cosv*sinu+80*c7u*cosv*sinu)
+200	z=(2/15)*(3+5*cosu*sinu)*sinv
+210	x=25*x:y=25*y:z=25*z
+220	xp=int(-p1*x+p1*y)
+230	yp=int(-p2*x-p2*y+z)
+240	if u=0
+250		plot xp+100,80-yp
+260	else
+270		drawto xp+100,80-yp
+280	endif
+300    u=u+PI/20
+310  wend
+320    v=v+PI/20
+330    u=0.0
+340 wend
