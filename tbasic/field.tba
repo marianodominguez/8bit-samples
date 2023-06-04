@@ -1,0 +1,16 @@
+#atari8bitbot {B99S99}
+GR.7+16
+F.x=0 to 159
+F.y=0 to 91
+COLOR (INT(x*x/50+y*y/50) mod 3 + 1 )
+PL.x,y
+N.y
+N.x
+SE. 0,7,4:SE.1,7,9:SE.2,7,10
+DO
+T=PEEK(710)
+POKE 710,PEEK(709)
+POKE 709,PEEK(708)
+POKE 708,T
+PAUSE 10
+LOOP

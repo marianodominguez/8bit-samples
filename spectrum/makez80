@@ -1,4 +1,0 @@
-#!/bin/sh -e
-# Usage: ./makez80 hello
-
-z80asm $@.z80asm ; bin2tap a.bin $@.tap ; fuse --auto-load $@.tap
