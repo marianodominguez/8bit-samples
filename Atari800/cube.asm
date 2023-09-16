@@ -27,21 +27,20 @@ STOCOL =   $CD
 
 ; Program variables
 xcord   =  $C0
-ycord   =  $C1 
+ycord   =  $C1
 i		=  $C2
 tmp		=  $C3
-len		=  $C4 
+len		=  $C4
 firstv  =  $C6  ;0 for first vertex in polygon.
 
 XMAX	=	160
 YMAX	=	96
 
-
 ; main program
   ORG  	$0600
   LDA	#7+16
   JSR	GRAFIC
-  
+
   LDA #0
   LDX #0
   LDY #0
@@ -52,12 +51,12 @@ mainl
   JSR DRWPLY
   ;tmp wait for start
   ;jsr waitstart
-  ;JSR delay 
+  ;JSR delay
 
   LDA #1 ; color registry, use background to erase
   STA STOCOL
   JSR DRWPLY
-  LDX #5    
+  LDX #5
   LDY #5
   JSR TRANS   ; traslation magitude in reg x,y
   LDA i
@@ -73,14 +72,14 @@ wait
 ; delay routine
 delay
   DEY
-  BNE delay 
+  BNE delay
   RTS
 ;wait for start pressed
 waitstart
   JSR delay
   LDA $D01F
   CMP #6
-  BNE waitstart 
+  BNE waitstart
   RTS
 
 ; **********
@@ -119,7 +118,7 @@ endt
 ;Format len, x1,y1,x2,y2
 
 DRWPLY
-; read vertices  
+; read vertices
   LDX #0
   LDY #0
   LDA #0
@@ -161,8 +160,8 @@ line
   JSR DRAWTO
 cont
   LDX tmp
-  JMP loop  
-endv 
+  JMP loop
+endv
   RTS
 
 V	.BY 10,0,0,0,20,20,20,20,0,0,0
