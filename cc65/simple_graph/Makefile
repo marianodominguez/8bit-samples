@@ -7,6 +7,7 @@ SYS ?= atari
 NULLDEV = /dev/null
 DEL = $(RM)
 RMDIR = $(RM) -r
+CC65_INC=/usr/share/cc65/include
 
 ifndef PROG
   PROG = graph
@@ -25,7 +26,7 @@ else
 endif
 
 $(PROG): clean
-	$(CL) -t $(SYS) -O -Os -Oi -Or -Wl "-D__RESERVED_MEMORY__=4000" -I include -o bin/$(PROG) src/$(PROG).c
+	$(CL) -t $(SYS) -O -Os -Oi -Or -Wl "-D__RESERVED_MEMORY__=0x2000" --static-locals -I include -o bin/$(PROG) src/$(PROG).c src/atari_draw.s
 clean:
 	@$(DEL) bin/* 2>$(NULLDEV)
 dist: $(PROG)

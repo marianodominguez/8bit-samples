@@ -1,16 +1,49 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <atari.h>
+#include "atari_draw.h"
+#include <peekpoke.h>
+#include <conio.h>
+
+void wait_start() {
+    int i;
+    int key=0;
+    while (key!=6) {
+        key = PEEK(0xD01f);
+        for (i=0; i<500; i++);
+    }
+}
 
 int main(void) {
-    int x;
-    _graphics(8);
-    _setcolor(1,1,14);
-    _color(1);
+    unsigned int x;
+    int screen;
+    int fd = _graphics(8);
 
-    for(x=0; x<100;x++) {
-        _plot(x,0);
-        _drawto(x,191);
+    if (fd == -1) {
+        cputsxy(0,0,"Unable to get graphic mode");
+        exit(1);
     }
+
+    cursor(0);
+    printf("Moire pattern\n");
+
+    // Store fd for screen
+    _setscreen(fd);
+
+    _setcolor(1,1,14);
+    _setcolor(2,4,4);
+    _color(1);
+    screen=PEEK(0x59)*256+PEEK(0x58);
+
+    wait_start();
+
+    for(x=0;x<320;x+=4) {
+        _plot(160,0);
+        //POKE(screen+160+x, fd);
+        _drawto(x,160);
+    }
+
+    wait_start();
 
     return EXIT_SUCCESS;
 }
