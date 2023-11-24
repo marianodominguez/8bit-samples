@@ -35,11 +35,8 @@ int main(void) {
     _color(1);
     screen=PEEK(0x59)*256+PEEK(0x58);
 
-    wait_start();
-
-    for(x=0;x<320;x+=4) {
+    for(x=0;x<320;x+=2) {
         _plot(160,0);
-        //POKE(screen+160+x, fd);
         _drawto(x,160);
     }
 
