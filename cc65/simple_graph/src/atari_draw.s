@@ -11,13 +11,12 @@
         .include "atari.inc"
 
 COLOR = $C8 ; not in include. taken from Atari basic source book
-SIOCB = $FA ; screen channel, find a permanent location
 
 ; set border for debug
-debug:
-    LDA ROWCRS
-    STA COLOR4
-    RTS
+; debug:
+;    LDA ROWCRS
+;    STA COLOR4
+;    RTS
 
 ; position x,y
 .proc __position
@@ -75,3 +74,5 @@ debug:
     rts
 .endproc
 
+;SIOCB screen channel, slow but safest location
+SIOCB: .byte $00
