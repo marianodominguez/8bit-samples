@@ -16,7 +16,6 @@ void wait_start() {
 
 int main(void) {
     unsigned int x;
-    int screen;
     int fd = _graphics(8);
 
     if (fd == -1) {
@@ -33,7 +32,6 @@ int main(void) {
     _setcolor(1,1,14);
     _setcolor(2,4,4);
     _color(1);
-    screen=PEEK(0x59)*256+PEEK(0x58);
 
     for(x=0;x<320;x+=2) {
         _plot(160,0);
