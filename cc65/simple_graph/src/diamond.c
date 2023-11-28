@@ -18,30 +18,31 @@ void wait_start() {
 int main(void) {
     long x,y,x1,y1;
     int ph,th;
-    int fd = _graphics(8+16);
-
+    int fd = _graphics(8);
+    unsigned int r = 80;
     if (fd == -1) {
         cputsxy(0,0,"Unable to get graphic mode");
         exit(1);
     }
+    wait_start();
 
     cursor(0);
-    //printf("Diamond\n");
+    printf("Diamond\n");
 
     // Store fd for screen
     _setscreen(fd);
 
     _setcolor(1,1,14);
-    _setcolor(2,4,4);
+    _setcolor(2,5,4);
     _color(1);
 
     for(th=0;th<360;th+=20) {
-        x = (long) 70*f_sin(th) / SCALE_FACTOR + 160;
-        y = 96 - (long) 70*f_cos(th) / SCALE_FACTOR ;
-        //printf("%ld,", ((long) 70*f_sin(th) ) / SCALE_FACTOR );
+        x = (long) r*f_sin(th) / SCALE_FACTOR + 160;
+        y = 96 - (long) r*f_cos(th) / SCALE_FACTOR -15;
+
         for(ph=0;ph<360;ph+=20) {
-            x1 = (long) 70*f_sin(ph)  / SCALE_FACTOR + 160;
-            y1 = 96- (long) 70*f_cos(ph)  / SCALE_FACTOR;
+            x1 = (long) r*f_sin(ph)  / SCALE_FACTOR + 160;
+            y1 = 96- (long) r*f_cos(ph)  / SCALE_FACTOR -15;
             _plot(x,y);
             _drawto(x1,y1);
         }
