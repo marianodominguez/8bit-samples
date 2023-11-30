@@ -37,11 +37,11 @@ int main(void) {
     _color(1);
 
     for(th=0;th<360;th+=20) {
-        x = (long) r*f_sin(th) / SCALE_FACTOR + 160;
+        x = (long) (r+10)*f_sin(th) / SCALE_FACTOR + 160;
         y = 96 - (long) r*f_cos(th) / SCALE_FACTOR -15;
 
         for(ph=0;ph<360;ph+=20) {
-            x1 = (long) r*f_sin(ph)  / SCALE_FACTOR + 160;
+            x1 = (long) (r+10)*f_sin(ph)  / SCALE_FACTOR + 160;
             y1 = 96- (long) r*f_cos(ph)  / SCALE_FACTOR -15;
             _plot(x,y);
             _drawto(x1,y1);
