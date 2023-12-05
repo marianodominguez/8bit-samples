@@ -24,39 +24,40 @@ int CUBE[]={
     -1, 1, 1,
     -1,-1, 1,
 
-     1,-1,-1,  //X=1
-     1, 1,-1,
-     1, 1, 1,
-     1,-1, 1,
-
     -1,-1,-1, //Y=-1
     -1,-1, 1,
      1,-1, 1,
      1,-1,-1,
+
+    -1,-1,-1,  //Z=-1
+     1,-1,-1,
+     1, 1,-1,
+    -1, 1,-1,
 
      1,-1, 1,  //Z=1
     -1,-1, 1,
     -1, 1, 1,
      1, 1, 1,
 
+     1,-1,-1,  //X=1
+     1, 1,-1,
+     1, 1, 1,
+     1,-1, 1,
+
      1, 1, 1, //Y=1
      1, 1,-1,
     -1, 1,-1,
-     1, 1,-1,
-
-    -1,-1,-1,  //Z=-1
-     1,-1,-1,
-     1, 1,-1,
-    -1, 1,-1
+     1, 1,-1
 };
+
 
 int main(void) {
     int x,y,z,xp,yp;
     unsigned int i,j,xs,ys,x1,y1,x0,y0;
-    int idx=0;
+    int idx=0,th=0;
     int sqrt2=1414;
     int sqrt6=2449;
-    int fd = _graphics(8);
+    int fd = _graphics(8+16);
 
     unsigned int r = 80;
     if (fd == -1) {
@@ -64,7 +65,7 @@ int main(void) {
         exit(1);
     }
     cursor(0);
-    printf("Cube\n");
+    //printf("Cube\n");
 
     // Store fd for screen
     _setscreen(fd);
@@ -73,46 +74,51 @@ int main(void) {
     _setcolor(2,7,4);
     _color(1);
 
+    for (th=0;th<360;th+=20) {
+        idx=0;
+        for(i=0;i<nfaces;i++) {
+            for(j=0; j<nvert; j++) {
+                x=CUBE[idx++]*100;
+                y=CUBE[idx++]*100;
+                z=CUBE[idx++]*100;
 
-    for(i=0;i<nfaces;i++) {
-        for(j=0; j<nvert; j++)
-        {
-            x=CUBE[idx++]*100;
-            y=CUBE[idx++]*100;
-            z=CUBE[idx++]*100;
+                //scale
 
-            //scale
+                x=x/2;
+                z=z/2;
+                y=y/3;
 
-            x=x/2;
-            z=z/2;
-            y=y/3;
+                //rotation
+                //x = x;
+                y =  ( (long) y*f_cos(th) + (long) z*f_sin(th))  / SCALE_FACTOR;
+                z =  ( (long) -y*f_sin(th) + (long) z*f_cos(th)) / SCALE_FACTOR;
 
-            xp = (long) 1000*(x-z)/sqrt2;
-            yp = (long) 1000*(x+2*y+z)/sqrt6;
+                xp = (long) 1000*(x-z)/sqrt2;
+                yp = (long) 1000*(x+2*y+z)/sqrt6;
 
-            //printf("%d,%d = ",xp,yp);
+                //printf("%d,%d = ",xp,yp);
 
-            xs = xp + 160;
-            ys = 96 - yp;
+                xs = xp + 160;
+                ys = 96 - yp;
 
-            //printf("%d,%d,%d ",i,j,idx);
-            if (j==0) {
-                x0=xs;
-                y0=ys;
-                _plot(xs,ys);
+                //printf("%d,%d,%d ",i,j,idx);
+                if (j==0) {
+                    x0=xs;
+                    y0=ys;
+                    _plot(xs,ys);
+                }
+                else {
+                    _plot(x1,y1);
+                    _drawto(xs,ys);
+                }
+                x1=xs;
+                y1=ys;
             }
-            else {
-                _plot(x1,y1);
-                _drawto(xs,ys);
-            }
-            x1=xs;
-            y1=ys;
+            _drawto(x0,y0);
+            //wait_start();
+            //printf("\n");
         }
-        _drawto(x0,y0);
-        //wait_start();
-        //printf("\n");
     }
-
     wait_start();
 
     return EXIT_SUCCESS;
