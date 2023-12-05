@@ -54,9 +54,9 @@ int main(void) {
     int x,y,z,xp,yp;
     unsigned int i,j,xs,ys,x1,y1,x0,y0;
     int idx=0;
+    int sqrt2=1414;
+    int sqrt6=2449;
     int fd = _graphics(8);
-    int p2=761;
-    int p1=166;
 
     unsigned int r = 80;
     if (fd == -1) {
@@ -81,13 +81,19 @@ int main(void) {
             y=CUBE[idx++]*100;
             z=CUBE[idx++]*100;
 
-            //printf("%d,%d,%d = ",x,y,z);
+            //scale
 
-            xp = -p1*x/1000 + p1*y/1000;
-            yp = -p2*2/1000 - p2*y/1000 + z;
+            x=x/2;
+            z=z/2;
+            y=y/3;
 
-            xs = xp*2 + 160;
-            ys = 96 - yp/3;
+            xp = (long) 1000*(x-z)/sqrt2;
+            yp = (long) 1000*(x+2*y+z)/sqrt6;
+
+            //printf("%d,%d = ",xp,yp);
+
+            xs = xp + 160;
+            ys = 96 - yp;
 
             //printf("%d,%d,%d ",i,j,idx);
             if (j==0) {

@@ -1,5 +1,5 @@
 cls:dim x,y,z
-r=50:p1=cos(PI/6):p2=cos(PI/2-p1)
+r=50:p1=cos(PI/6):p2=cos(PI/3)
 for th=0 to 2*PI step PI/20
 for ph=0 to  2*PI step PI/20
 x=r*sin(th)*cos(ph)
