@@ -52,8 +52,7 @@ int CUBE[]={
 
 
 int main(void) {
-    int x,y,z,xp,yp;
-    long yr,zr;
+    int x,y,z,xp,yp,yr,zr;
     unsigned int i,j,xs,ys,x1,y1,x0,y0;
     int idx=0,th=0;
     int sqrt2=1414;
