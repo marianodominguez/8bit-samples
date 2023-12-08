@@ -53,6 +53,7 @@ int CUBE[]={
 
 int main(void) {
     int x,y,z,xp,yp;
+    long yr,zr;
     unsigned int i,j,xs,ys,x1,y1,x0,y0;
     int idx=0,th=0;
     int sqrt2=1414;
@@ -90,11 +91,11 @@ int main(void) {
 
                 //rotation
                 //x = x;
-                y =  ( (long) y*f_cos(th) + (long) z*f_sin(th))  / SCALE_FACTOR;
-                z =  ( (long) -y*f_sin(th) + (long) z*f_cos(th)) / SCALE_FACTOR;
+                yr =  ((long) y*f_cos(th)  - (long) z*f_sin(th))  / SCALE_FACTOR;
+                zr =  ((long) y*f_sin(th)  + (long) z*f_cos(th))  / SCALE_FACTOR;
 
-                xp = (long) 1000*(x-z)/sqrt2;
-                yp = (long) 1000*(x+2*y+z)/sqrt6;
+                xp = (long) 1000*(x-zr)/sqrt2;
+                yp = (long) 1000*(x+2*yr+zr)/sqrt6;
 
                 //printf("%d,%d = ",xp,yp);
 
@@ -115,9 +116,9 @@ int main(void) {
                 y1=ys;
             }
             _drawto(x0,y0);
-            //wait_start();
             //printf("\n");
         }
+        wait_start();
     }
     wait_start();
 
