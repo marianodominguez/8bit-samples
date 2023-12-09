@@ -7,59 +7,58 @@
 #include "fp_trig.h"
 
 void wait_start() {
-    int i;
-    int key=0;
+    unsigned int i;
+    unsigned char key=0;
     while (key!=6) {
         key = PEEK(0xD01f);
         for (i=0; i<500; i++);
     }
 }
-const int nvert=4;
-const int nfaces=6;
+const unsigned char nvert=4;
+const unsigned char nfaces=6;
 
 int CUBE[]={
 
-    -1,-1,-1, //X=-1
-    -1, 1,-1,
-    -1, 1, 1,
-    -1,-1, 1,
+    -100,-100,-100, //X=-1
+    -100, 100,-100,
+    -100, 100, 100,
+    -100,-100, 100,
 
-    -1,-1,-1, //Y=-1
-    -1,-1, 1,
-     1,-1, 1,
-     1,-1,-1,
+    -100,-100,-100, //Y=-1
+    -100,-100, 100,
+     100,-100, 100,
+     100,-100,-100,
 
-    -1,-1,-1,  //Z=-1
-     1,-1,-1,
-     1, 1,-1,
-    -1, 1,-1,
+    -100,-100,-100,  //Z=-1
+     100,-100,-100,
+     100, 100,-100,
+    -100, 100,-100,
 
-     1,-1, 1,  //Z=1
-    -1,-1, 1,
-    -1, 1, 1,
-     1, 1, 1,
+     100,-100, 100,  //Z=1
+    -100,-100, 100,
+    -100, 100, 100,
+     100, 100, 100,
 
-     1,-1,-1,  //X=1
-     1, 1,-1,
-     1, 1, 1,
-     1,-1, 1,
+     100,-100,-100,  //X=1
+     100, 100,-100,
+     100, 100, 100,
+     100,-100, 100,
 
-     1, 1, 1, //Y=1
-     1, 1,-1,
-    -1, 1,-1,
-     1, 1,-1
+     100, 100, 100, //Y=1
+     100, 100,-100,
+    -100, 100,-100,
+     100, 100,-100
 };
 
 
 int main(void) {
-    int x,y,z,xp,yp,yr,zr;
+    int x,y,z,xp,yp,yr,zr,th;
     unsigned int i,j,xs,ys,x1,y1,x0,y0;
-    int idx=0,th=0;
+    unsigned char idx;
     int sqrt2=1414;
     int sqrt6=2449;
     int fd = _graphics(8+16);
 
-    unsigned int r = 80;
     if (fd == -1) {
         cputsxy(0,0,"Unable to get graphic mode");
         exit(1);
@@ -77,9 +76,9 @@ int main(void) {
         idx=0;
         for(i=0;i<nfaces;i++) {
             for(j=0; j<nvert; j++) {
-                x=CUBE[idx++]*100;
-                y=CUBE[idx++]*100;
-                z=CUBE[idx++]*100;
+                x=CUBE[idx++];
+                y=CUBE[idx++];
+                z=CUBE[idx++];
 
                 x=x/2;
                 z=z/2;
