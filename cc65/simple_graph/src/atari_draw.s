@@ -4,13 +4,15 @@
 ;
 ; atari draw lib
 ;
-        .export      __plot,__drawto,__color,__setscreen
+        .export      __plot,__drawto,__color,__setscreen, __clear
         .import      popa,gotoxy,fdtoiocb
         .importzp    tmp1
 
         .include "atari.inc"
 
 COLOR = $C8 ; not in include. taken from Atari basic source book
+PIXLO=$DC
+PIXHI=$DD
 
 ; set border for debug
 ; debug:
@@ -72,6 +74,26 @@ COLOR = $C8 ; not in include. taken from Atari basic source book
     sta ICAX2,X   ; Auxiliary 2
     jsr CIOV      ; Draw the line
     rts
+.endproc
+
+; TODO: make this for other graphic modes
+.proc __clear
+        lda SAVMSC+1
+        sta PIXHI
+        clc
+        adc #32
+        sta tmp1
+        lda SAVMSC
+        sta PIXLO
+sloop:  lda #0
+rloop:  sta (PIXLO),y
+        iny
+        bne rloop
+        inc PIXHI
+        lda PIXHI
+        cmp tmp1
+        bne sloop
+        rts
 .endproc
 
 ;SIOCB screen channel, slow but safest location

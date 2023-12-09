@@ -109,7 +109,7 @@ int main(void) {
             _drawto(x0,y0);
             //printf("\n");
         }
-        wait_start();
+        _clear();
     }
     wait_start();
 
