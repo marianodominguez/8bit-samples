@@ -4,15 +4,19 @@
 ;
 ; atari draw lib
 ;
-        .export      __plot,__drawto,__color,__setscreen, __clear
+        .export      __plot,__drawto,__color,__setscreen, __clear,__fast_draw
         .import      popa,gotoxy,fdtoiocb
-        .importzp    tmp1
+        .importzp    tmp1,tmp2,tmp3,tmp4,ptr1,ptr2
 
         .include "atari.inc"
 
 COLOR = $C8 ; not in include. taken from Atari basic source book
-PIXLO=$DC
-PIXHI=$DD
+PIXLO=ptr1
+PIXHI=ptr1+1
+DX=tmp2
+DY=tmp3
+X1=ptr2
+Y1=tmp4
 
 ; set border for debug
 ; debug:
@@ -94,6 +98,66 @@ rloop:  sta (PIXLO),y
         cmp tmp1
         bne sloop
         rts
+.endproc
+
+.proc __fast_draw
+    ;store x1
+    sta X1
+    stx X1+1
+
+    popa ; get y1
+    sta Y1
+    jsr find_row
+    jsr find_col
+.endproc
+
+; find row Yx40, in accumulator
+.proc find_row
+    lda Y1
+    lsr a
+    lsr a
+    lsr a
+    lsr a  ;clear top nibble
+    sta PIXHI
+    lsr a
+    lsr a
+    sta tmp5 ; first 2 bits
+    lda Y1
+    asl a
+    asl a
+    asl a
+    sta tmp6
+    asl a
+    asl a
+    clc
+    adc tmp6
+    sta PIXLO
+    lda PIXHI
+    adc tmp5
+    sta PIXHI
+.endproc
+
+;find the byte x-coord / 8
+; TODO: this is 1 byte x
+.proc find_col
+    lda X1
+    lsr a
+    lsr a
+    lsr a
+    clc
+    adc PIXLO
+    sta PIXLO
+    bcc nocarry
+    inc PIXHI
+nocarry:
+    clc
+    lda SAVMSC
+    adc PIXLO
+    sta PIXLO
+    lda SAVMSC+1
+    adc PIXHI
+    sta PIXHI
+
 .endproc
 
 ;SIOCB screen channel, slow but safest location
