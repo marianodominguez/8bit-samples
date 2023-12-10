@@ -18,6 +18,10 @@ DY=tmp3
 X1=ptr2
 Y1=tmp4
 
+;todo get proper addr fort these
+tmp5=$f1
+tmp6=$f2
+
 ; set border for debug
 ; debug:
 ;    LDA ROWCRS
@@ -105,7 +109,7 @@ rloop:  sta (PIXLO),y
     sta X1
     stx X1+1
 
-    popa ; get y1
+    jsr popa ;get y1
     sta Y1
     jsr find_row
     jsr find_col
