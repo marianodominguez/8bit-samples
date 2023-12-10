@@ -19,14 +19,18 @@ X1=ptr2
 Y1=tmp4
 
 ;todo get proper addr fort these
-tmp5=$f1
-tmp6=$f2
+tmp5=$D1
+tmp6=$D2
+PIXZ=$D3
+X2=$D4
+Y2=$D6
 
 ; set border for debug
-; debug:
-;    LDA ROWCRS
-;    STA COLOR4
-;    RTS
+.proc debug
+    LDA ROWCRS
+    STA COLOR4
+    RTS
+.endproc
 
 ; position x,y
 .proc __position
@@ -104,15 +108,37 @@ rloop:  sta (PIXLO),y
         rts
 .endproc
 
-.proc __fast_draw
-    ;store x1
-    sta X1
-    stx X1+1
+.proc __fast_draw ;int x1,char y1,int x2,char y2
+
+    ;store y2
+    sta Y2
+    ;store X1
+    jsr popa
+    sta X2
+    sta X2+1;
 
     jsr popa ;get y1
     sta Y1
+
+    ;store x1
+    jsr popa
+    sta X1
+    stx X1+1
+
     jsr find_row
     jsr find_col
+    ;find but for pixel to draw
+    lda X1
+    and #7
+    tax
+    lda PIXTAB,x
+    sta PIXZ
+    ldy #0
+    lda PIXZ
+    ora (PIXLO),y
+    sta (PIXLO),y
+    ;line routine called here
+    rts
 .endproc
 
 ; find row Yx40, in accumulator
@@ -139,6 +165,7 @@ rloop:  sta (PIXLO),y
     lda PIXHI
     adc tmp5
     sta PIXHI
+    rts
 .endproc
 
 ;find the byte x-coord / 8
@@ -161,8 +188,10 @@ nocarry:
     lda SAVMSC+1
     adc PIXHI
     sta PIXHI
-
+    rts
 .endproc
 
 ;SIOCB screen channel, slow but safest location
 SIOCB: .byte $00
+
+PIXTAB: .byte 128,64,32,16,8,4,2,1
