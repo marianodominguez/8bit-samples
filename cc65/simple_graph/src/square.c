@@ -17,6 +17,8 @@ void wait_start() {
 int main(void) {
     unsigned int x;
     unsigned char y;
+    unsigned int x2=0;
+    unsigned char y2=0;
     int fd = _graphics(8);
 
     if (fd == -1) {
@@ -33,12 +35,13 @@ int main(void) {
     _setcolor(1,1,14);
     _setcolor(2,4,4);
     _color(1);
+    x=100;
 
     for(x=50;x<210;x++) {
-        for (y=10;y<12; y++)
+        for (y=10;y<13; y++)
         {
-            _fast_draw(x,y,0,0);
-             printf("%d,%d ",x,y);
+            _fast_draw(x,y,x2,y2);
+            // printf("%d,%d ",x,y);
         }
         //_drawto(x,160);
     }

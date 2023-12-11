@@ -5,8 +5,8 @@
 ; atari draw lib
 ;
         .export      __plot,__drawto,__color,__setscreen, __clear,__fast_draw
-        .import      popa,gotoxy,fdtoiocb
-        .importzp    tmp1,tmp2,tmp3,tmp4,ptr1,ptr2
+        .import      popa,popax,gotoxy,fdtoiocb
+        .importzp    tmp1,tmp2,tmp3,tmp4,ptr1,ptr2,ptr3
 
         .include "atari.inc"
 
@@ -15,20 +15,32 @@ PIXLO=ptr1
 PIXHI=ptr1+1
 DX=tmp2
 DY=tmp3
-X1=ptr2
-Y1=tmp4
+TXTW=660
 
-;todo get proper addr fort these
-tmp5=$D1
-tmp6=$D2
-PIXZ=$D3
-X2=$D4
-Y2=$D6
+;todo get proper addr for these
+YX4HI=$E1
+YX4LO=$E2
+PIXZ=$E3
+X2=$E4
+Y2=$E6
+dtmp=$E7
+X1=$E8
+Y1=$EA
+
 
 ; set border for debug
 .proc debug
-    LDA ROWCRS
-    STA COLOR4
+    LDA TXTW
+    STA ptr3
+    LDA TXTW+1
+    STA ptr3+1
+    LDY dtmp
+    LDA Y1
+    CLC
+    ADC #16
+    STA (ptr3),y
+    iny
+    sty dtmp
     RTS
 .endproc
 
@@ -109,19 +121,19 @@ rloop:  sta (PIXLO),y
 .endproc
 
 .proc __fast_draw ;int x1,char y1,int x2,char y2
-
     ;store y2
     sta Y2
     ;store X1
-    jsr popa
+    jsr popax
     sta X2
     sta X2+1;
 
     jsr popa ;get y1
     sta Y1
+    ;jsr debug
 
     ;store x1
-    jsr popa
+    jsr popax
     sta X1
     stx X1+1
 
@@ -151,19 +163,18 @@ rloop:  sta (PIXLO),y
     sta PIXHI
     lsr a
     lsr a
-    sta tmp5 ; first 2 bits
+    sta YX4HI ; first 2 bits
     lda Y1
     asl a
     asl a
-    asl a
-    sta tmp6
+    sta YX4LO
     asl a
     asl a
     clc
-    adc tmp6
+    adc YX4LO
     sta PIXLO
     lda PIXHI
-    adc tmp5
+    adc YX4HI
     sta PIXHI
     rts
 .endproc
