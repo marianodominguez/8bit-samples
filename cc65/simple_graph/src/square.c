@@ -14,9 +14,22 @@ void wait_start() {
     }
 }
 
-int main(void) {
+void square(unsigned int x1,unsigned char y1,unsigned int x2,unsigned char y2) {
     unsigned int x;
     unsigned char y;
+
+    for(x=x1;x<x2;x++) {
+        for (y=y1;y<y2;y++)
+        {
+            _fast_draw(x,y,x2,y2);
+            // printf("%d,%d ",x,y);
+        }
+        //_drawto(x,160);
+    }
+}
+
+int main(void) {
+
     unsigned int x2=0;
     unsigned char y2=0;
     int fd = _graphics(8);
@@ -35,16 +48,8 @@ int main(void) {
     _setcolor(1,1,14);
     _setcolor(2,4,4);
     _color(1);
-    x=100;
 
-    for(x=50;x<210;x++) {
-        for (y=10;y<13; y++)
-        {
-            _fast_draw(x,y,x2,y2);
-            // printf("%d,%d ",x,y);
-        }
-        //_drawto(x,160);
-    }
+    square(0,0,255,13);
 
     wait_start();
 
