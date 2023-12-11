@@ -159,28 +159,28 @@ rloop:  sta (PIXLO),y
     lsr a
     lsr a
     lsr a
-    lsr a  ; y /16
+    lsr a       ;y/16
     sta PIXHI
-    lsr a
-    lsr a ;y / 64
-    sta YX4HI ; first 2 bits
+    lsr a       ;y/32
+    lsr a       ;y/64
+    sta YX4HI   ;y/64*256
     lda Y1
-    asl a
-    asl a
+    asl a       ;y*2
+    asl a       ;y*4
     sta YX4LO
-    asl a
-    asl a
+    asl a       ;y*8
+    asl a       ;y*16
     clc
-    adc YX4LO
+    adc YX4LO   ;y*16+y*4
     sta PIXLO
-    lda PIXHI
+    lda PIXHI   
     adc YX4HI
     sta PIXHI
-    ; y*20 mutiply per 2
+    ; y*20 multiply per 2
     clc
     asl PIXLO
-    lda #0
-    adc PIXHI
+    lda PIXHI
+    adc #0
     sta PIXHI
     rts
 .endproc

@@ -49,7 +49,7 @@ int main(void) {
     _setcolor(2,4,4);
     _color(1);
 
-    square(0,0,255,13);
+    square(0,0,255,159);
 
     wait_start();
 
