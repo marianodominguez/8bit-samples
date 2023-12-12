@@ -17,10 +17,10 @@ void wait_start() {
 const unsigned char nvert=4;
 const unsigned char nfaces=6;
 int x,y,z,xp,yp,yr,zr,th;
-unsigned char idx;
+unsigned char idx,val,bit;
 int sqrt2=1414;
 int sqrt6=2449;
-unsigned int screen;
+unsigned int screen,row,col;
 
 #define SAVMSC 89
 #define BYTES_PER_ROW 40
@@ -64,10 +64,10 @@ int CUBE[]={
 const unsigned char PIXTAB[]={128,64,32,16,8,4,2,1};
 
 void put_pixel(unsigned int x, unsigned char y) {
-    unsigned int row = y*BYTES_PER_ROW;
-    unsigned int col = x / 8;
-    unsigned char val = PEEK(screen+row+col);
-    unsigned char bit = PIXTAB[x & 7];
+    row = y*BYTES_PER_ROW;
+    col = x / 8;
+    val = PEEK(screen+row+col);
+    bit = PIXTAB[x & 7];
 
     screen = PEEK(SAVMSC)*256+PEEK(SAVMSC-1);
 
@@ -106,6 +106,46 @@ void line(unsigned int x, unsigned char y, unsigned int x1, unsigned char y1) {
         if(e2 < dx) {
             error+= dx;
             y0 += sy;
+        }
+    }
+}
+
+void bline(unsigned int x, unsigned char y, unsigned int u, unsigned char v) {
+    int x0=x;
+    int y0=y;
+    int x1=u;
+    int y1=v;
+    int dx=abs(x1-x0);
+    int dy=-abs(y1-y0);
+    int sx = -1;
+    int sy = -1;
+    int e2,error;
+
+    if (x0<x1) {
+        sx=1;
+    }
+    if (y0<y1) {
+        sy=1;
+    }
+
+    error = dx + dy;
+
+    while(1==1) {
+        put_pixel(x0,y0);
+        put_pixel(x1,y1);
+
+        if (abs(x0-x1)<=1 && abs(y0-y1)<=1) return;
+
+        e2=2*error;
+        if(e2 >= dy) {
+            error+= dy;
+            x0 += sx;
+            x1 -= sx;
+        }
+        if(e2 <= dx) {
+            error+= dx;
+            y0 += sy;
+            y1 -= sy;
         }
     }
 }
@@ -156,7 +196,7 @@ int main(void) {
                     //put_pixel(xs,ys);
                 }
                 else {
-                    line(x1,y1, xs,ys);
+                    bline(x1,y1, xs,ys);
                 }
                 x1=xs;
                 y1=ys;
