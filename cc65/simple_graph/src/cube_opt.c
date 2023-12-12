@@ -16,6 +16,13 @@ void wait_start() {
 }
 const unsigned char nvert=4;
 const unsigned char nfaces=6;
+int x,y,z,xp,yp,yr,zr,th;
+unsigned char idx;
+int sqrt2=1414;
+int sqrt6=2449;
+unsigned int screen;
+
+#define SAVMSC 89
 
 int CUBE[]={
 
@@ -50,13 +57,57 @@ int CUBE[]={
      100, 100,-100
 };
 
+const unsigned char PIXTAB[]={128,64,32,16,8,4,2,1};
+
+void put_pixel(unsigned int x, unsigned char y) {
+    unsigned int row = y*40;
+    unsigned int col = x / 8;
+    unsigned char val = PEEK(screen+row+col);
+    unsigned char pixel = PIXTAB[x & 7];
+
+    screen = PEEK(SAVMSC)*256+PEEK(SAVMSC-1);
+
+    POKE(screen+row+col, val | pixel);
+}
+
+void line(unsigned int x, unsigned char y, unsigned int x1, unsigned char y1) {
+    int x0=x;
+    int y0=y;
+    int dx=abs(x1-x0);
+    int dy=abs(y1-y0);
+    int sx = -1;
+    int sy = -1;
+    int rx=x1;
+    int ry=y1;
+    int e2,error;
+
+    if (x0<x1) {
+        sx=1;
+        rx=x0;
+    }
+    if (y0<y1) {
+        sy=1;
+        ry=y0;
+    }
+
+    error = dx - dy;
+
+    while(x0!=x1 || y0!=y1) {
+        put_pixel(x0,y0);
+        e2=2*error;
+        if(e2 > -dy) {
+            error-= dy;
+            x0 += sx;
+        }
+        if(e2 < dx) {
+            error+= dx;
+            y0 += sy;
+        }
+    }
+}
 
 int main(void) {
-    int x,y,z,xp,yp,yr,zr,th;
     unsigned int i,j,xs,ys,x1,y1,x0,y0;
-    unsigned char idx;
-    int sqrt2=1414;
-    int sqrt6=2449;
     int fd = _graphics(8+16);
 
     if (fd == -1) {
@@ -71,6 +122,7 @@ int main(void) {
     _setcolor(1,1,14);
     _setcolor(2,7,4);
     _color(1);
+    //wait_start();
 
     for (th=0;th<360;th+=20) {
         idx=0;
@@ -97,17 +149,15 @@ int main(void) {
                 if (j==0) {
                     x0=xs;
                     y0=ys;
-                    _plot(xs,ys);
+                    //put_pixel(xs,ys);
                 }
                 else {
-                    _plot(x1,y1);
-                    _drawto(xs,ys);
+                    line(x1,y1, xs,ys);
                 }
                 x1=xs;
                 y1=ys;
             }
-            _drawto(x0,y0);
-            //printf("\n");
+
         }
         _clear();
     }

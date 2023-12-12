@@ -173,16 +173,10 @@ rloop:  sta (PIXLO),y
     clc
     adc YX4LO   ;y*16+y*4
     sta PIXLO
-    lda PIXHI   
+    lda PIXHI
     adc YX4HI
     sta PIXHI
     ; y*20 multiply per 2
-    clc
-    asl PIXLO
-    lda PIXHI
-    adc #0
-    sta PIXHI
-    rts
 .endproc
 
 ;find the byte x-coord / 8

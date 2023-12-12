@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "fp_trig.h": "c",
+        "peekpoke.h": "c",
+        "conio.h": "c"
+    }
+}
