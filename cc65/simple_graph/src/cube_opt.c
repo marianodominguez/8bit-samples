@@ -16,7 +16,7 @@ void wait_start() {
 }
 const unsigned char nvert=4;
 const unsigned char nfaces=6;
-int x,y,z,xp,yp,yr,zr,th;
+int x,y,z,xp,yp,yr,zr,th,pixel_adr;
 unsigned char idx,val,bit;
 int sqrt2=1414;
 int sqrt6=2449;
@@ -66,12 +66,10 @@ const unsigned char PIXTAB[]={128,64,32,16,8,4,2,1};
 void put_pixel(unsigned int x, unsigned char y) {
     row = y*BYTES_PER_ROW;
     col = x / 8;
-    val = PEEK(screen+row+col);
+    pixel_adr=screen+row+col;
+    val = PEEK(pixel_adr);
     bit = PIXTAB[x & 7];
-
-    screen = PEEK(SAVMSC)*256+PEEK(SAVMSC-1);
-
-    POKE(screen+row+col, val | bit);
+    POKE(pixel_adr, val | bit);
 }
 
 void line(unsigned int x, unsigned char y, unsigned int x1, unsigned char y1) {
@@ -150,8 +148,47 @@ void bline(unsigned int x, unsigned char y, unsigned int u, unsigned char v) {
     }
 }
 
-int main(void) {
+void cube(void) {
     unsigned int i,j,xs,ys,x1,y1,x0,y0;
+    idx=0;
+    for(i=0;i<nfaces-1;i++) {
+        for(j=0; j<nvert; j++) {
+            x=CUBE[idx++];
+            y=CUBE[idx++];
+            z=CUBE[idx++];
+
+            x=x/2;
+            z=z/2;
+            y=y/3;
+
+            //rotation
+            yr =  ((long) y*f_cos(th)  - (long) z*f_sin(th))  / SCALE_FACTOR;
+            zr =  ((long) y*f_sin(th)  + (long) z*f_cos(th))  / SCALE_FACTOR;
+
+            xp = (long) 1000*(x-zr)/sqrt2;
+            yp = (long) 1000*(x+2*yr+zr)/sqrt6;
+
+            xs = xp + MAX_X/2;
+            ys = MAX_Y/2 - yp;
+
+            if (j==0) {
+                x0=xs;
+                y0=ys;
+                //put_pixel(xs,ys);
+            }
+            else {
+                bline(x1,y1, xs,ys);
+            }
+            x1=xs;
+            y1=ys;
+        }
+
+    }
+    _clear();
+
+}
+
+int main(void) {
     int fd = _graphics(MODE+16);
 
     if (fd == -1) {
@@ -167,45 +204,12 @@ int main(void) {
     _setcolor(2,7,4);
     _color(1);
     //wait_start();
+    screen = PEEK(SAVMSC)*256+PEEK(SAVMSC-1);
 
     for (th=0;th<360;th+=20) {
-        idx=0;
-        for(i=0;i<nfaces;i++) {
-            for(j=0; j<nvert; j++) {
-                x=CUBE[idx++];
-                y=CUBE[idx++];
-                z=CUBE[idx++];
-
-                x=x/2;
-                z=z/2;
-                y=y/3;
-
-                //rotation
-                yr =  ((long) y*f_cos(th)  - (long) z*f_sin(th))  / SCALE_FACTOR;
-                zr =  ((long) y*f_sin(th)  + (long) z*f_cos(th))  / SCALE_FACTOR;
-
-                xp = (long) 1000*(x-zr)/sqrt2;
-                yp = (long) 1000*(x+2*yr+zr)/sqrt6;
-
-                xs = xp + MAX_X/2;
-                ys = MAX_Y/2 - yp;
-
-                if (j==0) {
-                    x0=xs;
-                    y0=ys;
-                    //put_pixel(xs,ys);
-                }
-                else {
-                    bline(x1,y1, xs,ys);
-                }
-                x1=xs;
-                y1=ys;
-            }
-
-        }
-        _clear();
+        cube();
     }
     wait_start();
-
+    _graphics(0);
     return EXIT_SUCCESS;
 }
