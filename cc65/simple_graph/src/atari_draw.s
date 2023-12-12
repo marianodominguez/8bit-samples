@@ -9,6 +9,7 @@
         .importzp    tmp1,tmp2,tmp3,tmp4,ptr1,ptr2,ptr3
 
         .include "atari.inc"
+        .define SCR_RAM #32
 
 COLOR = $C8 ; not in include. taken from Atari basic source book
 PIXLO=ptr1
@@ -105,7 +106,7 @@ Y1=$EA
         lda SAVMSC+1
         sta PIXHI
         clc
-        adc #32
+        adc SCR_RAM
         sta tmp1
         lda SAVMSC
         sta PIXLO

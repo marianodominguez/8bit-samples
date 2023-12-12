@@ -23,6 +23,10 @@ int sqrt6=2449;
 unsigned int screen;
 
 #define SAVMSC 89
+#define BYTES_PER_ROW 40
+#define MODE 8
+#define MAX_X 320
+#define MAX_Y 192
 
 int CUBE[]={
 
@@ -60,14 +64,14 @@ int CUBE[]={
 const unsigned char PIXTAB[]={128,64,32,16,8,4,2,1};
 
 void put_pixel(unsigned int x, unsigned char y) {
-    unsigned int row = y*40;
+    unsigned int row = y*BYTES_PER_ROW;
     unsigned int col = x / 8;
     unsigned char val = PEEK(screen+row+col);
-    unsigned char pixel = PIXTAB[x & 7];
+    unsigned char bit = PIXTAB[x & 7];
 
     screen = PEEK(SAVMSC)*256+PEEK(SAVMSC-1);
 
-    POKE(screen+row+col, val | pixel);
+    POKE(screen+row+col, val | bit);
 }
 
 void line(unsigned int x, unsigned char y, unsigned int x1, unsigned char y1) {
@@ -108,7 +112,7 @@ void line(unsigned int x, unsigned char y, unsigned int x1, unsigned char y1) {
 
 int main(void) {
     unsigned int i,j,xs,ys,x1,y1,x0,y0;
-    int fd = _graphics(8+16);
+    int fd = _graphics(MODE+16);
 
     if (fd == -1) {
         cputsxy(0,0,"Unable to get graphic mode");
@@ -143,8 +147,8 @@ int main(void) {
                 xp = (long) 1000*(x-zr)/sqrt2;
                 yp = (long) 1000*(x+2*yr+zr)/sqrt6;
 
-                xs = xp + 160;
-                ys = 96 - yp;
+                xs = xp + MAX_X/2;
+                ys = MAX_Y/2 - yp;
 
                 if (j==0) {
                     x0=xs;
