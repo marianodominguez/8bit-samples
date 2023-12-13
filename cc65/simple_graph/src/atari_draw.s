@@ -19,14 +19,14 @@ DY=tmp3
 TXTW=660
 
 ;todo get proper addr for these
-YX4HI=$E1
-YX4LO=$E2
+YX4LO=$E1
+YX4HI=$E2
 PIXZ=$E3
 X2=$E4
 Y2=$E6
 dtmp=$E7
 X1=$E8
-Y1=$EA
+Y1=$E0
 
 
 ; set border for debug
@@ -124,7 +124,7 @@ rloop:  sta (PIXLO),y
 .proc __fast_draw ;int x1,char y1,int x2,char y2
     ;store y2
     sta Y2
-    ;store X1
+    ;store X2
     jsr popax
     sta X2
     sta X2+1;
@@ -156,28 +156,37 @@ rloop:  sta (PIXLO),y
 
 ; find row Yx40, in accumulator
 .proc find_row
+    lda #0
+    sta YX4HI
     lda Y1
-    lsr a
-    lsr a
-    lsr a
-    lsr a       ;y/16
-    sta PIXHI
-    lsr a       ;y/32
-    lsr a       ;y/64
-    sta YX4HI   ;y/64*256
-    lda Y1
-    asl a       ;y*2
-    asl a       ;y*4
-    sta YX4LO
-    asl a       ;y*8
-    asl a       ;y*16
+    sta YX4LO  ;y1*1
+
+    asl YX4LO
+    rol YX4HI   ;2*y1
+    asl YX4LO
+    rol YX4HI   ;4*y1
+    asl YX4LO
+    rol YX4HI   ;8*y2
     clc
-    adc YX4LO   ;y*16+y*4
+    lda PIXLO
+    adc YX4LO
     sta PIXLO
     lda PIXHI
     adc YX4HI
     sta PIXHI
-    ; y*20 multiply per 2
+
+    asl YX4LO
+    rol YX4HI   ;16*y2
+    asl YX4LO
+    rol YX4HI   ;32*y2
+    clc
+    lda PIXLO
+    adc YX4LO
+    sta PIXLO
+    lda PIXHI
+    adc YX4HI
+    sta PIXHI
+    rts
 .endproc
 
 ;find the byte x-coord / 8
