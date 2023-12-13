@@ -27,7 +27,7 @@ endif
 
 $(PROG): clean
 	$(CC) -t $(SYS) --add-source src/$(PROG).c src/atari_draw.s src/fp_trig.c -o bin/$(PROG).s -I include 
-	$(CL) -t $(SYS) -O -Os -Oi -Or -Wl "-D__RESERVED_MEMORY__=0x2000" --static-locals -I include -o bin/$(PROG) src/$(PROG).c src/atari_draw.s src/fp_trig.c
+	$(CL) -t $(SYS) -O -Oi -Or -Wl "-D__RESERVED_MEMORY__=0x2000" -I include -o bin/$(PROG) src/$(PROG).c src/atari_draw.s src/fp_trig.c
 clean:
 	@$(DEL) bin/* 2>$(NULLDEV)
 dist: $(PROG)

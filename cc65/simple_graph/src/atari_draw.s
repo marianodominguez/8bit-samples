@@ -19,15 +19,14 @@ DY=tmp3
 TXTW=660
 
 ;todo get proper addr for these
-YX4LO=$E1
-YX4HI=$E2
-PIXZ=$E3
-X2=$E4
-Y2=$E6
-dtmp=$E7
-X1=$E8
-Y1=$E0
-
+YX4LO=$F1
+YX4HI=$F2
+PIXZ=$F3
+X2=$F4
+Y2=$F6
+dtmp=$F7
+X1=$F8
+Y1=$F0
 
 ; set border for debug
 .proc debug
@@ -36,7 +35,7 @@ Y1=$E0
     LDA TXTW+1
     STA ptr3+1
     LDY dtmp
-    LDA Y1
+    LDA PIXHI
     CLC
     ADC #16
     STA (ptr3),y
@@ -66,7 +65,6 @@ Y1=$E0
     sta SIOCB
     rts
 .endproc
-
 
 ; plox x,y - x is 2 bytes only in mode 8
 .proc  __plot
@@ -118,6 +116,11 @@ rloop:  sta (PIXLO),y
         lda PIXHI
         cmp tmp1
         bne sloop
+
+        lda SAVMSC ; reset screen pointers
+        sta PIXLO
+        lda SAVMSC+1
+        sta PIXHI
         rts
 .endproc
 
@@ -127,17 +130,22 @@ rloop:  sta (PIXLO),y
     ;store X2
     jsr popax
     sta X2
-    sta X2+1;
+    sta X2+1
 
     jsr popa ;get y1
     sta Y1
-    ;jsr debug
 
     ;store x1
     jsr popax
     sta X1
     stx X1+1
 
+    lda SAVMSC ; reset screen pointers
+    sta PIXLO
+    lda SAVMSC+1
+    sta PIXHI
+
+    jsr debug
     jsr find_row
     jsr find_col
     ;find but for pixel to draw
