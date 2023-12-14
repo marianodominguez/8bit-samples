@@ -35,7 +35,7 @@ Y1=$F0
     LDA TXTW+1
     STA ptr3+1
     LDY dtmp
-    LDA PIXHI
+    LDA PIXLO
     CLC
     ADC #16
     STA (ptr3),y
@@ -145,19 +145,17 @@ rloop:  sta (PIXLO),y
     lda SAVMSC+1
     sta PIXHI
 
-    jsr debug
     jsr find_row
     jsr find_col
-    ;find but for pixel to draw
+    ;jsr debug
+    ;find bit for pixel to draw
     lda X1
     and #7
     tax
     lda PIXTAB,x
     sta PIXZ
-    ldy #0
-    lda PIXZ
-    ora (PIXLO),y
-    sta (PIXLO),y
+    ora PIXLO
+    sta PIXLO
     ;line routine called here
     rts
 .endproc

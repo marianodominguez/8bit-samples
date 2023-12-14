@@ -49,9 +49,9 @@ int main(void) {
     _setcolor(2,4,4);
     _color(1);
 
-    //square(0,0,355,159);
-    square(0,0,10,10);
-
+    //square(0,0,255,159);
+    square(1,1,10,10);
+    square(245,149,255,159);
     wait_start();
 
     return EXIT_SUCCESS;
