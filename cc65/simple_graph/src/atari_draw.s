@@ -35,7 +35,7 @@ Y1=$F0
     LDA TXTW+1
     STA ptr3+1
     LDY dtmp
-    LDA PIXLO
+    LDA PIXZ
     CLC
     ADC #16
     STA (ptr3),y
@@ -116,11 +116,6 @@ rloop:  sta (PIXLO),y
         lda PIXHI
         cmp tmp1
         bne sloop
-
-        lda SAVMSC ; reset screen pointers
-        sta PIXLO
-        lda SAVMSC+1
-        sta PIXHI
         rts
 .endproc
 
@@ -130,7 +125,7 @@ rloop:  sta (PIXLO),y
     ;store X2
     jsr popax
     sta X2
-    sta X2+1
+    stx X2+1
 
     jsr popa ;get y1
     sta Y1
@@ -140,20 +135,16 @@ rloop:  sta (PIXLO),y
     sta X1
     stx X1+1
 
-    lda SAVMSC ; reset screen pointers
-    sta PIXLO
-    lda SAVMSC+1
-    sta PIXHI
-
     jsr find_row
     jsr find_col
-    ;jsr debug
+
     ;find bit for pixel to draw
     lda X1
     and #7
     tax
     lda PIXTAB,x
     sta PIXZ
+    ;jsr debug
     ora PIXLO
     sta PIXLO
     ;line routine called here
@@ -172,10 +163,10 @@ rloop:  sta (PIXLO),y
     asl YX4LO
     rol YX4HI   ;4*y1
     asl YX4LO
-    rol YX4HI   ;8*y2
+    rol YX4HI   ;yx4lo=8*y1
     clc
-    lda PIXLO
-    adc YX4LO
+    lda PIXLO   
+    adc YX4LO   ;pixlo+=yx4lo
     sta PIXLO
     lda PIXHI
     adc YX4HI
@@ -188,7 +179,7 @@ rloop:  sta (PIXLO),y
     clc
     lda PIXLO
     adc YX4LO
-    sta PIXLO
+    sta PIXLO   ;pixlo=8*y1+32*y1
     lda PIXHI
     adc YX4HI
     sta PIXHI

@@ -38,20 +38,17 @@ int main(void) {
         cputsxy(0,0,"Unable to get graphic mode");
         exit(1);
     }
-
     cursor(0);
-
-
     // Store fd for screen
     _setscreen(fd);
 
     _setcolor(1,1,14);
     _setcolor(2,4,4);
     _color(1);
-
+    _clear();
     //square(0,0,255,159);
     square(1,1,10,10);
-    square(245,149,255,159);
+    //square(245,149,255,159);
     wait_start();
 
     return EXIT_SUCCESS;
