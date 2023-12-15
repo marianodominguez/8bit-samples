@@ -49,7 +49,8 @@ int main(void) {
     square(128,0,140,159);
     square(0,0,10,10);
     square(245,149,255,159);
-    square(305,40,319,92);
+    square(200,0,256,159);
+    square(256,0,319,159);
     wait_start();
 
     return EXIT_SUCCESS;

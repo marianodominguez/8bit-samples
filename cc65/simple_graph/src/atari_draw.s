@@ -205,17 +205,16 @@ rloop:
     lsr a   ;x1 / 4
     lsr a   ;x1 / 8
     clc
-    adc PIXLO
-    bcc nocarry
-    inc PIXHI
-nocarry:
-    clc
     ldx X1+1
     cpx #1
     bne no_high
     adc #31
 no_high:
+    adc PIXLO
     sta PIXLO
+    bcc nocarry
+    inc PIXHI
+nocarry:
     rts
 .endproc
 
