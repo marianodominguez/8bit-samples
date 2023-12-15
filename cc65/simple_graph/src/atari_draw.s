@@ -35,7 +35,7 @@ Y1=$F0
     LDA TXTW+1
     STA ptr3+1
     LDY dtmp
-    LDA PIXZ
+    LDA PIXHI
     CLC
     ADC #16
     STA (ptr3),y
@@ -108,14 +108,20 @@ Y1=$F0
         sta tmp1
         lda SAVMSC
         sta PIXLO
-sloop:  lda #0
-rloop:  sta (PIXLO),y
+sloop:
+        lda #0
+rloop:
+        sta (PIXLO),y
         iny
         bne rloop
         inc PIXHI
         lda PIXHI
         cmp tmp1
         bne sloop
+        lda SAVMSC+1
+        sta PIXHI
+        lda SAVMSC
+        sta PIXLO
         rts
 .endproc
 
@@ -135,6 +141,11 @@ rloop:  sta (PIXLO),y
     sta X1
     stx X1+1
 
+    lda SAVMSC+1
+    sta PIXHI
+    lda SAVMSC
+    sta PIXLO
+
     jsr find_row
     jsr find_col
 
@@ -144,9 +155,9 @@ rloop:  sta (PIXLO),y
     tax
     lda PIXTAB,x
     sta PIXZ
-    ;jsr debug
-    ora PIXLO
-    sta PIXLO
+    ldy #0
+    ora (PIXLO),y
+    sta (PIXLO),y
     ;line routine called here
     rts
 .endproc
@@ -165,7 +176,7 @@ rloop:  sta (PIXLO),y
     asl YX4LO
     rol YX4HI   ;yx4lo=8*y1
     clc
-    lda PIXLO   
+    lda PIXLO
     adc YX4LO   ;pixlo+=yx4lo
     sta PIXLO
     lda PIXHI
@@ -190,22 +201,20 @@ rloop:  sta (PIXLO),y
 ; TODO: this is 1 byte x
 .proc find_col
     lda X1
-    lsr a
-    lsr a
-    lsr a
+    lsr a   ;x1 / 2
+    lsr a   ;x1 / 4
+    lsr a   ;x1 / 8
     clc
     adc PIXLO
-    sta PIXLO
     bcc nocarry
     inc PIXHI
 nocarry:
-    clc
-    lda SAVMSC
-    adc PIXLO
+    ldx X1+1
+    cpx #1
+    bne no_high
+    adc #31
+no_high:
     sta PIXLO
-    lda SAVMSC+1
-    adc PIXHI
-    sta PIXHI
     rts
 .endproc
 

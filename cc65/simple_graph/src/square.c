@@ -45,10 +45,11 @@ int main(void) {
     _setcolor(1,1,14);
     _setcolor(2,4,4);
     _color(1);
-    _clear();
-    //square(0,0,255,159);
-    square(1,1,10,10);
+    //_clear();
+    //square(128,0,140,159);
+    //square(1,1,10,10);
     //square(245,149,255,159);
+    square(305,40,319,92);
     wait_start();
 
     return EXIT_SUCCESS;
