@@ -209,6 +209,7 @@ rloop:
     bcc nocarry
     inc PIXHI
 nocarry:
+    clc
     ldx X1+1
     cpx #1
     bne no_high
