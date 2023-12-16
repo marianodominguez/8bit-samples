@@ -1,17 +1,4 @@
 
-mask:
-m03:		.byte $03
-m0c:		.byte $0c
-m30:		.byte $30
-mc0:		.byte $c0
-
-m0f:		.byte $0f
-m3c:		.byte	$3c
-m3f:		.byte	$3f
-mf0:		.byte $f0
-mfc:		.byte $fc
-mff:		.byte $ff
-
 .macro  sub addr
 		sec
 		sbc addr
@@ -36,15 +23,14 @@ mff:		.byte $ff
 		lsr
 		tay
 
-		;mask - count 3,2,1,0
+		;PIXTAB - count 3,2,1,0
 		lda X1
-		and #3
-		eor #3
+		and #7
 		tax
 
 		;put pixel
 		lda (PIXLO),y
-		ora mask,x
+		ora PIXTAB,x
 		sta (PIXLO),y
 
 		rts
@@ -92,7 +78,7 @@ l_line:
 		sta DX
 
 		;start PIXLO
-		lDY Y1
+		ldy Y1
 
     	jsr find_row
     	jsr find_col
@@ -103,10 +89,9 @@ l_line:
 		lsr
 		tay
 
-		;mask - count 3,2,1,0
+		;PIXTAB - count 3,2,1,0
 		lda X1
-		and #3
-		eor #3
+		and #7
 		tax
 
 		;DY
@@ -146,14 +131,14 @@ L1a:	;move right and down
 
 		;draw pixel
 		lda (PIXLO),y
-		ora mask,x
+		ora PIXTAB,x
 		sta (PIXLO),y
 
 		;quit
 		dec pixcnt
 		beq l1_out
 
-		;move mask right
+		;move PIXTAB right
 		dex
 		bpl l1a2
 
@@ -186,14 +171,14 @@ L1b:	;move right only
 
 		;draw pixel
 		lda (PIXLO),y
-		ora mask,x
+		ora PIXTAB,x
 		sta (PIXLO),y
 
 		;quit
 		dec pixcnt
 		beq l1_out
 
-		;move mask right
+		;move PIXTAB right
 		dex
 		bpl l1b2
 
@@ -239,14 +224,14 @@ L2a:		;move right and down
 
 		;draw pixel
 		lda (PIXLO),y
-		ora mask,x
+		ora PIXTAB,x
 		sta (PIXLO),y
 
 		;quit
 		dec pixcnt
 		beq L2_out
 
-		;move mask right
+		;move PIXTAB right
 		dex
 		bpl L2a2
 
@@ -278,7 +263,7 @@ L2b:		;move down only
 
 		;draw pixel
 		lda (PIXLO),y
-		ora mask,x
+		ora PIXTAB,x
 		sta (PIXLO),y
 
 		;quit
@@ -340,14 +325,14 @@ L3a:		;move right and up
 
 		;draw pixel
 		lda (PIXLO),y
-		ora mask,x
+		ora PIXTAB,x
 		sta (PIXLO),y
 
 		;quit
 		dec pixcnt
 		beq L3_out
 
-		;move mask right
+		;move PIXTAB right
 		dex
 		bpl L3a2
 
@@ -380,14 +365,14 @@ L3b:		;move right only
 
 		;draw pixel
 		lda (PIXLO),y
-		ora mask,x
+		ora PIXTAB,x
 		sta (PIXLO),y
 
 		;quit
 		dec pixcnt
 		beq L3_out
 
-		;move mask right
+		;move PIXTAB right
 		dex
 		bpl L3b2
 
@@ -433,14 +418,14 @@ L4a:		;move right and up
 
 		;draw pixel
 		lda (PIXLO),y
-		ora mask,x
+		ora PIXTAB,x
 		sta (PIXLO),y
 
 		;quit
 		dec pixcnt
 		beq L4_out
 
-		;move mask right
+		;move PIXTAB right
 		dex
 		bpl L4a2
 
@@ -473,7 +458,7 @@ L4b:		;move up only
 
 		;draw pixel
 		lda (PIXLO),y
-		ora mask,x
+		ora PIXTAB,x
 		sta (PIXLO),y
 
 		;quit
