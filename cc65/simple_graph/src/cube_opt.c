@@ -16,14 +16,12 @@ void wait_start() {
 }
 const unsigned char nvert=4;
 const unsigned char nfaces=6;
-int x,y,z,xp,yp,yr,zr,th,pixel_adr;
-unsigned char idx,val,bit;
+int x,y,z,xp,yp,yr,zr,th;
+unsigned char idx;
 int sqrt2=1414;
 int sqrt6=2449;
 unsigned int screen,row,col;
 
-#define SAVMSC 89
-#define BYTES_PER_ROW 40
 #define MODE 8
 #define MAX_X 160
 #define MAX_Y 192
@@ -60,93 +58,6 @@ int CUBE[]={
     -100, 100,-100,
      100, 100,-100
 };
-
-const unsigned char PIXTAB[]={128,64,32,16,8,4,2,1};
-
-void put_pixel(unsigned int x, unsigned char y) {
-    row = y*BYTES_PER_ROW;
-    col = x / 8;
-    pixel_adr=screen+row+col;
-    val = PEEK(pixel_adr);
-    bit = PIXTAB[x & 7];
-    POKE(pixel_adr, val | bit);
-}
-
-void line(unsigned int x, unsigned char y, unsigned int x1, unsigned char y1) {
-    int x0=x;
-    int y0=y;
-    int dx=abs(x1-x0);
-    int dy=abs(y1-y0);
-    int sx = -1;
-    int sy = -1;
-    int rx=x1;
-    int ry=y1;
-    int e2,error;
-
-    if (x0<x1) {
-        sx=1;
-        rx=x0;
-    }
-    if (y0<y1) {
-        sy=1;
-        ry=y0;
-    }
-
-    error = dx - dy;
-
-    while(x0!=x1 || y0!=y1) {
-        put_pixel(x0,y0);
-        e2=2*error;
-        if(e2 > -dy) {
-            error-= dy;
-            x0 += sx;
-        }
-        if(e2 < dx) {
-            error+= dx;
-            y0 += sy;
-        }
-    }
-}
-
-void bline(unsigned int x, unsigned char y, unsigned int u, unsigned char v) {
-    int x0=x;
-    int y0=y;
-    int x1=u;
-    int y1=v;
-    int dx=abs(x1-x0);
-    int dy=-abs(y1-y0);
-    int sx = -1;
-    int sy = -1;
-    int e2,error;
-
-    if (x0<x1) {
-        sx=1;
-    }
-    if (y0<y1) {
-        sy=1;
-    }
-
-    error = dx + dy;
-
-    while(1==1) {
-        put_pixel(x0,y0);
-        put_pixel(x1,y1);
-
-        if (abs(x0-x1)<=1 && abs(y0-y1)<=1) return;
-
-        e2=2*error;
-        if(e2 >= dy) {
-            error+= dy;
-            x0 += sx;
-            x1 -= sx;
-        }
-        if(e2 <= dx) {
-            error+= dx;
-            y0 += sy;
-            y1 -= sy;
-        }
-    }
-}
 
 void cube(void) {
     unsigned int i,j,xs,ys,x1,y1,x0,y0;
@@ -204,7 +115,6 @@ int main(void) {
     _setcolor(2,7,4);
     _color(1);
     wait_start();
-    screen = PEEK(SAVMSC)*256+PEEK(SAVMSC-1);
 
     for (th=0;th<360;th+=10) {
         cube();
