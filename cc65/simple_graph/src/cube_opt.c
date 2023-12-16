@@ -25,6 +25,7 @@ unsigned int screen,row,col;
 #define MODE 8
 #define MAX_X 160
 #define MAX_Y 192
+#define SAVMSC 89
 
 int CUBE[]={
 
@@ -95,8 +96,11 @@ void cube(void) {
         }
 
     }
-    _clear();
+}
 
+void switch_buffer( unsigned char n) {
+    unsigned int buf[2];
+    buf[0]=PEEK(SAVMSC)*256+PEEK(SAVMSC-1);
 }
 
 int main(void) {
@@ -117,7 +121,10 @@ int main(void) {
     //wait_start();
 
     for (th=0;th<360;th+=10) {
+        switch_buffer(0);
+        _clear();
         cube();
+        switch_buffer(1);
     }
     wait_start();
     _graphics(0);

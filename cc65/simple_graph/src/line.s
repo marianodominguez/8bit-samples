@@ -373,7 +373,7 @@ skip4:
 		;q>0 -> L3b
 		bcc L3a
 
-L3b:		;move right only
+L3b:	;move right only
 
 		;draw pixel
 		lda (PIXLO),y
@@ -426,7 +426,7 @@ L4:
 		; q>=0 -> L4b
 		bcs L4b
 
-L4a:		;move right and up
+L4a:	;move right and up
 
 		;draw pixel
 		lda (PIXLO),y

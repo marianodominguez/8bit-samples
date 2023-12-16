@@ -17,7 +17,7 @@ void wait_start() {
 void draw(unsigned int x1,unsigned char y1,unsigned int x2,unsigned char y2) {
     unsigned int x;
 
-    for(x=x1;x<x2;x+=4) {
+    for(x=x1;x<x2;x+=3) {
        _fast_draw(x1,y1,x,y2);
     }
 }
