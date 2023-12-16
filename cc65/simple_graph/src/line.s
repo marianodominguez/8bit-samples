@@ -28,12 +28,12 @@ mff:		.byte $ff
 		lDY Y1
 
     	jsr find_row
-    	jsr find_col
+    	;jsr find_col
 
 		;byte x offset
 		lda X1
-		lsr
-		lsr
+		lsr a
+		lsr a
 		tay
 
 		;mask - count 3,2,1,0
@@ -92,15 +92,15 @@ l_line:
 		sta DX
 
 		;start PIXLO
-		lDY Y1
+		ldy Y1
 
     	jsr find_row
-    	jsr find_col
+    	;jsr find_col
 
 		;byte x offset
 		lda X1
-		lsr
-		lsr
+		lsr a
+		lsr a
 		tay
 
 		;mask - count 3,2,1,0
@@ -118,14 +118,11 @@ l_line:
 		bcs nojump
 		jmp L34
 nojump:
-
 		;dxy = dx-DY
 		lda DX
 		sub DY
 		sta dxy
-
 		bcc L2
-
 L1:
 		;pixel count
 		lda DX
@@ -469,7 +466,7 @@ skip5:
 		;q>=0 -> L4b
 		bcc L4a
 
-L4b:		;move up only
+L4b:	;move up only
 
 		;draw pixel
 		lda (PIXLO),y
@@ -487,7 +484,6 @@ L4b:		;move up only
 		bcs skip6
 		dec PIXLO+1
 skip6:
-
 		;advance q
 		lda q
 		sub DX

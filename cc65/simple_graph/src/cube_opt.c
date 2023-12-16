@@ -25,7 +25,7 @@ unsigned int screen,row,col;
 #define SAVMSC 89
 #define BYTES_PER_ROW 40
 #define MODE 8
-#define MAX_X 320
+#define MAX_X 160
 #define MAX_Y 192
 
 int CUBE[]={
@@ -157,8 +157,8 @@ void cube(void) {
             y=CUBE[idx++];
             z=CUBE[idx++];
 
-            x=x/2;
-            z=z/2;
+            x=x/3;
+            z=z/3;
             y=y/3;
 
             //rotation
@@ -206,7 +206,7 @@ int main(void) {
     wait_start();
     screen = PEEK(SAVMSC)*256+PEEK(SAVMSC-1);
 
-    for (th=0;th<360;th+=20) {
+    for (th=0;th<360;th+=10) {
         cube();
     }
     wait_start();
