@@ -114,7 +114,7 @@ int main(void) {
     _setcolor(1,1,14);
     _setcolor(2,7,4);
     _color(1);
-    wait_start();
+    //wait_start();
 
     for (th=0;th<360;th+=10) {
         cube();
