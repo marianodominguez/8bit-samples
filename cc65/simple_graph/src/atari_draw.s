@@ -27,6 +27,11 @@ Y2=$F6
 dtmp=$F7
 X1=$F8
 Y1=$F0
+pixcnt=$FF
+q=$EF
+dxy=$EE
+
+.include "line.s"
 
 ; set border for debug
 .proc debug
@@ -146,19 +151,20 @@ rloop:
     lda SAVMSC
     sta PIXLO
 
-    jsr find_row
-    jsr find_col
+    ;jsr find_row
+    ;jsr find_col
 
     ;find bit for pixel to draw
-    lda X1
-    and #7
-    tax
-    lda PIXTAB,x
-    sta PIXZ
-    ldy #0
-    ora (PIXLO),y
-    sta (PIXLO),y
+    ;lda X1
+    ;and #7
+    ;tax
+    ;lda PIXTAB,x
+    ;sta PIXZ
+    ;ldy #0
+    ;ora (PIXLO),y
+    ;sta (PIXLO),y
     ;line routine called here
+    jsr Line
     rts
 .endproc
 

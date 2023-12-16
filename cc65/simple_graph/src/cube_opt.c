@@ -177,7 +177,7 @@ void cube(void) {
                 //put_pixel(xs,ys);
             }
             else {
-                bline(x1,y1, xs,ys);
+                _fast_draw(x1,y1,xs,ys);
             }
             x1=xs;
             y1=ys;

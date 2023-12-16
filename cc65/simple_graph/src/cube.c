@@ -98,11 +98,9 @@ int main(void) {
                 if (j==0) {
                     x0=xs;
                     y0=ys;
-                    _plot(xs,ys);
                 }
                 else {
-                    _plot(x1,y1);
-                    _drawto(xs,ys);
+                    _fast_draw(x1,y1,xs,ys);
                 }
                 x1=xs;
                 y1=ys;
