@@ -126,8 +126,8 @@ void reserve_ram() {
     }
 
     //original ram jump
-    rhi=PEEK(dljmp);                    //Store address of ssecond half of display location
-    rlo=PEEK(dljmp+1);
+    rlo=PEEK(dljmp);                    //Store address of ssecond half of display location
+    rhi=PEEK(dljmp+1);
 
     POKE(SAVMSC-1,(unsigned int) &BUFFER & 0x00ff);     // point write video to buffer
     POKE(SAVMSC,(unsigned int) &BUFFER/256);
@@ -140,16 +140,19 @@ void switch_buffer( unsigned char n) {
     unsigned int buf_hi=(unsigned int) &BUFFER/256;
     unsigned int buf_lo=(unsigned int) &BUFFER & 0x00FF;
     //original buffer jump
-    bhi=(unsigned int) ( &BUFFER + 4096 )/256;
-    blo=(unsigned int) ( &BUFFER + 4096 )& 0x00FF;
+
+    //fix this offset
+
+    bhi=(unsigned int) ( &BUFFER[3800-120] )/256;
+    blo=(unsigned int) ( &BUFFER[3800-120] )& 0x00FF;
 
     if (n==0) {
         POKE(SAVMSC,rh);      //write to video RAM
         POKE(SAVMSC-1,rl);
         POKE(dl5, buf_hi);    //Display buffer contents
         POKE(dl4,buf_lo);
-        POKE(dljmp, bhi);     //jump to second 4k of buffer
-        POKE(dljmp+1, blo);
+        POKE(dljmp, blo);     //jump to second 4k of buffer
+        POKE(dljmp+1, bhi);
 
         _setcolor(2,0,4);
 
@@ -158,8 +161,8 @@ void switch_buffer( unsigned char n) {
         POKE(SAVMSC-1,buf_lo);
         POKE(dl5, rh);              //display video Ram
         POKE(dl4, rl);
-        POKE(dljmp, rhi);           // Jump to second 4k of video
-        POKE(dljmp+1, rlo);
+        POKE(dljmp, rlo);           // Jump to second 4k of video
+        POKE(dljmp+1, rhi);
         _setcolor(2,7,4);
     }
 }
