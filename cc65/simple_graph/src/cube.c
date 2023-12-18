@@ -6,7 +6,7 @@
 #include <conio.h>
 #include "fp_trig.h"
 
-#define BYTES_PER_ROW 40
+#define BYTES_PER_ROW 20
 #define SAVMSC 89
 
 void wait_start() {
