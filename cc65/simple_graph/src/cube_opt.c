@@ -113,25 +113,25 @@ void reserve_ram() {
     int i;
     //first buffer setup
 
-    fd = _graphics(MODE+16);
+    fd = _graphics(MODE+16);        //initialize graphics mode
     rh = PEEK(SAVMSC);
-    rl = PEEK(SAVMSC-1);
-    dl = PEEK(560)+256*PEEK(561);
-    dl4=dl+4;
-    dl5=dl+5;
+    rl = PEEK(SAVMSC-1);            // get video memory start
+    dl = PEEK(560)+256*PEEK(561);   // Get display list location
+    dl4=dl+4;                       // 4th (low byte) of memory to display
+    dl5=dl+5;                       // 5th (high byte) of memory to display
     _clear();
 
-    for(i=dl5+1; i<dl5+192; i++) {
+    for(i=dl5+1; i<dl5+192; i++) {      //Look for second jump instruction after 4k
         if(PEEK(i)==79) dljmp=i+1;
     }
 
     //original ram jump
-    rhi=PEEK(dljmp);
+    rhi=PEEK(dljmp);                    //Store address of ssecond half of display location
     rlo=PEEK(dljmp+1);
 
-    POKE(SAVMSC-1,(unsigned int) &BUFFER & 0x00ff);
+    POKE(SAVMSC-1,(unsigned int) &BUFFER & 0x00ff);     // point write video to buffer
     POKE(SAVMSC,(unsigned int) &BUFFER/256);
-    fd = _graphics(MODE+16);
+    fd = _graphics(MODE+16);                            //initialize grahics over buffer
     _clear();
 
 }
@@ -144,21 +144,21 @@ void switch_buffer( unsigned char n) {
     blo=(unsigned int) ( &BUFFER + 4096 )& 0x00FF;
 
     if (n==0) {
-        POKE(SAVMSC,rh);
+        POKE(SAVMSC,rh);      //write to video RAM
         POKE(SAVMSC-1,rl);
-        POKE(dl5, buf_hi);
+        POKE(dl5, buf_hi);    //Display buffer contents
         POKE(dl4,buf_lo);
-        POKE(dljmp, bhi);
+        POKE(dljmp, bhi);     //jump to second 4k of buffer
         POKE(dljmp+1, blo);
 
         _setcolor(2,0,4);
 
     } else {
-        POKE(SAVMSC,buf_hi);
+        POKE(SAVMSC,buf_hi);     //write to buffer
         POKE(SAVMSC-1,buf_lo);
-        POKE(dl5, rh);
+        POKE(dl5, rh);              //display video Ram
         POKE(dl4, rl);
-        POKE(dljmp, rhi);
+        POKE(dljmp, rhi);           // Jump to second 4k of video
         POKE(dljmp+1, rlo);
         _setcolor(2,7,4);
     }
