@@ -7,7 +7,7 @@
 #include "fp_trig.h"
 
 #pragma data-name (push, "BUFFER")
-unsigned char BUFFER[0x2000] ={0,0,0,0,0};
+unsigned char BUFFER[0x2000] ={};
 #pragma  data-name (pop)
 
 void wait_start() {
@@ -143,8 +143,8 @@ void switch_buffer( unsigned char n) {
 
     //fix this offset
 
-    bhi=(unsigned int) ( &BUFFER[3800-120] )/256;
-    blo=(unsigned int) ( &BUFFER[3800-120] )& 0x00FF;
+    bhi=buf_hi+0x0E;
+    blo=buf_lo+0xB0;
 
     if (n==0) {
         POKE(SAVMSC,rh);      //write to video RAM
