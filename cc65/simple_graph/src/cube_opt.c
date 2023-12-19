@@ -121,7 +121,7 @@ void reserve_ram() {
 
     //fix this offset 96 lines, 40 bytes per line
 
-    bhi=(unsigned int) buf_hi+0x0E;
+    bhi=(unsigned int) buf_hi+0x0F;
     blo=(unsigned int) buf_lo+0xB0;
 
     fd = _graphics(MODE+16);        //initialize graphics mode
@@ -198,7 +198,7 @@ int main(void) {
     //wait_start();
 
     //switch_buffer(n);
-    for (th=0;th<30;th+=10) {
+    for (th=0;th<360;th+=10) {
         switch_buffer(n);
         _clear();
         cube();
@@ -211,14 +211,14 @@ int main(void) {
 
     _graphics(0);
 
-    for(i=0; i<128;i++) {
-        printf("%d,", DL[i]);
+    for(i=0; i<200;i++) {
+        printf("%x,", DL[i]);
     }
 
     printf("\n--\n");
 
-    for(i=0; i<128;i++) {
-        printf("%d,", DL2[i]);
+    for(i=0; i<200;i++) {
+        printf("%x,", DL2[i]);
     }
     wait_start();
 
