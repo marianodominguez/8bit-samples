@@ -33,7 +33,7 @@ unsigned int buf[2];
 #define SAVMSC 89
 
 unsigned int dl,dl4,dl5,dljmp;
-unsigned int rh,rl,buf_lo,buf_hi,bhi,blo,rhi,rlo;
+unsigned char rh,rl,buf_lo,buf_hi,bhi,blo,rhi,rlo;
 int fd;
 
 
@@ -135,13 +135,11 @@ void reserve_ram() {
     _clear();
     buf_hi=(unsigned int) &BUFFER/256;
     buf_lo=(unsigned int) &BUFFER & 0x00FF;
-
+    bhi=buf_hi+0x0F;
+    blo=buf_lo+0xB0;
 }
 
 void switch_buffer( unsigned char n) {
-    bhi=buf_hi+0x0F;
-    blo=buf_lo+0xB0;
-
     if (n==0) {
         POKE(SAVMSC,rh);      //write to video RAM
         POKE(SAVMSC-1,rl);
