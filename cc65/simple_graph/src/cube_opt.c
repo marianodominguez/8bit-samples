@@ -32,8 +32,8 @@ unsigned int buf[2];
 #define MAX_Y 192
 #define SAVMSC 89
 
-unsigned int dl,dl4,dl5,dljmp,bhi,blo,rhi,rlo;
-unsigned int rh,rl;
+unsigned int dl,dl4,dl5,dljmp;
+unsigned int rh,rl,buf_lo,buf_hi,bhi,blo,rhi,rlo;
 int fd;
 
 
@@ -133,17 +133,13 @@ void reserve_ram() {
     POKE(SAVMSC,(unsigned int) &BUFFER/256);
     fd = _graphics(MODE+16);                            //initialize grahics over buffer
     _clear();
+    buf_hi=(unsigned int) &BUFFER/256;
+    buf_lo=(unsigned int) &BUFFER & 0x00FF;
 
 }
 
 void switch_buffer( unsigned char n) {
-    unsigned int buf_hi=(unsigned int) &BUFFER/256;
-    unsigned int buf_lo=(unsigned int) &BUFFER & 0x00FF;
-    //original buffer jump
-
-    //fix this offset
-
-    bhi=buf_hi+0x0E;
+    bhi=buf_hi+0x0F;
     blo=buf_lo+0xB0;
 
     if (n==0) {
