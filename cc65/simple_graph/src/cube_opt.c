@@ -7,7 +7,7 @@
 #include "fp_trig.h"
 
 #pragma data-name (push, "BUFFER")
-unsigned char BUFFER[0x2000] ={0,0,0,0,0};
+unsigned char BUFFER[0x2000]={};
 #pragma  data-name (pop)
 
 void wait_start() {
@@ -18,24 +18,26 @@ void wait_start() {
         for (i=0; i<500; i++);
     }
 }
-const unsigned char nvert=4;
-const unsigned char nfaces=6;
-int x,y,z,xp,yp,yr,zr,th;
-unsigned char idx;
-int sqrt2=1414;
-int sqrt6=2449;
-unsigned int screen,row,col;
-unsigned int buf[2];
 
 #define MODE 8
 #define MAX_X 160
 #define MAX_Y 192
 #define SAVMSC 89
 
-unsigned int dl,dl4,dl5,dljmp,bhi,blo,rhi,rlo;
+unsigned int DL[255],DL2 [255];
+
+const unsigned char nvert=4;
+const unsigned char nfaces=6;
+int x,y,z,xp,yp,yr,zr,th,i;
+unsigned char idx;
+int sqrt2=1414;
+int sqrt6=2449;
+unsigned int screen,row,col;
+unsigned int buf[2];
+
+unsigned int dl,dl4,dl5,dljmp,rhi,rlo,bhi,blo,buf_hi,buf_lo;
 unsigned int rh,rl;
 int fd;
-
 
 int CUBE[]={
 
@@ -113,6 +115,15 @@ void reserve_ram() {
     int i;
     //first buffer setup
 
+    buf_hi=(unsigned int) &BUFFER/256;
+    buf_lo=(unsigned int) &BUFFER & 0x00FF;
+    //original buffer jump
+
+    //fix this offset 96 lines, 40 bytes per line
+
+    bhi=(unsigned int) buf_hi+0x0E;
+    blo=(unsigned int) buf_lo+0xB0;
+
     fd = _graphics(MODE+16);        //initialize graphics mode
     rh = PEEK(SAVMSC);
     rl = PEEK(SAVMSC-1);            // get video memory start
@@ -125,36 +136,35 @@ void reserve_ram() {
         if(PEEK(i)==79) dljmp=i+1;
     }
 
+    for(i=0; i<255; i++) {
+        DL[i]=PEEK(dl+i);
+    }
+
     //original ram jump
-    rlo=PEEK(dljmp);                    //Store address of ssecond half of display location
+    rlo=PEEK(dljmp);                    //Store address of second half of display location
     rhi=PEEK(dljmp+1);
 
     POKE(SAVMSC-1,(unsigned int) &BUFFER & 0x00ff);     // point write video to buffer
     POKE(SAVMSC,(unsigned int) &BUFFER/256);
     fd = _graphics(MODE+16);                            //initialize grahics over buffer
     _clear();
-
 }
 
 void switch_buffer( unsigned char n) {
-    unsigned int buf_hi=(unsigned int) &BUFFER/256;
-    unsigned int buf_lo=(unsigned int) &BUFFER & 0x00FF;
-    //original buffer jump
-
-    //fix this offset
-
-    bhi=(unsigned int) ( &BUFFER[3800-120] )/256;
-    blo=(unsigned int) ( &BUFFER[3800-120] )& 0x00FF;
 
     if (n==0) {
         POKE(SAVMSC,rh);      //write to video RAM
         POKE(SAVMSC-1,rl);
         POKE(dl5, buf_hi);    //Display buffer contents
-        POKE(dl4,buf_lo);
+        POKE(dl4, buf_lo);
         POKE(dljmp, blo);     //jump to second 4k of buffer
         POKE(dljmp+1, bhi);
 
         _setcolor(2,0,4);
+
+        for(i=0; i<255; i++) {
+            DL2[i]=PEEK(dl+i);
+        }
 
     } else {
         POKE(SAVMSC,buf_hi);     //write to buffer
@@ -169,7 +179,7 @@ void switch_buffer( unsigned char n) {
 
 int main(void) {
     unsigned int n=0;
-
+    unsigned int i;
     reserve_ram();
 
     if (fd == -1) {
@@ -188,7 +198,7 @@ int main(void) {
     //wait_start();
 
     //switch_buffer(n);
-    for (th=0;th<360;th+=10) {
+    for (th=0;th<30;th+=10) {
         switch_buffer(n);
         _clear();
         cube();
@@ -198,7 +208,19 @@ int main(void) {
             n=0;
         }
     }
-    wait_start();
+
     _graphics(0);
+
+    for(i=0; i<128;i++) {
+        printf("%d,", DL[i]);
+    }
+
+    printf("\n--\n");
+
+    for(i=0; i<128;i++) {
+        printf("%d,", DL2[i]);
+    }
+    wait_start();
+
     return EXIT_SUCCESS;
 }
