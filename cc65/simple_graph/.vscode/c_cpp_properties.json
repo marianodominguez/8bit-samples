@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Mac",
+            "name": "CC65",
             "includePath": [
                 "${workspaceFolder}/**",
                 "/usr/share/cc65/include"

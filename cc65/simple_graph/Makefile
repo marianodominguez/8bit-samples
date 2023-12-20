@@ -10,7 +10,7 @@ RMDIR = $(RM) -r
 CC65_INC=/usr/share/cc65/include
 
 ifndef PROG
-  PROG = graph
+  PROG = cube_opt
 endif
 
 ifdef CC65_HOME

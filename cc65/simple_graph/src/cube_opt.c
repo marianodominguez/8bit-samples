@@ -148,7 +148,7 @@ void switch_buffer( unsigned char n) {
         POKE(dljmp, blo);     //jump to second 4k of buffer
         POKE(dljmp+1, bhi);
 
-        _setcolor(2,0,4);
+        //_setcolor(2,0,4);
 
     } else {
         POKE(SAVMSC,buf_hi);     //write to buffer
@@ -157,7 +157,7 @@ void switch_buffer( unsigned char n) {
         POKE(dl4, rl);
         POKE(dljmp, rlo);           // Jump to second 4k of video
         POKE(dljmp+1, rhi);
-        _setcolor(2,7,4);
+        //_setcolor(2,7,4);
     }
 }
 
