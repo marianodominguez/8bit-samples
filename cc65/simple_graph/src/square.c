@@ -17,7 +17,7 @@ void wait_start() {
 void draw(unsigned int x1,unsigned char y1,unsigned int x2,unsigned char y2) {
     unsigned int x;
 
-    for(x=x1;x<x2;x+=3) {
+    for(x=x1;x<x2;x++) {
        _fast_draw(x1,y1,x,y2);
     }
 }
@@ -26,7 +26,7 @@ int main(void) {
 
     unsigned int x2=0;
     unsigned char y2=0;
-    int fd = _graphics(8);
+    int fd = _graphics(6);
 
     if (fd == -1) {
         cputsxy(0,0,"Unable to get graphic mode");
@@ -36,18 +36,19 @@ int main(void) {
     // Store fd for screen
     _setscreen(fd);
 
-    _setcolor(1,1,14);
-    _setcolor(2,4,4);
+    _setcolor(0,1,14);
+
     _color(1);
     _clear();
-    draw(0,80,160,159);
+    _setcolor(4,4,4);
+    draw(0,0,50,50);
 
-    draw(0,80,160,0);
+    //draw(0,80,,0);
 
    //_clear();
 
-    draw(80,80,160,159);
-    draw(80,80,160,0);
+    //draw(80,80,160,92);
+    //draw(80,80,160,0);
 
     wait_start();
 

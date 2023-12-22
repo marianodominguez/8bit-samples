@@ -27,11 +27,17 @@ mff:		.byte $ff
 		;start position
 		lDY Y1
 
-    	jsr find_row
+		lda DINDEX
+		cmp #8
+		beq row40
+		jsr find_row_20
+		jmp bx
+
+row40:	jsr find_row
     	;jsr find_col
 
 		;byte x offset
-		lda X1
+bx:		lda X1
 		lsr a
 		lsr a
 		tay
@@ -47,6 +53,35 @@ mff:		.byte $ff
 		ora mask,x
 		sta (PIXLO),y
 
+		rts
+.endproc
+
+
+.proc find_row_20
+		;  FIND THE ROW (Y-COORD X 20)
+		lda #0
+    	sta YX4HI
+		lda Y1
+		LSR A
+		LSR A
+		LSR A
+		LSR A
+		STA PIXHI
+		LSR A
+		LSR A
+		STA YX4HI
+		LDA Y1
+		ASL A
+		ASL A
+		STA YX4LO
+		ASL A
+		ASL A
+		CLC
+		ADC YX4LO
+		STA PIXLO
+		LDA PIXHI
+		ADC YX4HI
+		sta PIXHI
 		rts
 .endproc
 
@@ -93,12 +128,16 @@ l_line:
 
 		;start PIXLO
 		ldy Y1
-
-    	jsr find_row
+		lda DINDEX
+		cmp #8
+		beq row40
+		jsr find_row_20
+		jmp bx
+row40:	jsr find_row
     	;jsr find_col
 
 		;byte x offset
-		lda X1
+bx:		lda X1
 		lsr a
 		lsr a
 		tay

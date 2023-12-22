@@ -106,10 +106,22 @@ dxy=$EE
 
 ; TODO: make this for other graphic modes
 .proc __clear
+        ;get mode from DL
+        lda DINDEX
+        cmp #8
+        beq hires
+
         lda SAVMSC+1
         sta PIXHI
         clc
+        adc #16
+        jmp cont
+hires:  lda SAVMSC+1
+        sta PIXHI
+        clc
         adc SCR_RAM
+
+cont:
         sta tmp1
         lda SAVMSC
         sta PIXLO
