@@ -10,6 +10,7 @@
 
         .include "atari.inc"
         .define SCR_RAM #32
+        .define nbyte 3
 
 COLOR = $C8 ; not in include. taken from Atari basic source book
 PIXLO=ptr1
@@ -30,6 +31,7 @@ Y1=$F0
 pixcnt=$FF
 q=$EF
 dxy=$EE
+row_bytes=$ED
 
 .include "line.s"
 
@@ -64,10 +66,19 @@ dxy=$EE
     rts
 .endproc
 
-;setscreen fd - file descriptor for screen
+;setscreen fd - file descriptor for screen and values for line
 .proc __setscreen
     jsr fdtoiocb
     sta SIOCB
+
+	lda #40
+	sta row_bytes
+	lda DINDEX
+	cmp #8
+	beq row40
+	lda #20
+	sta row_bytes
+row40:
     rts
 .endproc
 
@@ -120,7 +131,6 @@ hires:  lda SAVMSC+1
         sta PIXHI
         clc
         adc SCR_RAM
-
 cont:
         sta tmp1
         lda SAVMSC

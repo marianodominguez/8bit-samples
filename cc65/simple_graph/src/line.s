@@ -22,10 +22,9 @@ mff:		.byte $ff
 		adc addr
 .endmacro
 
-
 .proc PutPixel
 		;start position
-		lDY Y1
+		ldy Y1
 
 		lda DINDEX
 		cmp #8
@@ -52,7 +51,6 @@ bx:		lda X1
 		lda (PIXLO),y
 		ora mask,x
 		sta (PIXLO),y
-
 		rts
 .endproc
 
@@ -61,27 +59,26 @@ bx:		lda X1
 		;  FIND THE ROW (Y-COORD X 20)
 		lda #0
     	sta YX4HI
-		lda Y1
-		LSR A
-		LSR A
-		LSR A
-		LSR A
-		STA PIXHI
-		LSR A
-		LSR A
-		STA YX4HI
-		LDA Y1
-		ASL A
-		ASL A
-		STA YX4LO
-		ASL A
-		ASL A
-		CLC
-		ADC YX4LO
-		STA PIXLO
-		LDA PIXHI
-		ADC YX4HI
-		sta PIXHI
+		clc
+		lda Y1   ; coord
+		asl a 	;y*2
+		asl a   ;y*4
+		adc YX4LO
+		sta YX4LO
+		asl a   ;y*8
+		asl a   ;y*16
+		adc YX4LO
+		sta YX4LO
+		bcc nocarry
+		inc YX4HI
+nocarry:
+		clc
+		lda PIXLO
+		adc YX4LO
+		sta PIXLO
+		lda PIXHI
+		adc YX4HI  ; ;y1*4+y1*16
+		sta PIXHI  ;
 		rts
 .endproc
 
@@ -131,7 +128,7 @@ l_line:
 		lda DINDEX
 		cmp #8
 		beq row40
-		jsr find_row_20
+		jsr find_row_20  ; todo move this to init
 		jmp bx
 row40:	jsr find_row
     	;jsr find_col
@@ -204,7 +201,7 @@ L1a:	;move right and down
 l1a2:
 		;move down
 		tya
-		add #40
+		add row_bytes
 		tay
 		bcc skip3
 		inc PIXLO+1
@@ -234,7 +231,7 @@ L1b:	;move right only
 		bpl l1b2
 
 		;move to next byte
-		ldx #3
+		ldx #nbyte
 
 		iny
 		bne l1b2
@@ -287,7 +284,7 @@ L2a:		;move right and down
 		bpl L2a2
 
 		;move to next byte
-		ldx #3
+		ldx #nbyte
 
 		iny
 		bne L2a2
@@ -297,7 +294,7 @@ L2a:		;move right and down
 L2a2:
 		;move down
 		tya
-		add #40
+		add row_bytes
 		tay
 		bcc skip
 		inc PIXLO+1
@@ -310,7 +307,7 @@ skip:
 		;q<0 -> L2a
 		bcc L2a
 
-L2b:		;move down only
+L2b:	;move down only
 
 		;draw pixel
 		lda (PIXLO),y
@@ -323,7 +320,7 @@ L2b:		;move down only
 
 		;move down
 		tya
-		add #40
+		add row_bytes
 		tay
 		bcc skip2
 		inc PIXLO+1
@@ -372,7 +369,7 @@ L3:
 		; q>=0 -> L3b
 		bcs L3b
 
-L3a:		;move right and up
+L3a:	;move right and up
 
 		;draw pixel
 		lda (PIXLO),y
@@ -388,7 +385,7 @@ L3a:		;move right and up
 		bpl L3a2
 
 		;move to next byte
-		ldx #3
+		ldx #nbyte
 
 		iny
 		bne L3a2
@@ -398,7 +395,7 @@ L3a:		;move right and up
 L3a2:
 		;move up
 		tya
-		sub #40
+		sub row_bytes
 		tay
 		bcs skip4
 		dec PIXLO+1
@@ -428,7 +425,7 @@ L3b:	;move right only
 		bpl L3b2
 
 		;move to next byte
-		ldx #3
+		ldx #nbyte
 
 		iny
 		bne L3b2
@@ -481,7 +478,7 @@ L4a:	;move right and up
 		bpl L4a2
 
 		;move to next byte
-		ldx #3
+		ldx #nbyte
 
 		iny
 		bne L4a2
@@ -491,7 +488,7 @@ L4a:	;move right and up
 L4a2:
 		;move up
 		tya
-		sub #40
+		sub #0
 		tay
 		bcs skip5
 		dec PIXLO+1
@@ -518,7 +515,7 @@ L4b:	;move up only
 
 		;move up
 		tya
-		sub #40
+		sub row_bytes
 		tay
 		bcs skip6
 		dec PIXLO+1
