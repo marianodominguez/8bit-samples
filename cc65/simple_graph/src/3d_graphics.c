@@ -35,21 +35,54 @@ unsigned int buf[2];
 
 unsigned int dl,dl4,dl5,dljmp;
 unsigned char rh,rl,buf_lo,buf_hi,bhi,blo,rhi,rlo;
-int fd;
-
 
 int MODEL[NVERTICES];
+int b_patch[16][32], patch[16];
+
+void split(int a[], char *s) {
+    char *token;
+    const char delim[2] = ",";
+
+    token = strtok(s, delim);
+    int i = 0;
+    while (token != NULL)
+    {
+        a[i] = atoi(token);
+        i++;
+        token = strtok(NULL, delim);
+    }
+}
 
 int readModel(char *filename) {
     int f=fopen(filename);
+    int i,j;
+    char line[255]
     if (f==-1) {
         printf("Unablr to read model");
         exit(1);
     }
-
+    fgets(line, sizeof(line), f);
+    int npatches=atoi(line);
     // Read patches
-
+    for(i=0; i< npatches; i++) {
+        fgets(line, sizeof(line), f);
+        split(patch,line);
+        for (j = 0; j < 16; j++)
+        {
+            b_patch[j][i] = patch[j];
+        }
+    }
     // read vertices
+    fgets(line, sizeof(line), f);
+    nvert=atoi(line);
+
+    for (int i = 0; i < nvert; i++) {
+        fgets(line, sizeof(line), f);
+        if (strlen(line) < 5)
+            fgets(line, sizeof(line), f);
+        sscanf(line, "%f,%f,%f", &Px[i], &Py[i], &Pz[i]);
+        printf("%f %f %f\n",Px[i],Py[i],Pz[i]);
+    }
 }
 
 void draw(void) {
@@ -58,12 +91,9 @@ void draw(void) {
 
     for(i=0;i<nfaces-1;i++) {
         for(j=0; j<nvert; j++) {
-            x=MODEL
-        [idx++];
-            y=MODEL
-        [idx++];
-            z=MODEL
-        [idx++];
+            x=MODEL[idx++];
+            y=MODEL[idx++];
+            z=MODEL[idx++];
 
             x=x/5;
             z=z/4;
@@ -73,11 +103,11 @@ void draw(void) {
             yr =  ((long) y*f_cos(th)  - (long) z*f_sin(th))  / SCALE_FACTOR;
             zr =  ((long) y*f_sin(th)  + (long) z*f_cos(th))  / SCALE_FACTOR;
 
-            xp = (long) 1000*(x-zr)/sqrt2;
-            yp = (long) 1000*(x+2*yr+zr)/sqrt6;
+            xp = (long) (x-zr)/sqrt2;
+            yp = (long) (x+2*yr+zr)/sqrt6;
 
-            xs = xp + MAX_X/2;
-            ys = MAX_Y/2 - yp;
+            xs = xp/1000 + MAX_X/2;
+            ys = MAX_Y/2 - yp/1000;
 
             if (j==0) {
                 x0=xs;
@@ -148,6 +178,8 @@ void switch_buffer( unsigned char n) {
 
 int main(void) {
     unsigned int n=0;
+
+    readModel("TEAPOT.TXT");
 
     reserve_ram();
 

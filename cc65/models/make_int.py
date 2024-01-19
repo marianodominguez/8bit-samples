@@ -18,9 +18,11 @@ while line!='' and line!="\n":
 f.close()
 
 f=open('teapot_int', 'w')
+f.write(f"{npatches}\n")
 for p in patches:
     f.write(",".join([str(x) for x in p]))
     f.write("\n")
+f.write(f"{nvert}\n")    
 for v in points:
     f.write(",".join( [str(x) for x in v]))
     f.write("\n")
