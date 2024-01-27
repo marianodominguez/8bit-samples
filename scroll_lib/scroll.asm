@@ -11,21 +11,21 @@
 ; 25 to scroll slower,
 ; Change the 7 in line
 ; 33 to the number of scan lines
-;per mode line minus 1 far other graphics modes 
+;per mode line minus 1 far other graphics modes
 ;Change the 40 in line 39 to the number of jbytes per mode line f
 ;or other graphics modes
 
-    ORG $0600   ;Load into page 6.
+    org $0600   ;Load into page 6.
     PLA         ;Remove argument count.
     LDY #10     ;These 4 statements set up
     LDX #6      ;a deferred vertical blank
-    LDA #7      ;inter rupt - use LDA #6 -for
+    LDA #7      ;interrupt - use LDA #6 -for
     JMP $E45C   ;an immediate VBI.
-    INC ICB     ;SCB is counter for number of
+    INC $CB     ;$CB is counter for number of
     LDA #1      ;VB cycles before next scroll.
     CMP $CB     ;If not up to desired interval
     BNE EXIT    ;then exit VBI
-    INC $CC     ;*CC is counter for number
+    INC $CC     ;$CC is counter for number
     LDA $CC     ;of fine scrolls.
     STA $D405   ;Storein vertical fine scroil register.
     LDA #0      ;reset VB counter
