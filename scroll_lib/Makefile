@@ -1,14 +1,8 @@
 scroll:
-	tr '\12\11' '\233\177' < GR0SCR.TBA > GR0SCR.LST
-	cp ../atr_images/blank_SD.atr work.atr
-	franny -A  -i GR0SCR.LST -o WORK.LST work.atr
-	atari800 -nobasic ../atr_images/TBXL.atr work.atr &
-	sleep 5
-	xdotool type -delay 200 'E."D2:WORK.LST'
-	xdotool key -delay 100 Return
-	sleep 2
-	xdotool type -delay 200 'RUN'
-	xdotool key -delay 100 Return
+	basicParser -b GR0SCR.TBA -o tmp/AUTORUN.BAS
+	cp ../atr_images/TBXL.atr work.atr
+	franny -A  -i tmp/AUTORUN.BAS -o AUTORUN.BAS work.atr
+	atari800 -nobasic work.atr &
 binary:
 	mads scroll.asm -o:tmp/scroll.o
 	od -t u1 tmp/scroll.o | sed -E 's/^\w+(\s|$$)/DATA /' > tmp/scroll.txt
