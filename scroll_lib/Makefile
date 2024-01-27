@@ -8,5 +8,7 @@ scroll:
 	xdotool key Return
 binary:
 	mads scroll.asm -o:tmp/scroll.o
-	od -t u1 tmp/scroll.o | sed -E 's/^\w+\s/DATA /' > tmp/scroll.txt
+	od -t u1 tmp/scroll.o | sed -E 's/^\w+(\s|$\)/DATA /' > tmp/scroll.txt
 	sed -i -E 's/([0-9]+)\s+/\1,/g' tmp/scroll.txt
+	nl -v 2000 -i 10 tmp/scroll.txt > tmp/scroll.tba
+	rm tmp/scroll.txt

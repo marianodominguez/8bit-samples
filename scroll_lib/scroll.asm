@@ -14,6 +14,7 @@
 ; per mode line minus 1 for other graphics modes
 ; Change the 40 in line 39 to the number of
 ; bytes per mode line for other graphics modes
+; $CE is the counter of pages to scroll
 
     org $0600   ;Load into page 6.
     PLA         ;Remove argument count.
