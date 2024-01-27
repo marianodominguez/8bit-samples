@@ -5,10 +5,13 @@ scroll:
 	atari800 -nobasic ../atr_images/TBXL.atr work.atr &
 	sleep 5
 	xdotool type -delay 200 'E."D2:WORK.LST'
-	xdotool key Return
+	xdotool key -delay 100 Return
+	sleep 2
+	xdotool type -delay 200 'RUN'
+	xdotool key -delay 100 Return
 binary:
 	mads scroll.asm -o:tmp/scroll.o
-	od -t u1 tmp/scroll.o | sed -E 's/^\w+(\s|$\)/DATA /' > tmp/scroll.txt
+	od -t u1 tmp/scroll.o | sed -E 's/^\w+(\s|$$)/DATA /' > tmp/scroll.txt
 	sed -i -E 's/([0-9]+)\s+/\1,/g' tmp/scroll.txt
 	nl -v 2000 -i 10 tmp/scroll.txt | tr -s '\t' ' ' > tmp/scroll.tba
 	rm tmp/scroll.txt
