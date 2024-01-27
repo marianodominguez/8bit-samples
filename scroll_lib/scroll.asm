@@ -2,7 +2,7 @@
 ;Source Code
 ; original: http://archive.org/stream/1985-12-compute-magazine/Compute_Issue_067_1985_Dec#page/n0/mode/2up
 
-; VBI rautine
+; VBI routine
 ; for combined fine and
 ; coarse scrolling
 ; in graphics mode 0.
@@ -11,9 +11,9 @@
 ; 25 to scroll slower,
 ; Change the 7 in line
 ; 33 to the number of scan lines
-;per mode line minus 1 far other graphics modes
-;Change the 40 in line 39 to the number of jbytes per mode line f
-;or other graphics modes
+; per mode line minus 1 for other graphics modes
+; Change the 40 in line 39 to the number of
+; bytes per mode line for other graphics modes
 
     org $0600   ;Load into page 6.
     PLA         ;Remove argument count.

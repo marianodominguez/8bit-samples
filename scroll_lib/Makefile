@@ -6,3 +6,7 @@ scroll:
 	sleep 5
 	xdotool type -delay 200 'E."D2:WORK.LST'
 	xdotool key Return
+binary:
+	mads scroll.asm -o:tmp/scroll.o
+	od -t u1 tmp/scroll.o | sed -E 's/^\w+\s/DATA /' > tmp/scroll.txt
+	sed -i -E 's/([0-9]+)\s+/\1,/g' tmp/scroll.txt
