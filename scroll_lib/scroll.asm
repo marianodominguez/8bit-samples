@@ -14,7 +14,7 @@
 ; per mode line minus 1 for other graphics modes
 ; Change the 40 in line 39 to the number of
 ; bytes per mode line for other graphics modes
-; $CE is the counter of pages to scroll
+; $CF is the counter of pages to scroll
 
     org $0600   ;Load into page 6.
     PLA         ;Remove argument count.
@@ -26,6 +26,17 @@
     LDA #1      ;VB cycles before next scroll.
     CMP $CB     ;If not up to desired interval
     BNE EXIT    ;then exit VBI
+    LDA #11     ;12 pages max
+    CMP $CF
+    BPL scrl
+    CLC
+    LDY #5
+    LDA ($CD),Y
+    SBC #11
+    STA ($CD),Y
+    LDA #0
+    STA $CF
+scrl:
     INC $CC     ;$CC is counter for number
     LDA $CC     ;of fine scrolls.
     STA $D405   ;Storein vertical fine scroil register.
@@ -42,9 +53,10 @@
     CLC         ;of screen memory pointer.
     ADC ($CD),Y
     STA ($CD) ,Y
-    BCC EXIT ; If carry not set then exit VBI ,
-    INY ;else increment high byte
-    LDA #0 ;of screen memory pointer.
+    BCC EXIT    ; If carry not set then exit VBI ,
+    INY         ;else increment high byte of screen memory pointer.
+    LDA #0
     ADC ($CD),Y
     STA ($CD),Y
+    INC $CF
 EXIT: JMP $E462
