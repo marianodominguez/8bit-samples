@@ -1,5 +1,5 @@
 scroll:
-	basicParser -b GR0SCR.TBA -o tmp/AUTORUN.BAS
+	basicParser -f -b GR0SCR.TBA -o tmp/AUTORUN.BAS
 	cp ../atr_images/TBXL.atr work.atr
 	franny -A  -i tmp/AUTORUN.BAS -o AUTORUN.BAS work.atr
 	atari800 -nobasic work.atr &
