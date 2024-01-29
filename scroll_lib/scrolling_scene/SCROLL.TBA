@@ -1,0 +1,376 @@
+10  	REM *** SCROLLING STREET SCENE ***
+20  	REM                  Example 13
+30  	REM
+40  	REM Program demonstrating Horizontal Fine Scrolling and Display List Interrupts
+50  	REM Copyright (C) 1982 by David Fox and Mitchell Waite
+60  	REM
+70  	goto 140
+80  	REM
+100  	REM Hi/Lo Byte Calculation
+110  	HIBYTE = int( X / 256 ):REM Calculate High Byte
+120  	LOBYTE = X - HIBYTE * 256:REM Calculate Low Byte
+130  	return
+140  	REM Initialize
+160  	dim CL$( 24 ), SEG$( 24 ), TEMP$( 8 )
+170  	CL$( 1 ) = chr$( 0 ):CL$( 24 ) = chr$( 0 ):CL$( 2 ) = CL$:REM Fill with ASCII 0
+180  	gosub 11000:REM Initialize Routine strings
+190  	gosub 5000:REM Set up memory locations
+200  	gosub 6000:REM Set up Display List
+210  	gosub 2600:REM Clear screen
+230  	gosub 8000:REM Load in Character Set
+250  	poke 756, HICHRB:REM Switch to Street character set
+260  	poke 559, 35:REM Turn screen DMA on again, Wide Playfield
+270  	gosub 2800:gosub 3000:REM Create a street
+280  	gosub 12000:REM Set up parameter addresses
+290  	gosub 13000:REM Turn on interrupts
+340  	SPEED = 1:poke SCRLSTEP, SPEED
+380  	open #2, 4, 0, "K:":poke 754, 255
+390  	REM
+400  	REM Main Animation Loop
+480  	if peek( 754 ) = 255 then 480
+490  	get #2, BYTE:SPEED = BYTE - 48:poke 754, 255:if SPEED < 0:SPEED = 0:endif
+500  	poke SCRLSTEP, SPEED
+520  	goto 480
+530  	REM
+1900  	REM Convert to Screen Value
+1910  	CFLAG = 0
+1920  	if CHAR > 127:CHAR = CHAR - 128:CFLAG = 128:endif
+1930  	if CHAR < 96:CHAR = CHAR - 32:if CHAR < 0:CHAR = CHAR + 96:endif:endif
+1940  	if CFLAG:CHAR = CHAR + CFLAG + PAINT * 64:endif
+1950  	return
+1960  	REM
+2000  	REM Send Info to Screen
+2010  	LN = len( SEG$ ):if LN < 24:SEG$( LN + 1 ) = CL$:endif
+2020  	if FENCE:PTR = PTR + 1:endif
+2030  	for I = 0 to HEIGHT
+2040  		if FENCE:gosub 2200:endif
+2050  		for J = 1 to WIDTH
+2060  			P = I * WIDTH + J:CHAR = asc( SEG$( P, P ) )
+2070  			gosub 1900
+2080  			if GRND:poke SCRLWIN + 6 * LINELEN + J + 23, CHAR:goto 2130:endif
+2090  			if CLOUD = 0 then 2120
+2100  			if CLOUD = 2:CHAR = CHAR + 64:endif
+2110  			poke SCRN + PTR + I * 24 + J - 1, CHAR:goto 2130
+2120  			poke SCRLWIN + PTR + I * LINELEN + J - 1, CHAR
+2130  		next J
+2140  	next I
+2150  	PTR = PTR + WIDTH + abs( FENCE ) + SPCFLAG
+2160  	SPCFLAG = 0
+2170  	ROOMLEFT = LINELEN - 25 - PTR
+2180  	return
+2190  	REM
+2200  	REM Put In Fence
+2210  	if I < 4 then 2240
+2220  	if I = 4:CHAR = asc( "Q" ):gosub 1900:P = -1:gosub 2250:CHAR = asc( "E" ):gosub 1900:P = WIDTH:gosub 2250:goto 2240:endif
+2230  	CHAR = asc( "A" ):gosub 1900:P = -1:gosub 2250:CHAR = asc( "D" ):gosub 1900:P = WIDTH:gosub 2250
+2240  	return
+2250  	REM Poke In Data
+2260  	poke SCRLWIN + PTR + I * LINELEN + P, CHAR
+2270  	return
+2280  	REM
+2400  	REM Copy First Page Onto Last Page
+2410  	for I = 0 to 5
+2420  		for J = 0 to 24
+2430  			poke SCRLWIN + I * LINELEN + LINELEN - 25 + J, peek( SCRLWIN + I * LINELEN + J )
+2440  		next J
+2450  	next I
+2460  	return
+2470  	REM
+2600  	REM Clear the Screen - Fill the Screen With 0
+2610  	TEMP = usr( MFILL, SCRN, SCRNSZE, 0 )
+2620  	return
+2630  	REM
+2800  	REM Put in Clouds and Sidewalk
+2810  	SEG$ = "\BC\D4\BD\BC\D4\D4\BD\DB\DC\DD\DB\DC\DC\DD":CLOUD = 1:PTR = 4:HEIGHT = 1:WIDTH = 7:gosub 2000
+2820  	SEG$ = "\BC\D4\BD\BC\BD\DB\DC\DC\DC\DD":CLOUD = 2:PTR = PTR + 3:WIDTH = 5:gosub 2000
+2830  	SEG$ = "\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE":GRND = 1:HEIGHT = 0:WIDTH = 24:gosub 2000
+2840  	return
+2850  	REM
+2995  	REM +
+3000  	REM CREATE RANDOM DISPLAY
+3010  	PTR = 0:REM Initialize Pointer to Scroll Window
+3020  	HEIGHT = 5:REM How tall is the window
+3030  	CLOUD = 0:GRND = 0
+3040  	WIDTH = int( rnd( 1 ) * 3 + 2 ):REM From 2-4
+3050  	if rnd( 1 ) * 100 <= 45:STORY = 2:goto 3080:REM 45% 2 Stories
+3055 	endif
+3060  	if rnd( 1 ) * 55 <= 35:STORY = 3:goto 3080:REM 35% 3 Stories
+3065 	endif
+3070  	STORY = 4:REM 20% 4 Stories
+3080  	CHIMNEY = ( rnd( 1 ) <= 0.6 ):REM 60% chance
+3090  	if SHRUB = 0:FENCE = ( rnd( 1 ) <= 0.4 ):REM 40% chance (only if no shrub)
+3095	endif
+3100  	if ROOMLEFT < 6:FENCE = 0:REM Not enough room left for a fence
+3105	endif
+3110  	ANTENNA = ( rnd( 1 ) <= 0.5 ):REM 50% chance
+3120  	PAINT = ( rnd( 1 ) <= 0.5 ):REM 50% yellow, 50% pink
+3130  	SEG$ = CL$:on WIDTH - 1 gosub 3500, 3700, 3900:gosub 2000
+3140  	if ROOMLEFT < 2:gosub 2400:return:REM No room for tree, exit routine
+3145	endif
+3150  	REM Plant Some Foilage
+3160  	SHRUB = 0:TREE = 0
+3170  	if FENCE = 0 and ODDHOUSE = 0 and ROOMLEFT > 8:SHRUB = ( rnd( 1 ) <= 0.3 ):if SHRUB then 3440:endif
+3180  	REM Make a tree
+3190  	WIDTH = 2:SEG$ = CL$
+3200  	REM Find height of tree
+3210  	if rnd( 1 ) * 10 <= 1:TREE = 2:goto 3260:REM 10%
+3215	endif
+3220  	if rnd( 1 ) * 9 <= 2:TREE = 3:goto 3260:REM 20%
+3225 	endif
+3230  	if rnd( 1 ) * 7 <= 4:TREE = 4:goto 3260:REM 40%
+3235	endif
+3240  	if rnd( 1 ) * 3 <= 2:TREE = 5:goto 3260:REM 20%
+3245	endif
+3250  	TREE = 6:REM 10%
+3260  	TRUNK = int( rnd( 1 ) * ( TREE - 2 ) + 1 ):if TREE = 2:TRUNK = 0:endif
+3270  	TREETOP = TREE - TRUNK:if TREETOP > 4:TRUNK = TREE - 4:TREETOP = 4:endif
+3280  	BT = ( 6 - TREE ) * 2 + 1
+3290  	SEG$( BT ) = "\1C\1D"
+3300  	if TREETOP = 2 then 3340
+3310  	for I = 1 to TREETOP - 2
+3320  		BT = BT + 2:SEG$( BT ) = "tt"
+3330  	next I
+3340  	BT = BT + 2:SEG$( BT ) = "\1E\1F"
+3350  	if TRUNK = 1 then 3390
+3360  	for I = 1 to TRUNK - 1
+3370  		BT = BT + 2:SEG$( BT ) = "BV"
+3380  	next I
+3390  	if rnd( 1 ) <= 0.5:SEG$( BT + 2 ) = "KL":endif
+3400  	REM Add random spacing on side of tree
+3410  	TEMP = int( rnd( 1 ) * 3 + 1 ):if TEMP = 3 or ROOMLEFT < 3 then 3470
+3420  	if TEMP = 1:PTR = PTR + 1:goto 3470:endif
+3430  	SPCFLAG = 1:goto 3470
+3440  	REM Make a shrub
+3450  	WIDTH = int( rnd( 1 ) * 2 + 2 ):SEG$ = CL$:if WIDTH = 2:SEG$( 9 ) = "\1D\1C":goto 3470:endif
+3460  	SEG$( 13 ) = "\1D \1C"
+3470  	ODDHOUSE = 0:FENCE = 0:gosub 2000
+3480  	if ROOMLEFT < 4 then 3140:REM Add another tree if not enough room for a house
+3490  	goto 3040
+3500  	REM Width 2
+3510  	if STORY > 3:STORY = 3:endif
+3520  	BT = 1
+3530  	if STORY = 2:BT = 3:endif
+3540  	if CHIMNEY:SEG$( BT ) = "INZU":goto 3560:endif
+3550  	SEG$( BT ) = "IOZX"
+3560  	BT = BT + 4:for I = BT to BT + ( STORY - 2 ) * 2 step 2
+3570  		if rnd( 1 ) <= 0.5:SEG$( I ) = "\D4\D0":goto 3590:endif
+3580  		SEG$( I ) = "\D2\D0"
+3590  	next I
+3600  	SEG$( 9 ) = "\C3\D4"
+3610  	if FENCE = 0 then 3640
+3620  	if rnd( 1 ) <= 0.5:SEG$( 11 ) = "WW":goto 3640:endif
+3630  	SEG$( 11 ) = "EQ"
+3640  	return
+3650  	REM
+3700  	REM Width 3
+3710  	BT = ( 4 - STORY ) * 3 + 1
+3720  	if ANTENNA and STORY < 4:SEG$( BT - 3 ) = "\00`\00":endif
+3730  	SEG$( BT ) = "ZTX"
+3740  	if rnd( 1 ) <= 0.5:TEMP$ = "\C6\D0\C7":goto 3760:endif
+3750  	TEMP$ = "\C6\D2\C7"
+3760  	BT = BT + 3:for I = BT to BT + ( STORY - 2 ) * 3 step 3
+3770  		SEG$( I ) = TEMP$
+3780  	next I
+3790  	SEG$( 13 ) = "\C6\C3\C7"
+3800  	if FENCE:SEG$( 16 ) = "WWW":endif
+3810  	return
+3820  	REM
+3900  	REM Width 4
+3910  	BT = ( 4 - STORY ) * 4 + 1
+3920  	if STORY = 4:SEG$( BT ) = "HTTJ":goto 4050:endif
+3930  	if STORY > 2 or SHRUB or rnd( 1 ) <= 0.3333 then 4000:REM Which type house?
+3940  	REM Create Odd House type
+3950  	ODDHOUSE = 1
+3960  	if CHIMNEY:SEG$( 1 ) = "\00IN\00\00ZU\00":goto 3980:endif
+3970  	SEG$( 1 ) = "\00IO\00\00ZX\00"
+3980  	FENCE = 0
+3990  	SEG$( 9 ) = "ITTO\C2\D2\D0\D6\C2\D4\C3\D6":goto 4100
+4000  	REM Create Normal House type
+4010  	if ANTENNA and CHIMNEY:SEG$( BT - 4 ) = "`HJ\00YTTJ":goto 4050:endif
+4020  	SEG$( BT - 4 ) = "\00HJ\00":if CHIMNEY = 0:SEG$( BT ) = "HTTJ":goto 4050:endif
+4030  	if rnd( 1 ) <= 0.5:SEG$( BT ) = "YTTJ":goto 4050:endif
+4040  	SEG$( BT ) = "HTTM"
+4050  	BT = BT + 4:for I = BT to BT + ( STORY - 2 ) * 4 step 4
+4060  		if rnd( 1 ) <= 0.25:SEG$( I ) = "\C6\D3\D3\C7":goto 4080:endif
+4070  		SEG$( I ) = "\C6\D0\D2\C7"
+4080  	next I
+4090  	SEG$( 17 ) = "\C6\D4\C3\C7"
+4100  	if FENCE:SEG$( 21 ) = "WEQW":endif
+4110  	return
+4120  	REM
+4125  	REM +
+5000  	REM Set Up Memory Locations
+5010  	DIF = 0
+5020  	DLSZE = 34:REM Display List size
+5030  	LINELEN = 48:REM Horizontal length of scrolling window
+5040  	SCRNSZE = 6 * 24 + LINELEN * 6:REM Screen size
+5050  	MEM = DLSZE + SCRNSZE:REM MEMory to reserve for DL and Screen
+5170  	DIF = DIF + 4:if DIF * 256 < MEM then 5170
+5180  	HIBASE = peek( 106 ) - DIF:REM Find DL Hi and Lo bytes
+5190  	LOBASE = 0
+5200  	DLBASE = HIBASE * 256 + LOBASE
+5210  	SCRN = DLBASE + DLSZE:REM Starting address of Screen RAM
+5220  	X = SCRN:gosub 110
+5230  	SCRNHI = HIBYTE:SCRNLO = LOBYTE:REM Find Screen Hi and Lo bytes
+5240  	SCRLWIN = SCRN + 48:REM Beginning of Scroll window
+5250  	SCROLL = adr( SCROLL$ )
+5260  	DLIROUT = adr( DLIROUT$ )
+5300  	MFILL = adr( MFILL$ )
+5340  	return
+5350  	REM
+6000  	REM Set Up the Display List
+6010  	graphics 2 + 16:REM Set flags to Graphics mode 2
+6020  	poke 559, 0:REM Turn off screen DMA
+6030  	poke DLBASE, 112:REM Set up top border, 24 scan lines
+6040  	poke DLBASE + 1, 112
+6050  	poke DLBASE + 2, 112
+6060  	poke DLBASE + 3, 71:REM LMS for line 1
+6070  	poke DLBASE + 4, SCRNLO
+6080  	poke DLBASE + 5, SCRNHI
+6090  	poke DLBASE + 6, 7 + 128:REM Line 2 (w/ DLI)
+6100  	for I = 0 to 6:REM Loop for lines 3-9
+6110  		WINDOW = SCRLWIN + I * LINELEN
+6120  		BYTE = 87:REM LMS and HSCRL
+6130  		if I = 2 or I = 5:BYTE = 87 + 128:REM DLI, LMS and HSCRL for lines 5 and 8
+6135 	endif
+6140  		if I = 6:BYTE = 71:REM No scroll for line 9
+6145	endif
+6150  		poke DLBASE + 7 + 3 * I, BYTE:REM LMS and HSCRL
+6160  		X = WINDOW:gosub 110
+6170  		poke DLBASE + 8 + 3 * I, LOBYTE
+6180  		poke DLBASE + 9 + 3 * I, HIBYTE
+6190  	next I
+6200  	poke DLBASE + 28, 7 + 128:REM Last 3 lines
+6210  	poke DLBASE + 29, 7
+6220  	poke DLBASE + 30, 7 + 128
+6230  	poke DLBASE + 31, 65:REM Jump on VBLANK to beginning of DL
+6240  	poke DLBASE + 32, LOBASE
+6250  	poke DLBASE + 33, HIBASE
+6260  	X = DLIROUT:gosub 110
+6270  	poke 512, LOBYTE:REM Address of DL for DLI handling routine
+6280  	poke 513, HIBYTE
+6290  	REM Tell ANTIC where the DL is
+6300  	poke 560, LOBASE
+6310  	poke 561, HIBASE
+6320  	setcolor 0, 15, 4:setcolor 1, 12, 4:setcolor 2, 0, 10:setcolor 3, 0, 12:setcolor 4, 9, 8:REM Brn, grn, wht, wht, blue
+6330  	return
+6340  	REM
+8000  	REM Set Up Alternate Character Set
+8010  	HICHRB = peek( 106 ) - DIF - 2:REM Reserve space (512 bytes)
+8020  	CHRBAS = HICHRB * 256:REM Find start of Character Set
+8030  	REM Read in data, skip first 28 characters
+8040  	OFFSET = 28 * 8:CHARS = 35
+8050  	restore 23000
+8060  	read TOTAL:TEMP = 0
+8070  	for I = CHRBAS + OFFSET to CHRBAS + OFFSET + CHARS * 8 - 1
+8080  		read BYTE:poke I, BYTE:TEMP = TEMP + BYTE
+8090  	next I
+8100  	if TOTAL <> TEMP:graphics 0:print "\C5\D2\D2\CF\D2 In Character Set Data":end:endif
+8110  	REM Clear out first char (background)
+8120  	for I = CHRBAS to CHRBAS + 7
+8130  		poke I, 0
+8140  	next I
+8150  	return
+8160  	REM
+10995  	REM .
+11000  	REM INITIALIZE ROUTINE STRINGS
+11010  	REM Set SCROLL routine
+11020  	dim SCROLL$( 316 )
+11030  	SCROLL$( 1 ) = "\B8P\03Lb\E4\D8\AD\05\04\F0\F7\10H\A5\E0\8DY\04\A5\E1\8DZ\04\AD0\02\85\E0\AD1\02\85\E1\AD\1E\04\8DP\04\A9\C0\8DQ\04\AD\1F\04\A0\00NP\04\90\07JNQ\04\C8\D0\F4\8DP\04\AD\1F\04-\1E\04\18mF\04\CD\1E\04\F0\0E\90\0C\B0\04P\AD\D0Y\EEP"
+11040  	SCROLL$( 91 ) = "\04-\1E\04\8DF\04M\1E\04\8D\04\D4\ADP\04\18mD\04\8DD\04\90\03\EEE\04\ADD\048mQ\04\8DD\04\90\03\EEE\04\ADE\04\CD\1D\04\90(\D0\08\ADD\04\CD\1C\04\90\1E\A9\00\8DD\04\8DE\04\8DP\04\AD\1A\04\8DB\04\AD\1B\04\8DC\04\B8P\13\D0gP"
+11050  	SCROLL$( 181 ) = "\9F\ADD\04\18\EDQ\04\8DD\04\B0\03\CEE\04\ADB\04\18mP\04\8DB\04\8DR\04\90\03\EEC\04\ADC\04\8DS\04\A0\03\B1\E0\C9A\F0))P\F0 )\10\F0\1A\C8\ADR\04\91\E0\18m\1C\04\8DR\04\C8\ADS\04\91\E0m\1D\04\8DS\04\AD\C8\C8\C8\D0\D3P\A6\AD"
+11060  	SCROLL$( 271 ) = "Y\04\85\E0\ADZ\04\85\E1\B8P\99\A9\80\8D\05\04\AD\1E\04\8DF\04\A9\00\8DD\04\8DE\04\AD\1A\04\8DB\04\AD\1B\04\8DC\04\B8P\CF"
+11100  	REM Set DLI routine
+11110  	dim DLIROUT$( 94 )
+11120  	DLIROUT$( 1 ) = "\B8P\0ALb\E4\A9\00\8DK\04\F0\F6H\8AH\98H\A5\E0\8D]\04\A5\E1\8D^\04\AD$\04\85\E0\AD%\04\85\E1\ACK\04\B1\E0H\C8\B1\E0\AA\C8\B1\E0\C8\8CK\04\A8h\EA\EA\EA\EA\EA\EA\EA\EA\EA\8D\0A\D4\8D\18\D0\8E\19\D0\8C\1A\D0\AD]\04\85\E0\AD^\04\85\E1h\A8"
+11130  	DLIROUT$( 91 ) = "h\AAh@"
+11200  	REM Read Color Values Into DLI Table
+11210  	DLITBLSZE = 15:restore 25510
+11220  	dim DLITABLE$( DLITBLSZE )
+11230  	DLITABLE = adr( DLITABLE$ )
+11240  	for I = 0 to DLITBLSZE - 1
+11250  		read BYTE
+11260  		poke DLITABLE + I, BYTE
+11270  	next I
+11600  	REM Set MFILL routine
+11610  	dim MFILL$( 41 )
+11620  	MFILL$( 1 ) = "hh\85\CCh\85\CBh\85\CEh\85\CDhh\A0\00\AA\8A\91\CB\C8\D0\02\E6\CC\A5\CD\D0\02\C6\CE\C6\CD\A5\CD\05\CE\D0\EA`"
+11650  	return
+11660  	REM
+11665  	REM .
+12000  	REM Set Parameters For Routines
+12010  	PARAMBASE = 1024:REM Parameter Base address
+12060  	SCRLINIT = PARAMBASE + 5:REM Poke a 1 to initialize the scroll routine
+12140  	SCRLADR = PARAMBASE + 26:REM Address of scrolling window
+12150  	SCRLLEN = PARAMBASE + 28:REM Line length of scrolling window
+12160  	SCRLCLK = PARAMBASE + 30:REM Number of Color Clocks per screen byte
+12170  	SCRLSTEP = PARAMBASE + 31:REM Step size of scroll each jiffy
+12180  	DLIADR = PARAMBASE + 36:REM Address of DLI table
+12190  	VVBLKD = 548:REM Deferred Vertical Blank Interrupt Vector
+12200  	CRITICAL = 66:REM Critical Flag
+12240  	TEMP = usr( MFILL, PARAMBASE, 94, 0 ):REM IMPORTANT: Clear out parameter area
+12280  	X = SCRLWIN:gosub 110
+12290  	poke SCRLADR, LOBYTE
+12300  	poke SCRLADR + 1, HIBYTE
+12320  	X = LINELEN:gosub 110
+12330  	poke SCRLLEN, LOBYTE
+12340  	poke SCRLLEN + 1, HIBYTE
+12350  	poke SCRLCLK, 7:REM Set to 8 color clocks per byte
+12360  	X = DLITABLE:gosub 110
+12370  	poke DLIADR, LOBYTE
+12380  	poke DLIADR + 1, HIBYTE
+12530  	return
+12540  	REM
+13000  	REM Install Interrupt Routines
+13010  	poke CRITICAL, 1:REM Open CRITICAL "valve", set up detour
+13020  	X = SCROLL + 6:gosub 110
+13030  	poke VVBLKD, LOBYTE:REM Set VBLANK vector to SCROLL
+13040  	poke VVBLKD + 1, HIBYTE
+13050  	X = DLIROUT + 6:gosub 110
+13060  	poke SCROLL + 4, LOBYTE:REM Points SCROLL to DLIROUT
+13070  	poke SCROLL + 5, HIBYTE
+13170  	poke CRITICAL, 0:REM Close CRITICAL "valve", routines installed
+13180  	poke SCRLINIT, 1
+13190  	poke 54286, 192:REM Enable DLI's
+13200  	return
+13210  	REM
+23000  	REM Character Set Data
+23010  	data 38646
+23020  	data 0,3,15,31,63,63,127,127
+23030  	data 0,192,240,248,252,252,254,254
+23040  	data 127,127,127,63,63,31,15,7
+23050  	data 254,254,254,252,252,248,240,224
+23060  	data 4,31,4,31,4,4,4,4
+23070  	data 48,48,48,63,54,54,54,54
+23080  	data 3,3,3,3,3,3,3,3
+23090  	data 255,195,219,219,219,219,219,219
+23100  	data 12,12,12,252,108,108,108,108
+23110  	data 0,0,0,252,108,108,108,108
+23120  	data 127,127,127,127,127,127,127,127
+23130  	data 254,254,254,254,254,254,254,254
+23140  	data 1,3,7,15,31,63,127,255
+23150  	data 1,1,3,3,7,7,15,15
+23160  	data 128,192,224,240,248,252,254,255
+23170  	data 3,3,7,7,15,0,0,0
+23180  	data 192,192,224,224,240,0,0,0
+23190  	data 156,220,252,252,252,252,254,255
+23200  	data 128,128,192,192,224,224,243,243
+23210  	data 128,128,192,192,224,224,240,240
+23220  	data 255,255,39,39,255,39,39,255
+23230  	data 0,0,0,63,54,54,54,54
+23240  	data 255,255,228,228,255,228,228,255
+23250  	data 255,24,24,24,255,24,24,24
+23260  	data 255,255,255,255,255,255,255,255
+23270  	data 251,251,255,252,254,254,255,255
+23280  	data 192,192,192,192,192,192,192,192
+23290  	data 0,0,0,255,102,102,102,102
+23300  	data 248,248,252,252,254,254,255,255
+23310  	data 57,59,63,63,63,63,127,255
+23320  	data 31,31,63,63,127,127,255,255
+23330  	data 127,127,127,127,63,63,30,0
+23340  	data 255,255,255,255,255,254,124,0
+23350  	data 254,254,254,254,252,252,120,0
+23360  	data 255,255,255,0,0,0,0,0
+23370  	REM
+25500  	REM DLI Color Values
+25510  	data 234,90,152,234,90,198,10,0,198,0,0,6,0,0,10
