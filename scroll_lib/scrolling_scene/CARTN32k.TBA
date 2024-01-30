@@ -187,7 +187,8 @@
 3140 	if ROOMLEFT < 2:gosub 2400:return:endif
 3150 	REM Plant Some Foilage
 3160 	SHRUB = 0:TREE = 0
-3170 	if FENCE = 0 and ODDHOUSE = 0 and ROOMLEFT > 8:SHRUB = ( rnd( 1 ) <= 0.3 ):if SHRUB then 3440:endif
+3170 	if FENCE = 0 and ODDHOUSE = 0 and ROOMLEFT > 8:SHRUB = ( rnd( 1 ) <= 0.3 ):endif
+3175 	if SHRUB then 3440:endif
 3180 	REM Make a tree
 3190 	WIDTH = 2:SEG$ = CL$
 3200 	REM Find height of tree
