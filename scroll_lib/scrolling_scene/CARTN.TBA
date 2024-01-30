@@ -1,0 +1,629 @@
+10	REM *** THE GREAT MOVIE CARTOON ***
+20	REM                  Example 14
+30	REM
+40	REM Program putting it all together - PM Graphics, Fine Scrolling, & Display List Interrupts
+50	REM Copyright (C) 1982 by David Fox and Mitchell Waite
+60	REM
+70	goto 140
+80	REM
+100	REM Hi/Lo Byte Calculation
+110	HIBYTE = int( X / 256 ):REM Calculate High Byte
+120	LOBYTE = X - HIBYTE * 256:REM Calculate Low Byte
+130	return
+140	REM Initialize
+150	dim PLR( 3 ), HPLR( 3 ), VPLR( 3 ), RATE( 3 ), PMWIDTH( 3 ), FRMLSTPTR( 3 ), MVRATE( 3 )
+160	dim CL$( 24 ), SEG$( 24 ), TEMP$( 8 )
+170	CL$( 1 ) = chr$( 0 ):CL$( 24 ) = chr$( 0 ):CL$( 2 ) = CL$:REM Fill with ASCII 0
+180	gosub 11000:REM Initialize Routine strings
+190	gosub 5000:REM Set up memory locations
+200	gosub 6000:REM Set up Display List
+210	gosub 2600:REM Clear screen
+220	gosub 7000:REM Set up Player area
+230	gosub 8000:REM Load in Character Set
+240	gosub 10000:REM Read frames into RAM
+250	poke 756, HICHRB:REM Switch to Street character set
+260	poke 559, 47:REM Turn screen DMA on again, Wide Playfield, PM 2 line resolution, Players enabled
+270	gosub 2800:gosub 3000:REM Create a street
+280	gosub 12000:REM Set up parameter addresses
+290	gosub 13000:REM Turn on interrupts
+310	for I = 0 to 1:poke RATE( I ), 4:next I:REM Frame rate for walking man
+320	SPEED = -1:REM Temporary start up condition
+330	gosub 1000:gosub 1100
+340	SPEED = 1
+350	TEMP = usr( PMOVER, ALLP )
+360	poke INITANIMATE, ALLP
+370	gosub 700
+380	open #2, 4, 0, "K:":poke 754, 255
+390	REM
+400	REM Main Animation Loop
+410	TEMP = abs( peek( 1064 ) - 128 ):SND = TEMP / 5:SND2 = SND + SCONS
+420	if VF:VOL = ( 128 - TEMP ) / 9:sound 1, SND, 8, VOL:sound 2, SND2, 2, VOL:endif
+430	if WALK > 0:WALK = WALK - ( SPEED <> 1 ):goto 470:endif
+440	if WALK = 0:poke INITAUTOMOVE, FST2P:TEMP = usr( PMOVER, FST2P ):WALK = -1:endif
+450	if peek( 1086 ) = 2:sound 0, 10, 4, 10:sound 0, 0, 0, 0:REM Footsteps
+452 endif
+460	if peek( 1062 ) > 218 or peek( 1062 ) < 20:gosub 1050:REM Reset Man
+461 endif
+470	if peek( 1064 ) > 229 or peek( 1065 ) < 16:gosub 600:REM Reset other players
+471endif
+480	if peek( 754 ) = 255 then 410
+490	get #2, BYTE:SPEED = BYTE - 48:poke 754, 255:if SPEED < 0:SPEED = 0:endif
+510	gosub 700
+520	goto 410
+530	REM
+600	REM Select a New Object
+610	if VOL:VOL = int( VOL ):if VOL = 0:VOL = 1:endif:endif
+620	if VOL:VOL = VOL - 0.5:sound 1, SND, 8, VOL:sound 2, SND2, 2, VOL:goto 620:endif
+630	TEMP = usr( MFILL, PLR( 2 ), 256, 0 ):REM Use memory fill routine to clear Players 2 & 3
+640	FLAG = int( rnd( 1 ) * 6 + 1 ):REM Which object to display (if possible)
+650	OBJECT = 0:REM No object selected yet
+660	on FLAG gosub 1100, 1100, 1100, 1200, 1300, 1300:if OBJECT = 0:return:endif
+670	TEMP = usr( PMOVER, LST2P )
+680	poke INITANIMATE, LST2P
+690	REM
+700	REM Set Horizontal Velocities
+710	if OBJECT = 3:NSPD = 128 - SPEED * 2:goto 740:REM Tree
+712 endif
+720	if OBJECT = 4:NSPD = 125 - SPEED:goto 740:REM Truck
+725 endif
+730	NSPD = 132 - SPEED:REM Car
+740	poke MVRATE( 2 ), NSPD:poke MVRATE( 3 ), NSPD:TEMP = LST2P
+750	poke MVRATE( 0 ), 129 - SPEED:poke MVRATE( 1 ), 129 - SPEED:if WALK = -1:TEMP = ALLP:endif
+760	poke INITAUTOMOVE, TEMP
+770	poke SCRLSTEP, SPEED
+780	return
+790	REM
+1000	REM PARAMETERS FOR PLAYERS
+1010	REM Man
+1020	poke 704, 3 * 16 + 10:poke 705, 3 * 16 + 10:REM Set color to peach
+1030	FRSTPLR = 0:OBJECT = 1:gosub 1500:REM Point to proper Frame List
+1040	poke VPLR( 0 ), 97:poke VPLR( 1 ), 97
+1050	if SPEED = 1 then 1070
+1060	poke HPLR( 0 ), 20:poke HPLR( 1 ), 28:if SPEED > 1:poke HPLR( 0 ), 218:poke HPLR( 1 ), 226:endif
+1070	WALK = int( rnd( 1 ) * 100 + 20 )
+1080	return
+1090	REM
+1100	REM Tree
+1110	if SPEED = 0:return:endif
+1120	poke 706, 14 * 16 + 4:poke 707, 13 * 16 + 6:REM Brown trunk and green leaves
+1130	poke HPLR( 2 ), 229:poke HPLR( 3 ), 217
+1140	poke VPLR( 2 ), 42:poke VPLR( 3 ), 28
+1150	FRSTPLR = 2:OBJECT = 2:gosub 1500:FRSTPLR = 3:OBJECT = 3:gosub 1500:REM Point to proper Frame List
+1160	poke PMWIDTH( 2 ), 0:poke PMWIDTH( 3 ), 3
+1170	VF = 0
+1180	return
+1190	REM
+1200	REM Truck
+1210	poke 706, 3 * 16 + 6:poke 707, int( rnd( 1 ) * 16 ) * 16 + 10
+1220	poke HPLR( 2 ), 217:poke HPLR( 3 ), 233
+1230	poke VPLR( 2 ), 77:poke VPLR( 3 ), 77
+1240	FRSTPLR = 2:OBJECT = 4:gosub 1500:REM Point to proper Frame List
+1250	poke PMWIDTH( 2 ), 1:poke PMWIDTH( 3 ), 3
+1260	VF = 1:SCONS = 180
+1270	return
+1280	REM
+1300	REM Car
+1310	if SPEED = 4:return:endif
+1320	C = int( rnd( 1 ) * 16 ):L = 8 - int( rnd( 1 ) * 2 ) * 4:TEMP = C * 16 + L:poke 706, TEMP:poke 707, TEMP
+1330	poke HPLR( 2 ), 0:poke HPLR( 3 ), 16
+1340	if SPEED > 4:poke HPLR( 2 ), 216:poke HPLR( 3 ), 232:endif
+1350	poke VPLR( 2 ), 96:poke VPLR( 3 ), 96
+1360	FRSTPLR = 2:OBJECT = 5:gosub 1500:REM Point to proper Frame List
+1370	poke PMWIDTH( 2 ), 1:poke PMWIDTH( 3 ), 1
+1380	VF = 1:SCONS = 40
+1390	return
+1400	REM
+1500	REM Put Frame List Address in Param Table
+1510	for I = 0 to NUMPLRS( OBJECT ) - 1
+1520		X = PNTER( OBJECT, I ):gosub 110
+1530		poke FRMLSTPTR( I + FRSTPLR ), LOBYTE
+
+1540		poke FRMLSTPTR( I + FRSTPLR ) + 1, HIBYTE
+1550	next I
+1560	return
+1570	REM
+1900	REM Convert to Screen Value
+1910	CFLAG = 0
+1920	if CHAR > 127:CHAR = CHAR - 128:CFLAG = 128:endif
+1930	if CHAR < 96:CHAR = CHAR - 32:if CHAR < 0:CHAR = CHAR + 96:endif:endif
+1940	if CFLAG:CHAR = CHAR + CFLAG + PINT * 64:endif
+1950	return
+1960	REM
+2000	REM Send Info to Screen
+2010	LN = len( SEG$ ):if LN < 24:SEG$( LN + 1 ) = CL$:endif
+2020	if FENCE:PTR = PTR + 1:endif
+2030	for I = 0 to HEIGHT
+2040		if FENCE:gosub 2200:endif
+2050		for J = 1 to WIDTH
+2060			P = I * WIDTH + J:CHAR = asc( SEG$( P, P ) )
+2070			gosub 1900
+2080			if GRND:poke SCRLWIN + 6 * LINELEN + J + 23, CHAR:goto 2130:endif
+2090			if CLOUD = 0 then 2120
+2100			if CLOUD = 2:CHAR = CHAR + 64:endif
+2110			poke SCRN + PTR + I * 24 + J - 1, CHAR:goto 2130
+2120			poke SCRLWIN + PTR + I * LINELEN + J - 1, CHAR
+2130		next J
+2140	next I
+2150	PTR = PTR + WIDTH + abs( FENCE ) + SPCFLAG
+2160	SPCFLAG = 0
+2170	ROOMLEFT = LINELEN - 25 - PTR
+2180	return
+2190	REM
+2200	REM Put In Fence
+2210	if I < 4 then 2240
+2220	if I = 4:CHAR = asc( "Q" ):gosub 1900:P = -1:gosub 2250:CHAR = asc( "E" ):gosub 1900:P = WIDTH:gosub 2250:goto 2240:endif
+2230	CHAR = asc( "A" ):gosub 1900:P = -1:gosub 2250:CHAR = asc( "D" ):gosub 1900:P = WIDTH:gosub 2250
+2240	return
+2250	REM Poke In Data
+2260	poke SCRLWIN + PTR + I * LINELEN + P, CHAR
+2270	return
+2280	REM
+2400	REM Copy First Page Onto Last Page
+2410	for I = 0 to 5
+2420		for J = 0 to 24
+2430			poke SCRLWIN + I * LINELEN + LINELEN - 25 + J, peek( SCRLWIN + I * LINELEN + J )
+2440		next J
+2450	next I
+2460	return
+2470	REM
+2600	REM Clear the Screen - Fill the Screen With 0
+2610	TEMP = usr( MFILL, SCRN, SCRNSZE, 0 )
+2620	return
+2630	REM
+2800	REM Put in Clouds and Sidewalk
+2810	SEG$ = "\BC\D4\BD\BC\D4\D4\BD\DB\DC\DD\DB\DC\DC\DD":CLOUD = 1:PTR = 4:HEIGHT = 1:WIDTH = 7:gosub 2000
+2820	SEG$ = "\BC\D4\BD\BC\BD\DB\DC\DC\DC\DD":CLOUD = 2:PTR = PTR + 3:WIDTH = 5:gosub 2000
+2830	SEG$ = "\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE\DE":GRND = 1:HEIGHT = 0:WIDTH = 24:gosub 2000
+2840	return
+2850	REM
+2995	REM +
+3000	REM CREATE RANDOM DISPLAY
+3010	PTR = 0:REM Initialize Pnter to Scroll Window
+3020	HEIGHT = 5:REM How tall is the window
+3030	CLOUD = 0:GRND = 0
+3040	WIDTH = int( rnd( 1 ) * 3 + 2 ):REM From 2-4
+3050	if rnd( 1 ) * 100 <= 45:STORY = 2:goto 3080:REM 45% 2 Stories
+3051	endif
+3060	if rnd( 1 ) * 55 <= 35:STORY = 3:goto 3080:REM 35% 3 Stories
+3061	endif
+3070	STORY = 4:REM 20% 4 Stories
+3080	CHIMNEY = ( rnd( 1 ) <= 0.6 ):REM 60% chance
+3090	if SHRUB = 0:FENCE = ( rnd( 1 ) <= 0.4 ):REM 40% chance (only if no shrub)
+3091	endif
+3100	if ROOMLEFT < 6:FENCE = 0:REM Not enough room left for a fence
+3101	endif
+3110	ANTENNA = ( rnd( 1 ) <= 0.5 ):REM 50% chance
+3120	PINT = ( rnd( 1 ) <= 0.5 ):REM 50% yellow, 50% pink
+3130	SEG$ = CL$:on WIDTH - 1 gosub 3500, 3700, 3900:gosub 2000
+3140	if ROOMLEFT < 2:gosub 2400:return:REM No room for tree, exit routine
+3141	endif
+3150	REM Plant Some Foilage
+3160	SHRUB = 0:TREE = 0
+3170	if FENCE = 0 and ODDHOUSE = 0 and ROOMLEFT > 8:SHRUB = ( rnd( 1 ) <= 0.3 )
+3171		if SHRUB then 3440
+3172		endif
+3173	endif
+3180	REM Make a tree
+3190	WIDTH = 2:SEG$ = CL$
+3200	REM Find height of tree
+3210	if rnd( 1 ) * 10 <= 1:TREE = 2:goto 3260:REM 10%
+3211 	endif
+3220	if rnd( 1 ) * 9 <= 2:TREE = 3:goto 3260:REM 20%
+3221 	endif
+3230	if rnd( 1 ) * 7 <= 4:TREE = 4:goto 3260:REM 40%
+3231	endif
+3240	if rnd( 1 ) * 3 <= 2:TREE = 5:goto 3260:REM 20%
+3241	endif
+3250	TREE = 6:REM 10%
+3260	TRUNK = int( rnd( 1 ) * ( TREE - 2 ) + 1 ):if TREE = 2:TRUNK = 0:endif
+3270	TREETOP = TREE - TRUNK:if TREETOP > 4:TRUNK = TREE - 4:TREETOP = 4:endif
+3280	BT = ( 6 - TREE ) * 2 + 1
+3290	SEG$( BT ) = "\1C\1D"
+3300	if TREETOP = 2 then 3340
+3310	for I = 1 to TREETOP - 2
+3320		BT = BT + 2:SEG$( BT ) = "tt"
+3330	next I
+3340	BT = BT + 2:SEG$( BT ) = "\1E\1F"
+3350	if TRUNK = 1 then 3390
+3360	for I = 1 to TRUNK - 1
+3370		BT = BT + 2:SEG$( BT ) = "BV"
+3380	next I
+3390	if rnd( 1 ) <= 0.5:SEG$( BT + 2 ) = "KL":endif
+3400	REM Add random spacing on side of tree
+3410	TEMP = int( rnd( 1 ) * 3 + 1 ):if TEMP = 3 or ROOMLEFT < 3 then 3470
+3420	if TEMP = 1:PTR = PTR + 1:goto 3470:endif
+3430	SPCFLAG = 1:goto 3470
+3440	REM Make a shrub
+3450	WIDTH = int( rnd( 1 ) * 2 + 2 ):SEG$ = CL$:if WIDTH = 2:SEG$( 9 ) = "\1D\1C":goto 3470:endif
+3460	SEG$( 13 ) = "\1D \1C"
+3470	ODDHOUSE = 0:FENCE = 0:gosub 2000
+3480	if ROOMLEFT < 4 then 3140:REM Add another tree if not enough room for a house
+3490	goto 3040
+3500	REM Width 2
+3510	if STORY > 3:STORY = 3:endif
+3520	BT = 1
+3530	if STORY = 2:BT = 3:endif
+3540	if CHIMNEY:SEG$( BT ) = "INZU":goto 3560:endif
+3550	SEG$( BT ) = "IOZX"
+3560	BT = BT + 4:for I = BT to BT + ( STORY - 2 ) * 2 step 2
+3570		if rnd( 1 ) <= 0.5:SEG$( I ) = "\D4\D0":goto 3590
+3571		endif
+3580		SEG$( I ) = "\D2\D0"
+3590	next I
+3600	SEG$( 9 ) = "\C3\D4"
+3610	if FENCE = 0 then 3640
+3620	if rnd( 1 ) <= 0.5:SEG$( 11 ) = "WW":goto 3640:endif
+3630	SEG$( 11 ) = "EQ"
+3640	return
+3650	REM
+3700	REM Width 3
+3710	BT = ( 4 - STORY ) * 3 + 1
+3720	if ANTENNA and STORY < 4:SEG$( BT - 3 ) = "\00`\00":endif
+3730	SEG$( BT ) = "ZTX"
+3740	if rnd( 1 ) <= 0.5:TEMP$ = "\C6\D0\C7":goto 3760:endif
+3750	TEMP$ = "\C6\D2\C7"
+3760	BT = BT + 3:for I = BT to BT + ( STORY - 2 ) * 3 step 3
+3770		SEG$( I ) = TEMP$
+3780	next I
+3790	SEG$( 13 ) = "\C6\C3\C7"
+3800	if FENCE:SEG$( 16 ) = "WWW":endif
+3810	return
+3820	REM
+3900	REM Width 4
+3910	BT = ( 4 - STORY ) * 4 + 1
+3920	if STORY = 4:SEG$( BT ) = "HTTJ":goto 4050:endif
+3930	if STORY > 2 or SHRUB or rnd( 1 ) <= 0.3333 then 4000:REM Which type house?
+3940	REM Create Odd House type
+3950	ODDHOUSE = 1
+3960	if CHIMNEY:SEG$( 1 ) = "\00IN\00\00ZU\00":goto 3980:endif
+3970	SEG$( 1 ) = "\00IO\00\00ZX\00"
+3980	FENCE = 0
+3990	SEG$( 9 ) = "ITTO\C2\D2\D0\D6\C2\D4\C3\D6":goto 4100
+4000	REM Create Normal House type
+4010	if ANTENNA and CHIMNEY:SEG$( BT - 4 ) = "`HJ\00YTTJ":goto 4050:endif
+4020	SEG$( BT - 4 ) = "\00HJ\00":if CHIMNEY = 0:SEG$( BT ) = "HTTJ":goto 4050:endif
+4030	if rnd( 1 ) <= 0.5:SEG$( BT ) = "YTTJ":goto 4050:endif
+4040	SEG$( BT ) = "HTTM"
+4050	BT = BT + 4:for I = BT to BT + ( STORY - 2 ) * 4 step 4
+4060		if rnd( 1 ) <= 0.25:SEG$( I ) = "\C6\D3\D3\C7":goto 4080:endif
+4070		SEG$( I ) = "\C6\D0\D2\C7"
+4080	next I
+4090	SEG$( 17 ) = "\C6\D4\C3\C7"
+4100	if FENCE:SEG$( 21 ) = "WEQW":endif
+4110	return
+4120	REM
+4125	REM +
+5000	REM Set Up Memory Locations
+5010	DIF = 0
+5020	DLSZE = 34:REM Display List size
+5030	LINELEN = 160:REM Horizontal length of scrolling window
+5040	SCRNSZE = 6 * 24 + LINELEN * 6:REM Screen size
+5050	MEM = DLSZE + SCRNSZE:REM MEMory to reserve for DL and Screen
+5060	restore:read OBJS
+5070	dim FRMDATA( OBJS, 3 ):dim FRAMES( OBJS ), FRMSIZE( OBJS ), NUMPLRS( OBJS ), PLRFRMMEM( OBJS ), FRMLSTSIZE( OBJS )
+5080	for I = 1 to OBJS
+5090		read TEMP1, TEMP2, TEMP3
+5100		FRAMES( I ) = TEMP1:FRMSIZE( I ) = TEMP2:NUMPLRS( I ) = TEMP3
+5110		PLRFRMMEM( I ) = FRAMES( I ) * FRMSIZE( I ) + 1
+5120		FRAMEMEM = FRAMEMEM + PLRFRMMEM( I ) * NUMPLRS( I )
+5130		FRMLSTSIZE( I ) = FRAMES( I ) + 3
+5140		TOTFRMLSTSIZE = TOTFRMLSTSIZE + FRMLSTSIZE( I ) * NUMPLRS( I )
+5150	next I
+5160	dim BUFFER$( 128 ), FRAMEMEM$( FRAMEMEM ), FRMLSTMEM$( TOTFRMLSTSIZE )
+5170	DIF = DIF + 4:if DIF * 256 < MEM then 5170
+5180	HIBASE = peek( 106 ) - DIF:REM Find DL Hi and Lo bytes
+5190	LOBASE = 0
+5200	DLBASE = HIBASE * 256 + LOBASE
+5210	SCRN = DLBASE + DLSZE:REM Starting address of Screen RAM
+5220	X = SCRN:gosub 110
+5230	SCRNHI = HIBYTE:SCRNLO = LOBYTE:REM Find Screen Hi and Lo bytes
+5240	SCRLWIN = SCRN + 48:REM Beginning of Scroll window
+5250	SCROLL = adr( SCROLL$ )
+5260	DLIROUT = adr( DLIROUT$ )
+5270	PMOVER = adr( PMOVER$ )
+5280	ANIMATE = adr( ANIMATE$ )
+5290	AUTOMOVE = adr( AUTOMOVE$ )
+5300	MFILL = adr( MFILL$ )
+5310	BUFFER = adr( BUFFER$ )
+5320	PLRFRAMES = adr( FRAMEMEM$ )
+5330	FRMLSTMEM = adr( FRMLSTMEM$ )
+5340	return
+5350	REM
+6000	REM Set Up the Display List
+6010	graphics 2 + 16:REM Set flags to Graphics mode 2
+6020	poke 559, 0:REM Turn off screen DMA
+6030	poke DLBASE, 112:REM Set up top border, 24 scan lines
+6040	poke DLBASE + 1, 112
+6050	poke DLBASE + 2, 112
+6060	poke DLBASE + 3, 71:REM LMS for line 1
+6070	poke DLBASE + 4, SCRNLO
+6080	poke DLBASE + 5, SCRNHI
+6090	poke DLBASE + 6, 7 + 128:REM Line 2 (w/ DLI)
+6100	for I = 0 to 6:REM Loop for lines 3-9
+6110		WINDOW = SCRLWIN + I * LINELEN
+6120		BYTE = 87:REM LMS and HSCRL
+6130		if I = 2 or I = 5:BYTE = 87 + 128:REM DLI, LMS and HSCRL for lines 5 and 8
+6132 		endif
+6140		if I = 6:BYTE = 71:REM No scroll for line 9
+6142		endif
+6150		poke DLBASE + 7 + 3 * I, BYTE:REM LMS and HSCRL
+6160		X = WINDOW:gosub 110
+6170		poke DLBASE + 8 + 3 * I, LOBYTE
+6180		poke DLBASE + 9 + 3 * I, HIBYTE
+6190	next I
+6200	poke DLBASE + 28, 7 + 128:REM Last 3 lines
+6210	poke DLBASE + 29, 7
+6220	poke DLBASE + 30, 7 + 128
+6230	poke DLBASE + 31, 65:REM Jump on VBLANK to beginning of DL
+6240	poke DLBASE + 32, LOBASE
+6250	poke DLBASE + 33, HIBASE
+6260	X = DLIROUT:gosub 110
+6270	poke 512, LOBYTE:REM Address of DL for DLI handling routine
+6280	poke 513, HIBYTE
+6290	REM Tell ANTIC where the DL is
+6300	poke 560, LOBASE
+6310	poke 561, HIBASE
+6320	setcolor 0, 15, 4:setcolor 1, 12, 4:setcolor 2, 0, 10:setcolor 3, 0, 12:setcolor 4, 9, 8:REM Brn, grn, wht, wht, blue
+6330	return
+6340	REM
+7000	REM Initialize Player-Missile Graphics
+7010	TEMP = peek( 106 ) - DIF - 4:REM Set aside Player-Missile area
+7020	poke 54279, TEMP:REM Tell ANTIC where PM RAM is
+7030	PMBASE = 256 * TEMP:REM Find PM Base address
+7040	for I = 0 to 3
+7050		PLR( I ) = PMBASE + 128 * I + 512:REM Set addresses of Players
+7060		PMWIDTH( I ) = 53256 + I:REM Set addresses of Player Widths
+7070	next I
+7090	poke 623, 1:REM Set priority - Players in front
+7100	poke 53277, 2:REM Enable Player display
+7110	TEMP = usr( MFILL, PLR( 0 ), 512, 0 ):REM Use memory fill routine to clear Players
+7120	return
+7130	REM
+8000	REM Set Up Alternate Character Set
+8010	HICHRB = peek( 106 ) - DIF - 4:REM Reserve space (512 bytes)
+8020	CHRBAS = HICHRB * 256:REM Find start of Character Set
+8030	REM Read in data, skip first 28 characters
+8040	OFFSET = 28 * 8:CHARS = 35
+8050	restore 23000
+8060	read TOTAL:TEMP = 0
+8070	for I = CHRBAS + OFFSET to CHRBAS + OFFSET + CHARS * 8 - 1
+8080		read BYTE:poke I, BYTE:TEMP = TEMP + BYTE
+8090	next I
+8100	if TOTAL <> TEMP:graphics 0:print "\C5\D2\D2\CF\D2 In Character Set Data":end:endif
+8110	REM Clear out first char (background)
+8120	for I = CHRBAS to CHRBAS + 7
+8130		poke I, 0
+8140	next I
+8150	return
+8160	REM
+10000	REM Read in Frame Data
+10010	OFFSET = 0:OFFSET2 = 0:dim FRAMELIST( OBJS ):restore 21000
+10020	for K = 1 to OBJS
+10030		FRAMELIST( K ) = FRMLSTMEM + OFFSET
+10040		OFFSET = OFFSET + ( FRAMES( K ) + 3 ) * NUMPLRS( K )
+10050		for I = 0 to NUMPLRS( K ) - 1
+10060			FRMDATA( K, I ) = PLRFRAMES + OFFSET2:REM Store addresses of frame data
+10070			OFFSET2 = OFFSET2 + PLRFRMMEM( K )
+10080			poke FRMDATA( K, I ), FRMSIZE( K ):REM Poke Frame size at beginning of each set of frame data
+10090			for J = 1 to PLRFRMMEM( K ) - 1
+10100				read BYTE
+10110				poke FRMDATA( K, I ) + J, BYTE
+10120			next J:next I:next K
+10130	return
+10140	REM
+10995	REM .
+11000	REM INITIALIZE ROUTINE STRINGS
+11010	REM Set SCROLL routine
+11020	dim SCROLL$( 316 )
+11030	SCROLL$( 1 ) = "\B8P\03Lb\E4\D8\AD\05\04\F0\F7\10H\A5\E0\8DY\04\A5\E1\8DZ\04\AD0\02\85\E0\AD1\02\85\E1\AD\1E\04\8DP\04\A9\C0\8DQ\04\AD\1F\04\A0\00NP\04\90\07JNQ\04\C8\D0\F4\8DP\04\AD\1F\04-\1E\04\18mF\04\CD\1E\04\F0\0E\90\0C\B0\04P\AD\D0Y\EEP"
+11040	SCROLL$( 91 ) = "\04-\1E\04\8DF\04M\1E\04\8D\04\D4\ADP\04\18mD\04\8DD\04\90\03\EEE\04\ADD\048mQ\04\8DD\04\90\03\EEE\04\ADE\04\CD\1D\04\90(\D0\08\ADD\04\CD\1C\04\90\1E\A9\00\8DD\04\8DE\04\8DP\04\AD\1A\04\8DB\04\AD\1B\04\8DC\04\B8P\13\D0gP"
+11050	SCROLL$( 181 ) = "\9F\ADD\04\18\EDQ\04\8DD\04\B0\03\CEE\04\ADB\04\18mP\04\8DB\04\8DR\04\90\03\EEC\04\ADC\04\8DS\04\A0\03\B1\E0\C9A\F0))P\F0 )\10\F0\1A\C8\ADR\04\91\E0\18m\1C\04\8DR\04\C8\ADS\04\91\E0m\1D\04\8DS\04\AD\C8\C8\C8\D0\D3P\A6\AD"
+11060	SCROLL$( 271 ) = "Y\04\85\E0\ADZ\04\85\E1\B8P\99\A9\80\8D\05\04\AD\1E\04\8DF\04\A9\00\8DD\04\8DE\04\AD\1A\04\8DB\04\AD\1B\04\8DC\04\B8P\CF"
+11100	REM Set DLI routine
+11110	dim DLIROUT$( 94 )
+11120	DLIROUT$( 1 ) = "\B8P\0ALb\E4\A9\00\8DK\04\F0\F6H\8AH\98H\A5\E0\8D]\04\A5\E1\8D^\04\AD$\04\85\E0\AD%\04\85\E1\ACK\04\B1\E0H\C8\B1\E0\AA\C8\B1\E0\C8\8CK\04\A8h\EA\EA\EA\EA\EA\EA\EA\EA\EA\8D\0A\D4\8D\18\D0\8E\19\D0\8C\1A\D0\AD]\04\85\E0\AD^\04\85\E1h\A8"
+11130	DLIROUT$( 91 ) = "h\AAh@"
+11200	REM Read Color Values Into DLI Table
+11210	DLITBLSZE = 15:restore 25510
+11220	dim DLITABLE$( DLITBLSZE )
+11230	DLITABLE = adr( DLITABLE$ )
+11240	for I = 0 to DLITBLSZE - 1
+11250		read BYTE
+11260		poke DLITABLE + I, BYTE
+11270	next I
+11300	REM Set PMOVER routine
+11310	dim PMOVER$( 186 )
+11320	PMOVER$( 1 ) = "\B8P\10Lb\E4\A2\03\BD&\04\9D\00\D0\CA\10\F70\F0\A2\06\B5\DF\9DS\04\CA\D0\F8hhh\85\E3\A5\E3\85\E2\AC\04\04\A2\00\8E\04\04F\E2\90\06\BD\06\04\9D&\04\E8\E0\04\D0\F1\8C\04\04\A2\00\86\E0\AD\00\04\85\E1\AD\01\04\85\E4\AD\02\04\85\E5\AD\03\04\85\E2\8E\03"
+11330	PMOVER$( 91 ) = "\04F\E3\B0\1E\A5\E0I\80\85\E0\D0\02\E6\E1\E8\E0\04\D0\ED\A5\E2\8D\03\04\E8\BDT\04\95\E0\CA\10\F8`\A0\7F\B1\E0\91\E4\88\10\F9\8EL\04\BD*\04H\BD\0A\04\9D*\04\A8h\AA\8EM\04\8CN\04\8A\A8\B1\E4\ACN\04\91\E0\C8\10\02\A0\00\E8\10\02\A2\00\ECM\04\D0\E5"
+11340	PMOVER$( 181 ) = "\AEL\04\B8P\A5"
+11400	REM Set ANIMATE routine
+11410	dim ANIMATE$( 294 )
+11420	ANIMATE$( 1 ) = "\B8P\03Lb\E4\D8\A2\03\B5\E0\9DY\04\CA\10\F8\AD\03\04\F0\ED0H\0A\0A\0A\8DP\04\A2\00N\03\04\B0\10\90\02\F0\DA\E8\E0\04\D0\F2\A9\80\8D\03\04\D0+\BD\0E\04\D0\02\A9\FF\9D.\04\8A\0A\A8\B9\12\04\992\04\B9\13\04\993\04\ADP\040\D6\BD\0E\04\9D:\04\A9"
+11430	ANIMATE$( 91 ) = "\01\9D>\04\D0\C9\A9\00\85\E0\AD\00\04\85\E1\A2\00\BD.\04\F0\09\C9\FF\F0%\DE:\04\F0\19\A5\E0I\80\85\E0\D0\02\E6\E1\E8\E0\04\D0\E3\BDX\04\95\DF\CA\D0\F8\F0\95\BD.\04\C9\FF\D0\02\A9\01\9D:\04\8A\0A\A8\B92\04\85\E2\B93\04\85\E3\FE>\04\BD>\04\A8\B1\E2"
+11440	ANIMATE$( 181 ) = "\D0\09\A9\02\9D>\04\D0\F4P\BA\8DP\04\CEP\04\A0\00\B1\E2H\C8\B1\E2\85\E3h\85\E2\88\B1\E2\8DQ\04\A9\00\A0\08NP\04\90\04\18mQ\04JnR\04\88\D0\F0\A8\ADR\048e\E2\85\E2\98e\E3\85\E3\8EP\04\BD*\04\A8\A2\00\8CR\04\8A\A8\B1\E2\ACR\04\91"
+11450	ANIMATE$( 271 ) = "\E0\C8\E8\ECQ\04\D0\ED\AEP\04\BD.\04\C9\FF\D0\03\FE.\04\B8P\97"
+11500	REM Set AUTOMOVE routine
+11510	dim AUTOMOVE$( 74 )
+11520	AUTOMOVE$( 1 ) = "\B8P\03Lb\E4\D8\AD\04\04\F0\F70\17\A2\00N\04\04\90\06\BD \04\9DG\04\E8\E0\04\D0\F0\A9\80\8D\04\04\A2\03\BDG\04I\80\08\18}&\04\90\05(0\0C\10\03(\10\07\A9\80\9DG\04\A9\00\9D&\04\CA\10\DF0\B9"
+11600	REM Set MFILL routine
+11610	dim MFILL$( 41 )
+11620	MFILL$( 1 ) = "hh\85\CCh\85\CBh\85\CEh\85\CDhh\A0\00\AA\8A\91\CB\C8\D0\02\E6\CC\A5\CD\D0\02\C6\CE\C6\CD\A5\CD\05\CE\D0\EA`"
+11650	return
+11655	REM .
+11660	REM
+12000	REM Set Parameters For Routines
+12010	PARAMBASE = 1024:REM Parameter Base address
+12020	PMBAS = PARAMBASE:REM Hi Byte of PLR0 Location goes here
+12030	PMBUF = PARAMBASE + 1:REM Address of a 128 byte buffer
+12040	INITANIMATE = PARAMBASE + 3:REM Initialize Frame Animate routine
+12050	INITAUTOMOVE = PARAMBASE + 4:REM Initialize Player Automove routine
+12060	SCRLINIT = PARAMBASE + 5:REM Poke a 1 to initialize the scroll routine
+12070	for I = 0 to 3
+12080		HPLR( I ) = PARAMBASE + 6 + I:REM Player horizontal "shadow" registers
+12090		VPLR( I ) = PARAMBASE + 10 + I:REM Player vertical "shadow" registers
+12100		RATE( I ) = PARAMBASE + 14 + I:REM Animate rate "shadow" registers
+12110		FRMLSTPTR( I ) = PARAMBASE + 18 + I * 2: REM Pnter to Frame Lists
+12120		MVRATE( I ) = PARAMBASE + 32 + I: REM Horizontal movement for AUTOMOVE
+12130	next I
+12140	SCRLADR = PARAMBASE + 26:REM Address of scrolling window
+12150	SCRLLEN = PARAMBASE + 28:REM Line length of scrolling window
+12160	SCRLCLK = PARAMBASE + 30:REM Number of Color Clocks per screen byte
+12170	SCRLSTEP = PARAMBASE + 31:REM Step size of scroll each jiffy
+12180	DLIADR = PARAMBASE + 36:REM Address of DLI table
+12190	VVBLKD = 548:REM Deferred Vertical Blank Interrupt Vector
+12200	CRITICAL = 66:REM Critical Flag
+12210	P0 = 1:P1 = 2:P2 = 4:P3 = 8:REM Control bits for the four Players
+12220	FST2P = P0 + P1
+12230	LST2P = P2 + P3:ALLP = P0 + P1 + P2 + P3
+12240	TEMP = usr( MFILL, PARAMBASE, 94, 0 ):REM IMPORTANT: Clear out parameter area
+12250	X = PLR( 0 ):gosub 110:poke PMBAS, HIBYTE:REM Poke Hi Byte of Player 0 into PMBAS
+12260	X = BUFFER:gosub 110:poke PMBUF, LOBYTE:REM Poke address of buffer
+12270	poke PMBUF + 1, HIBYTE
+12280	X = SCRLWIN:gosub 110
+12290	poke SCRLADR, LOBYTE
+12300	poke SCRLADR + 1, HIBYTE
+12320	X = LINELEN:gosub 110
+12330	poke SCRLLEN, LOBYTE
+12340	poke SCRLLEN + 1, HIBYTE
+12350	poke SCRLCLK, 7:REM Set to 8 color clocks per byte
+12360	X = DLITABLE:gosub 110
+12370	poke DLIADR, LOBYTE
+12380	poke DLIADR + 1, HIBYTE
+12390	REM
+12400	REM Set Up Frame Lists
+12410	dim PNTER( OBJS, 1 )
+12420	for K = 1 to OBJS
+12430		for I = 0 to NUMPLRS( K ) - 1
+12440			let PNTER( K, I ) = FRAMELIST( K ) + I * FRMLSTSIZE( K ):REM Points to start of each Frame List
+12450			X = FRMDATA( K, I ):gosub 110
+12460			poke PNTER( K, I ), LOBYTE:REM Put in address of Frame Data
+12470			poke PNTER( K, I ) + 1, HIBYTE
+12480			for J = 1 to FRAMES( K ):REM Make up a Frame List (numbers 1 thru FRAMES)
+12490				poke PNTER( K, I ) + J + 1, J
+12500			next J
+12510			poke PNTER( K, I ) + FRAMES( K ) + 2, 0:REM End of frame list marker
+12520		next I:next K
+12530	return
+12540	REM
+13000	REM Install Interrupt Routines
+13010	poke CRITICAL, 1:REM Open CRITICAL "valve", set up detour
+13020	X = SCROLL + 6:gosub 110
+13030	poke VVBLKD, LOBYTE:REM Set VBLANK vector to SCROLL
+13040	poke VVBLKD + 1, HIBYTE
+13050	X = DLIROUT + 6:gosub 110
+13060	poke SCROLL + 4, LOBYTE:REM Points SCROLL to DLIROUT
+13070	poke SCROLL + 5, HIBYTE
+13080	X = PMOVER + 6:gosub 110
+13090	poke DLIROUT + 4, LOBYTE:REM Points DLIROUT to PMOVER
+13100	poke DLIROUT + 5, HIBYTE
+13110	X = ANIMATE + 6:gosub 110
+13120	poke PMOVER + 4, LOBYTE:REM Points PMOVER to ANIMATE
+13130	poke PMOVER + 5, HIBYTE
+13140	X = AUTOMOVE + 6:gosub 110
+13150	poke ANIMATE + 4, LOBYTE:REM Points ANIMATE to AUTOMOVE
+13160	poke ANIMATE + 5, HIBYTE
+13170	poke CRITICAL, 0:REM Close CRITICAL "valve", routines installed
+13180	poke SCRLINIT, 1
+13190	poke 54286, 192:REM Enable DLI's
+13200	return
+13210	REM
+20000	REM FRAME DATA
+20010	REM Number of objects
+20020	data 5
+20030	REM
+20040	REM Number of Frames, Frame Size, Number of Players
+20050	REM .  (Walking Man)
+20060	data 5,19,2
+20070	REM .  (Tree Trunk)
+20080	data 1,52,1
+20090	REM .  (Tree Top)
+20100	data 1,26,1
+20110	REM .  (Truck)
+20120	data 1,25,2
+20130	REM .  (Car)
+20140	data 1,13,2
+20150	REM
+21000	REM Frame data for Walking Man
+21010	REM Frame 1, Player 0
+21020	data 0,0,0,0,0,0,0,3,15,29,59,51,7,7,15,252,224,112,48
+21030	REM Frame 2, Player 0
+21040	data 0,0,0,0,0,0,0,1,7,15,31,55,55,7,111,125,248,192,193
+21050	REM Frame 3, Player 0
+21060	data 0,0,0,0,0,0,3,7,15,31,31,31,31,222,254,251,231,206,15
+21070	REM Frame 4, Player 0
+21080	data 1,3,3,3,1,7,15,31,30,62,62,63,63,60,124,120,112,112,252
+21090	REM Frame 5, Player 0
+21100	data 0,0,1,1,1,0,7,31,31,31,31,31,15,15,13,31,123,112,124
+21110	REM Frame 1, Player 1
+21120	data 0,28,62,62,62,28,240,240,240,240,251,255,220,192,192,227,118,60,24
+21130	REM Frame 2, Player 1
+21140	data 0,0,56,124,124,124,56,224,224,224,224,246,254,192,128,192,224,224,248
+21150	REM Frame 3, Player 1
+21160	data 0,112,248,248,248,112,192,192,128,128,128,224,224,0,0,0,0,0,128
+21170	REM Frame 4, Player 1
+21180	data 192,224,224,224,192,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+21190	REM Frame 5, Player 1
+21200	data 0,224,240,240,240,224,128,128,128,128,176,240,0,128,192,128,192,0,0
+21210	REM
+22000	REM Frame data for Tree
+22010	REM Player 2, Tree Trunk
+22020	data 2,2,132,128,64,0,149,165,210,211,219,251,255,254,126,126,126,126,126,126
+22030	data 126,126,126,126,126,126,126,126,126,122,126,126,126,126,126,126,126,126,126,126
+22040	data 126,126,126,126,126,126,126,126,255,255,219,137
+22050	REM Player 3, Tree Top
+22060	data 24,24,60,60,126,126,126,255,255,255,255,255,255,255,255,255,255,255,255,126
+22070	data 126,60,60,60,24,24
+22080	REM
+22100	REM Frame data for Truck
+22110	REM Player 2, Truck Cab
+22120	data 0,0,0,0,0,15,25,17,17,17,17,17,31,31,255,255,255,255,255,255
+22130	data 255,255,255,28,28
+22140	REM Player 3, Truck Body
+22150	data 255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255
+22160	data 255,255,255,12,12
+22170	REM
+22200	REM Frame data for Car
+22210	REM Player 2, Car back
+22220	data 7,9,17,17,17,31,63,127,255,255,255,56,16
+22230	REM Player 3, Car front
+22240	data 192,64,32,32,16,248,255,255,255,254,255,28,8
+23000	REM Character Set Data
+23010	data 38646
+23020	data 0,3,15,31,63,63,127,127
+23030	data 0,192,240,248,252,252,254,254
+23040	data 127,127,127,63,63,31,15,7
+23050	data 254,254,254,252,252,248,240,224
+23060	data 4,31,4,31,4,4,4,4
+23070	data 48,48,48,63,54,54,54,54
+23080	data 3,3,3,3,3,3,3,3
+23090	data 255,195,219,219,219,219,219,219
+23100	data 12,12,12,252,108,108,108,108
+23110	data 0,0,0,252,108,108,108,108
+23120	data 127,127,127,127,127,127,127,127
+23130	data 254,254,254,254,254,254,254,254
+23140	data 1,3,7,15,31,63,127,255
+23150	data 1,1,3,3,7,7,15,15
+23160	data 128,192,224,240,248,252,254,255
+23170	data 3,3,7,7,15,0,0,0
+23180	data 192,192,224,224,240,0,0,0
+23190	data 156,220,252,252,252,252,254,255
+23200	data 128,128,192,192,224,224,243,243
+23210	data 128,128,192,192,224,224,240,240
+23220	data 255,255,39,39,255,39,39,255
+23230	data 0,0,0,63,54,54,54,54
+23240	data 255,255,228,228,255,228,228,255
+23250	data 255,24,24,24,255,24,24,24
+23260	data 255,255,255,255,255,255,255,255
+23270	data 251,251,255,252,254,254,255,255
+23280	data 192,192,192,192,192,192,192,192
+23290	data 0,0,0,255,102,102,102,102
+23300	data 248,248,252,252,254,254,255,255
+23310	data 57,59,63,63,63,63,127,255
+23320	data 31,31,63,63,127,127,255,255
+23330	data 127,127,127,127,63,63,30,0
+23340	data 255,255,255,255,255,254,124,0
+23350	data 254,254,254,254,252,252,120,0
+23360	data 255,255,255,0,0,0,0,0
+23370	REM
+25500	REM DLI Color Values
+25510	data 234,90,152,234,90,198,10,0,198,0,0,6,0,0,10

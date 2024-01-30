@@ -11,7 +11,7 @@
 120 	LOBYTE = X - HIBYTE * 256
 130 	return
 140 	REM Initialize
-150 	dim PLR( 3 ), HPLR( 3 ), VPLR( 3 ), RATE( 3 ), PMWIDTH( 3 ), FRMLSTPTR( 3 ), MOVERATE( 3 )
+150 	dim PLR( 3 ), HPLR( 3 ), VPLR( 3 ), RATE( 3 ), PMWIDTH( 3 ), FRMLSTPTR( 3 ), MOVRATE( 3 )
 160 	dim CL$( 24 ), SEG$( 24 ), TEMP$( 8 )
 170 	CL$( 1 ) = chr$( 0 ):CL$( 24 ) = chr$( 0 ):CL$( 2 ) = CL$
 180 	gosub 11000
@@ -62,8 +62,8 @@
 710 	if OBJECT = 3:NSPD = 128 - SPEED * 2:goto 740:endif
 720 	if OBJECT = 4:NSPD = 125 - SPEED:goto 740:endif
 730 	NSPD = 132 - SPEED
-740 	poke MOVERATE( 2 ), NSPD:poke MOVERATE( 3 ), NSPD:TEMP = LST2P
-750 	poke MOVERATE( 0 ), 129 - SPEED:poke MOVERATE( 1 ), 129 - SPEED:if WALK = -1:TEMP = ALLP:endif
+740 	poke MOVRATE( 2 ), NSPD:poke MOVRATE( 3 ), NSPD:TEMP = LST2P
+750 	poke MOVRATE( 0 ), 129 - SPEED:poke MOVRATE( 1 ), 129 - SPEED:if WALK = -1:TEMP = ALLP:endif
 760 	poke INITAUTOMOVE, TEMP
 770 	poke SCRLSTEP, SPEED
 780 	return
@@ -110,7 +110,7 @@
 1400 	REM
 1500 	REM Put Frame List Address in Param Table
 1510 	for I = 0 to NUMPLRS( OBJECT ) - 1
-1520 		X = POINTER( OBJECT, I ):gosub 110
+1520 		X = PNTR( OBJECT, I ):gosub 110
 1530 		poke FRMLSTPTR( I + FRSTPLR ), LOBYTE
 1540 		poke FRMLSTPTR( I + FRSTPLR ) + 1, HIBYTE
 1550 	next I
@@ -120,7 +120,7 @@
 1910 	CFLAG = 0
 1920 	if CHAR > 127:CHAR = CHAR - 128:CFLAG = 128:endif
 1930 	if CHAR < 96:CHAR = CHAR - 32:if CHAR < 0:CHAR = CHAR + 96:endif:endif
-1940 	if CFLAG:CHAR = CHAR + CFLAG + PAINT * 64:endif
+1940 	if CFLAG:CHAR = CHAR + CFLAG + PNT * 64:endif
 1950 	return
 1960 	REM
 2000 	REM Send Info to Screen
@@ -182,7 +182,7 @@
 3090 	if SHRUB = 0:FENCE = ( rnd( 1 ) <= 0.4 ):endif
 3100 	if ROOMLEFT < 6:FENCE = 0:endif
 3110 	ANTENNA = ( rnd( 1 ) <= 0.5 )
-3120 	PAINT = ( rnd( 1 ) <= 0.5 )
+3120 	PNT = ( rnd( 1 ) <= 0.5 )
 3130 	SEG$ = CL$:on WIDTH - 1 gosub 3500, 3700, 3900:gosub 2000
 3140 	if ROOMLEFT < 2:gosub 2400:return:endif
 3150 	REM Plant Some Foilage
@@ -439,7 +439,7 @@
 12090 		VPLR( I ) = PARAMBASE + 10 + I
 12100 		RATE( I ) = PARAMBASE + 14 + I
 12110 		FRMLSTPTR( I ) = PARAMBASE + 18 + I * 2
-12120 		MOVERATE( I ) = PARAMBASE + 32 + I
+12120 		MOVRATE( I ) = PARAMBASE + 32 + I
 12130 	next I
 12140 	SCRLADR = PARAMBASE + 26
 12150 	SCRLLEN = PARAMBASE + 28
@@ -467,17 +467,17 @@
 12380 	poke DLIADR + 1, HIBYTE
 12390 	REM
 12400 	REM Set Up Frame Lists
-12410 	dim POINTER( OBJS, 1 )
+12410 	dim PNTR( OBJS, 1 )
 12420 	for K = 1 to OBJS
 12430 		for I = 0 to NUMPLRS( K ) - 1
-12440 			let POINTER( K, I ) = FRAMELIST( K ) + I * FRMLSTSIZE( K )
+12440 			let PNTR( K, I ) = FRAMELIST( K ) + I * FRMLSTSIZE( K )
 12450 			X = FRMDATA( K, I ):gosub 110
-12460 			poke POINTER( K, I ), LOBYTE
-12470 			poke POINTER( K, I ) + 1, HIBYTE
+12460 			poke PNTR( K, I ), LOBYTE
+12470 			poke PNTR( K, I ) + 1, HIBYTE
 12480 			for J = 1 to FRAMES( K )
-12490 				poke POINTER( K, I ) + J + 1, J
+12490 				poke PNTR( K, I ) + J + 1, J
 12500 			next J
-12510 			poke POINTER( K, I ) + FRAMES( K ) + 2, 0
+12510 			poke PNTR( K, I ) + FRAMES( K ) + 2, 0
 12520 		next I:next K
 12530 	return
 12540 	REM
