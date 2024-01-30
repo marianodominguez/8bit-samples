@@ -26,6 +26,8 @@ int main(void) {
 
     unsigned int x2=0;
     unsigned char y2=0;
+    unsigned int i;
+
     int fd = _graphics(8);
 
     if (fd == -1) {
@@ -33,22 +35,24 @@ int main(void) {
         exit(1);
     }
     cursor(0);
+    wait_start();
     // Store fd for screen
     _setscreen(fd);
 
     _setcolor(1,1,14);
     _setcolor(2,4,4);
     _color(1);
-    _clear();
-    draw(0,80,160,159);
+    for(i=0; i<10;i++) {
+        _clear();
+        draw(0,80,160,159);
 
-    draw(0,80,160,0);
+        draw(0,80,160,0);
 
-   //_clear();
+        //_clear();
 
-    draw(80,80,160,159);
-    draw(80,80,160,0);
-
+        draw(80,80,160,159);
+        draw(80,80,160,0);
+    }
     wait_start();
 
     return EXIT_SUCCESS;
