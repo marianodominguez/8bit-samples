@@ -24,7 +24,7 @@ print(args.outfile)
 f=open(args.binfile, 'br')
 #read header
 header=f.read(6)
-if (header[:2]!=b'\ff\ff'):
+if (header[:2]!=b'\xff\xff'):
     print("invaild executable, using raw data")
     f.seek(0)
 
