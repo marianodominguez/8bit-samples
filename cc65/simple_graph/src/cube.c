@@ -90,7 +90,8 @@ void line(unsigned int x, unsigned char y, unsigned int x1, unsigned char y1) {
     error = dx - dy;
 
     while(x0!=x1 || y0!=y1) {
-        put_pixel(x0,y0);
+
+        _plot(x0,y0);
         e2=2*error;
         if(e2 > -dy) {
             error-= dy;
@@ -124,8 +125,8 @@ void bline(unsigned int x, unsigned char y, unsigned int u, unsigned char v) {
     error = dx + dy;
 
     while(1==1) {
-        put_pixel(x0,y0);
-        put_pixel(x1,y1);
+        _plot(x0,y0);
+        _plot(x1,y1);
 
         if (abs(x0-x1)<=1 && abs(y0-y1)<=1) return;
 

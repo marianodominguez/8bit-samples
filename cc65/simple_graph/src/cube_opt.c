@@ -36,9 +36,7 @@ unsigned int dl,dl4,dl5,dljmp;
 unsigned char rh,rl,buf_lo,buf_hi,bhi,blo,rhi,rlo;
 int fd;
 
-
 int CUBE[]={
-
     -100,-100,-100, //X=-1
     -100, 100,-100,
     -100, 100, 100,
@@ -70,6 +68,42 @@ int CUBE[]={
      100, 100,-100
 };
 
+void line(int x,char y,int x1,char y1) {
+    int x0=x;
+    int y0=y;
+    int dx=abs(x1-x0);
+    int dy=abs(y1-y0);
+    int sx = -1;
+    int sy = -1;
+    int rx=x1;
+    int ry=y1;
+    int e2,error;
+
+    if (x0<x1) {
+        sx=1;
+        rx=x0;
+    }
+    if (y0<y1) {
+        sy=1;
+        ry=y0;
+    }
+
+    error = dx - dy;
+
+    while(x0!=x1 || y0!=y1) {
+        _plot(x0,y0);
+        e2=2*error;
+        if(e2 > -dy) {
+            error-= dy;
+            x0 += sx;
+        }
+        if(e2 < dx) {
+            error+= dx;
+            y0 += sy;
+        }
+    }
+}
+
 void cube(void) {
     unsigned int i,j,xs,ys,x1,y1,x0,y0;
     idx=0;
@@ -100,7 +134,7 @@ void cube(void) {
                 //put_pixel(xs,ys);
             }
             else {
-                _fast_draw(x1,y1,xs,ys);
+                line(x1,y1,xs,ys);
             }
             x1=xs;
             y1=ys;
