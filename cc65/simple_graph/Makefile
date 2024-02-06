@@ -25,7 +25,7 @@ else
   LD := $(if $(wildcard /usr/bin/ca65*),/usr/bin/ld65,ld65)
 endif
 
-$(PROG): clean
+$(PROG):
 	$(CC) -t $(SYS) -O --static-locals -I include -o bin/$(PROG).s src/$(PROG).c src/atari_draw.s src/fp_trig.c
 	$(CL) -t $(SYS) -C cfg/atari_mem.cfg -O -Wl "-D__RESERVED_MEMORY__=0x2000" --static-locals -I include -o bin/$(PROG) src/$(PROG).c src/atari_draw.s src/fp_trig.c
 clean:
