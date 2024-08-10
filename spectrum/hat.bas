@@ -1,0 +1,22 @@
+10 CLS : LET t=(65536*PEEK 23674+256*PEEK 23673+PEEK 23672)/50
+20 LET p=80: LET q=50
+30 LET xp=72: LET xr=1.5*PI
+40 LET yp=28: LET yr=1: LET zp=32
+50 LET xf=xr/xp: LET yf=yp/yr: LET zf=xr/zp
+60 FOR z=-q TO q-1
+70 IF z<-zp OR z>zp THEN GO TO 150
+80 LET zt=z*xp/zp: LET zz=z
+90 LET xl=INT (.5+SQR (xp*xp-zt*zt))
+100 FOR x=-xl TO xl
+110 LET xt=SQR (x*x+zt*zt)*xf: LET xx=x
+120 LET yy=(SIN (xt)+.4*SIN (3*xt))*yf
+130 GO SUB 170
+140 NEXT x
+150 NEXT z
+160 PRINT AT 0,0;(65536*PEEK 23674+256*PEEK 23673+PEEK 23672)/50-t: STOP
+170 LET x1=xx+zz+p
+180 LET y1=yy-zz+q
+190 PLOT 40+x1,40+y1
+200 IF y1=0 THEN RETURN
+210 PLOT 40+x1,40+y1-1: REM DRAW x1,0
+220 RETURN
