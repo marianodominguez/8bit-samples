@@ -1,0 +1,15 @@
+10 REM **********************************
+20 REM *      Gorillas Atari basic      *
+30 REM *      by @papa_robot            *
+40 REM **********************************
+100 EXEC init: REM Load charset, antic graphics
+110 EXEC splash : REM splash screen, intro
+120 IF PEEK($d01f) <> 6 THEN 120
+130 EXEC getparams : REM get gravity and rounds
+140 EXEC setup : REM draw buildings
+150 WHILE NOT round_ends
+160 EXEC PLAYER_SHOOT
+500 WEND
+600 END
+1000 PROC init
+1010 
