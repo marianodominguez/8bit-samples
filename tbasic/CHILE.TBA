@@ -2,8 +2,8 @@
 20 dim o(5)::dim xs(5): dim ys(5)
 30 for y=20 to 96:plot 0,y:drawto 160,0:next y
 40 for x=96 to 255:plot x,96:drawto 0,9:next x
-50 
-60 
+50 rem
+60 rem
 70 for r=25 to 1 step -1 
 80 for j=0 to 5
 90 th=th+2/5*PI
