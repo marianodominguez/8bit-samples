@@ -1,6 +1,6 @@
-#atari8bitbot 
+rem #atari8bitbot 
 GR. 8+16:SE.1,1,14:SE.2,0,0:C.1
-PL.160,0:DR.160.191
+PL.160,0:DR.160,191
 PL.0,96:DR.319,96
 PI=3.141592
 F.X=-2*PI TO 2*PI STEP PI/80
