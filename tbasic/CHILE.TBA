@@ -1,8 +1,8 @@
-10 gr.7+16:se 1,5,10:se.2,1,10:se.3,3,10
-20 dim o(5)::dim xs(5): dim ys(5)
+10 gr.7+16:se.1,5,10:se.2,1,10:se.3,3,10
+20 dim o(5):dim xs(5): dim ys(5)
 30 for y=20 to 96:plot 0,y:drawto 160,0:next y
 40 for x=96 to 255:plot x,96:drawto 0,9:next x
-50 rem
+50 for i=1 to 6:read v:o(i)=v:next i
 60 rem
 70 for r=25 to 1 step -1 
 80 for j=0 to 5
@@ -11,8 +11,8 @@
 110 next j
 120 for i=0 to 5
 130 plot xs(o(i)),ys(o(i))
-140 draw xs(o(i+1))-PEEK 23677,ys(o(i+1))-PEEK 23678
+140 drawto xs(o(i+1)),ys(o(i+1))
 150 next i
 160 next r
-170 data 0,2,4,1,3,0
-180 pause 120
+170 pause 120
+500 data 0,2,4,1,3,0
