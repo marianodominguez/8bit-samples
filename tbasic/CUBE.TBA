@@ -4,8 +4,8 @@
 30 F.th=0 to 360 step 10
 35 idx=1
 40 GR.8+16:SE.1,1,14:C.1
-50 F.i=0 TO 6
-60 F.j=0 TO 4
+50 F.i=0 TO 5
+60 F.j=0 TO 3
 65 x=x(idx):y=y(idx):z=z(idx)
 66 idx=idx+1
 70 xp=(x-z)/sq2
