@@ -1,9 +1,9 @@
 SAVMSC 	= 	$58
-		org $0600
-start	ldy #0
-		lda #0
-loop	sta (SAVMSC),Y
-		iny
-		tya
-		bne loop
-pause 	jmp pause
+		ORG $0600
+START	LDY #0
+		LDA #0
+LOOP	STA (SAVMSC),Y
+		INY
+		TYA
+		BNE LOOP
+PAUSE 	JMP PAUSE

@@ -1,43 +1,49 @@
-        ORG   $0302
-SAVMSC = $58
-MAXLEN = 100
-strp   = $C0
-offset = $C2
-asc    = $C4
+      ORG  $0302
+SAVMSC   =  $58
+MAXLEN   =  100
+STRP    = $C0
+OFFSET  = $C2
+ASC    = $C4
 
 START
-        LDA SAVMSC
-        STA asc
-        LDA SAVMSC+1
-        STA asc+1
+      LDA #0
+      JSR $EF9C
 
-        LDA #40
-        STA offset
-        LDX #<string
-        LDY #>string
-        JSR print
+      LDA SAVMSC
+      STA ASC
+      LDA SAVMSC+1
+      STA ASC+1
 
-        LDA #80
-        STA offset
-        LDX #<string1
-        LDY #>string1
-        JSR print
-pause   JMP pause
+      LDA #40
+      STA OFFSET
+      LDX #STR&255
+      LDY #STR/256
+      JSR PRINT
 
-print   CLC
-        LDA SAVMSC
-        ADC offset
-        STA asc
-        STX strp
-        STY strp+1
-        LDY #0
-prn     LDA (strp),Y
-        CMP #$9B
-        BEQ pre
-        STA (asc),Y
-        INY
-        CPY #MAXLEN
-        BNE prn
-pre     RTS
-string 	.BYTE $7C,"    This computer can't run Win11   ",$7C,$9B
-string1 .BYTE $7C,"        Learn 6502 assembler        ",$7C,$9B 
+      LDA #80
+      STA OFFSET
+      LDX #STR1&255
+      LDY #STR1/256
+      JSR PRINT
+PAUSE JMP PAUSE
+
+PRINT CLC
+      LDA SAVMSC
+      ADC OFFSET
+      STA ASC
+      STX STRP
+      STY STRP+1
+      LDY #0
+PRN   LDA (STRP),Y
+      CMP #$9B
+      BEQ PRE
+      SBC #31
+      STA (ASC),Y
+      INY
+      CPY #MAXLEN
+      BNE PRN
+PRE   RTS
+STR
+  .BY "|    THIS COMPUTER CAN'T RUN WIN11     |",$9B
+STR1
+  .BY "|       LEARN 6502 ASSEMBLER           |",$9B
