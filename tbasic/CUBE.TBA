@@ -1,15 +1,18 @@
 10 DIM x(25): DIM y(25):DIM z(25):sq2=SQR(2):sq6=SQR(6)
-15 rem
+15 PI=3.1415926535
 20 F.i=1 TO 4*6: read x,y,z: x(i)=x:y(i)=y:z(i)=z:N.i
-30 F.th=0 to 360 step 10
+30 F.th=0 to 2*PI step PI/20
 35 idx=1
 40 GR.8+16:SE.1,1,14:C.1
 50 F.i=0 TO 5
 60 F.j=0 TO 3
 65 x=x(idx):y=y(idx):z=z(idx)
 66 idx=idx+1
-70 xp=(x-z)/sq2
-80 yp=(x+2*y+z)/sq6
+67 rem rotation
+68 yr = y*cos(th) - z*sin(th)
+69 zr = y*sin(th) + z*cos(th)
+70 xp=(x-zr)/sq2
+80 yp=(x+2*yr+zr)/sq6
 90 xs = xp*50 +160
 100 ys= 96-yp*40
 110 IF j=0

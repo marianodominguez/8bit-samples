@@ -1,9 +1,9 @@
 .PHONY: clean
 
 UNAME_S := $(shell uname -s)
-
+ATARI=atari800
 ifeq ($(UNAME_S),Darwin)
-$(error OSX not supported)
+ATARI=Atari800MacX
 endif
 
 clean:
@@ -18,4 +18,4 @@ clean:
 	basicParser -b -f -k -o bin/AUTORUN.BAS $<
 	franny -A bin/disk.atr -i bin/AUTORUN.BAS -o AUTORUN.BAS
 run:
-	atari800 bin/disk.atr
+	$(ATARI) bin/disk.atr
