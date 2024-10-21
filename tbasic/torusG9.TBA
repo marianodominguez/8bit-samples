@@ -1,0 +1,17 @@
+GR.9+16:C.15:PI=3.14159265
+p1=cos(PI/6):p2=cos(PI/3)
+c=1:d=1
+for r=30 to 60
+for th=0 to  2*PI step PI/20
+x=r/2.5*cos(th)
+y=r*sin(th)
+xp=x+40
+yp=y+96
+color c
+if th=0:plot xp,yp: else: DRAWTO xp,yp:endif
+next th
+if c>=15 then d=-1:endif
+if c<=0 then d=1:endif
+c=c+d
+next r
+do:loop

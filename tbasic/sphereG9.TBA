@@ -1,0 +1,13 @@
+10 GR.9+16:C.15:PI=3.14159265:r=30
+40 for x=-30 to 30
+50 for y=-60 to 60
+60 z=SQR(ABS(x*x+y/2*y/2))
+70 xp=x+40
+80 yp=y+96
+90 if z>=0 and z<=r
+93    color int(15-z*15/r)
+95    plot xp,yp
+100 endif
+110 next y
+120 next x
+130 do:loop
