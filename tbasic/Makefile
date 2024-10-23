@@ -2,10 +2,23 @@
 
 UNAME_S := $(shell uname -s)
 ATARI=atari800
-ATR_CMD=franny -A bin/disk.atr -i bin/AUTORUN.BAS -o AUTORUN.BAS
+ATR=franny
+ATR_CMD=$(ATR) -A bin/disk.atr -i bin/AUTORUN.BAS -o AUTORUN.BAS
 ifeq ($(UNAME_S),Darwin)
 ATARI=/Applications/Atari800MacX/Atari800MacX.app/Contents/MacOS/Atari800MacX
-ATR_CMD=atr "bin/disk.atr" put -l bin/AUTORUN.BAS AUTORUN.BAS
+ATR=atr
+ATR_CMD=$(ATR) "bin/disk.atr" put -l bin/AUTORUN.BAS AUTORUN.BAS
+endif
+
+ATR_R := $(shell which $(ATR))
+PARSER := $(shell which basicParser)
+
+ifeq ($(ATR_R),)
+$(error "$(ATR) program not found, install it before running" )
+endif
+
+ifeq ($(PARSER),)
+$(error "basicParser program not found " )
 endif
 
 clean:
