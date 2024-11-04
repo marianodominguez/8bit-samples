@@ -2,20 +2,22 @@ target: all
 
 SRC=.
 
-all: compile img atr run
+all: clean compile img atr run
+
+clean:
+	rm -f ./bin/*
 
 compile:
 	cd $(FBPATH)
-	basicParser -b -f -k  $(SRC)/abejuarez.tba -o AUTORUN.BAS
+	basicParser -b -f -k  $(SRC)/abejuarez.tba -o bin/AUTORUN.BAS
 	cd $(SRC)
 
 img:
-	rm -f ABEJUARE.BMP
-	./util/imgconv.py abejuarez_full.bmp ABEJUARE.BMP
+	./util/imgconv.py abejuarez_full.bmp ./bin/ABEJUARE.BMP
 
 atr:
-	cp ../../atr_images/TBXL.atr abejuarez.atr
-	franny  -A -i AUTORUN.BAS -o AUTORUN.BAS abejuarez.atr
-	franny  -A -i ABEJUARE.BMP -o ABEJUARE.BMP abejuarez.atr
-run: compile img atr
-	atari800 abejuarez.atr
+	cp ../../atr_images/TBXL.atr ./bin/abejuarez.atr
+	franny  -A -i bin/AUTORUN.BAS -o AUTORUN.BAS bin/abejuarez.atr
+	franny  -A -i bin/ABEJUARE.BMP -o ABEJUARE.BMP bin/abejuarez.atr
+run: clean compile img atr
+	atari800 ./bin/abejuarez.atr
