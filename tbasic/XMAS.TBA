@@ -1,0 +1,15 @@
+10 GR.7+16:SE.4,0,0:SE.2,3,2:SE.1,11,4:C.1
+20 TEXT 20,1, "Happy holidays !!"
+30 C.2:PI=3.14159265
+40 r=1:p1=cos(PI/6):p2=cos(PI/2-p1)
+50 for th=0 to 60 step PI/15
+60 x=(r/40+th)/2*cos(th)
+70 y=(r/40+th)/2*sin(th)
+80 z=-r/5+48
+90 r=r+1
+100 xp=-p1*x+p1*y
+110 yp=-p2*x-p2*y+z
+120 if th=0:plot xp+80,-yp+48:else:DRAWTO xp+80,-yp+48:endif
+130 if rnd*5<1 and r>120:C.3: circle xp+80,-yp+48,2:C.2:plot xp+80,-yp+48:endif
+140 next th
+150 DO:LOOP

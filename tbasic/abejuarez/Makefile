@@ -13,7 +13,7 @@ compile:
 	cd $(SRC)
 
 img:
-	./util/imgconv.py abejuarez_full.bmp ./bin/ABEJUARE.PIC
+	./util/imgconv.py abejuarez_4_fs.bmp ./bin/ABEJUARE.PIC
 
 atr:
 	cp ../../atr_images/TBXL.atr ./bin/abejuarez.atr
