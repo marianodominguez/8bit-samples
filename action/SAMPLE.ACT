@@ -1,0 +1,15 @@
+PROC C() BYTE X,Y,DX,DY
+Graphics(22) Poke($2C4,$C8)
+FOR X=0 TO 80 DO
+ FOR Y=0 TO 80 DO
+  COLOR=1 DX=X DY=Y
+   DO 
+    IF (DX MOD 3)=1 THEN
+     IF (DY MOD 3)=1 THEN
+      COLOR=0 EXIT FI FI
+    DX==/3 DY==/3
+  UNTIL (DX=0 AND DY=0) OD
+  PLOT(X,Y)
+ OD
+OD
+DO OD

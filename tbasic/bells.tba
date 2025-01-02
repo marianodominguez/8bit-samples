@@ -1,7 +1,7 @@
 5 Graphics 3:Setcolor 4,12,6
 10 Read A:Trap 40
 15 Sound 0,A,10,12
-16 For X=1 To 700:Next X
+16 For X=1 To 800:Next X
 17 Sound 0,0,0,0
 20 Data 47,47,47,0,47,47,47 0,47,40,60,53,47
 30 Goto 10

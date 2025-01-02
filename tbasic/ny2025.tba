@@ -1,0 +1,17 @@
+GR. 2
+SE.4,8,4:SE.1,1,14
+?#6;"       FELIZ "
+POS. 4,6:?#6;"  2024 "
+F.s=20 TO 100: SO.1,s,12,10:n.s
+PAUSE 100
+SO.1,0,0,0
+? "Muchos abrazos y muchos juegos !"
+DO
+SO.1,20,15,10
+POS. 4,6:?#6;"  2025 !!"
+PAUSE 10
+POS. 4,6:?#6;"       "
+PAUSE 10
+SO.1,0,0,0
+LOOP
+
