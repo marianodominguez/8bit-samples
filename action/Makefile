@@ -1,7 +1,7 @@
 .PHONY: clean
 
 UNAME_S := $(shell uname -s)
-ATARI=atari800
+ATARI=atari800 -no-autosave-config
 ATR=franny
 ATR_CMD=$(ATR) -A bin/disk.atr -i
 ifeq ($(UNAME_S),Darwin)
