@@ -20,11 +20,16 @@ endif
 clean:
 	rm -rf bin/*.*
 % :: %.act
-	cp ../atr_images/action.atr bin/disk.atr
-	$(ATR_CMD) $< -o AUTO.ACT
+	cp ../atr_images/DOS2_5.atr bin/disk.atr
+	tr '\12\11' '\233\177' < $< > bin/AUTO.ACT
+	$(ATR_CMD) bin/AUTO.ACT -o AUTO.ACT
 
 % :: %.ACT
-	cp ../atr_images/action.atr bin/disk.atr
-	$(ATR_CMD) $< -o AUTO.ACT
+	cp ../atr_images/DOS2_5.atr bin/disk.atr
+	tr '\12\11' '\233\177' < $< > bin/AUTO.ACT
+	$(ATR_CMD) bin/AUTO.ACT -o AUTO.ACT
 run:
-	$(ATARI) -cart ../atr_images/action.rom bin/disk.atr
+	$(ATARI) -cart ../atr_images/action.rom bin/disk.atr &
+	sleep 2
+	./run_action.sh
+	
