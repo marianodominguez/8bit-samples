@@ -1,0 +1,37 @@
+PROC TORUS() INT X,Y,R,D,XC,YC
+Graphics(9+16)
+XC=40
+YC=96
+FOR R=10 TO 60
+DO
+    IF R<35 THEN 
+        COLOR=(R-10)*16/25 
+    ELSE 
+        COLOR=15-(R-35)*16/(60-34) 
+    FI
+    X=0
+    Y=R
+    D=3-2*R
+    WHILE X<=Y
+    DO
+        PLOT(X/2+XC,Y+YC)
+        PLOT(-X/2+XC,Y+YC)
+        PLOT(-X/2+XC,-Y+YC)
+        PLOT(X/2+XC,-Y+YC)
+        PLOT(Y/2+XC,X+YC)
+        PLOT(Y/2+XC,-X+YC)
+        PLOT(-Y/2+XC,X+YC)
+        PLOT(-Y/2+XC,-X+YC)
+        X=X+1
+        IF D<0 THEN
+            D=D+4*X+6
+        ELSE
+            D=D+4*(X-Y)+10
+            Y=Y-1
+        FI
+    OD
+OD
+WHILE PEEK($D01F)<>6
+DO
+OD
+RETURN

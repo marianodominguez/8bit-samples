@@ -1,0 +1,12 @@
+PROC GRAD() INT X,Y
+Graphics(9+16)
+COLOR=1
+FOR X=0 TO 79
+DO
+    FOR Y=0 TO 191
+    DO
+        COLOR= (Y/2 XOR X) MOD 16
+        PLOT(X,Y)
+    OD
+OD
+RETURN
