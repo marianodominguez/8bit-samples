@@ -3,36 +3,38 @@
 17 print "Pre-calculating cos and sin"
 20 F.i=1 TO 4*6: READ x,y,z: x(i)=x:y(i)=y:z(i)=z:N.i
 25 REM precalculate cos and sin
-26 FOR i=1 TO 360
-27     tcos(i) = COS(i*PI/180)
-28     tsin(i) = SIN(i*PI/180)
-29     print ".";
-30 NEXT i
-32 F.th=0 TO 360 STEP 5
-35 idx=1
-40 GR.7+16:SE.1,1,14:C.1
-50 F.i=0 TO 5
-60 F.j=0 TO 3
-65 x=x(idx):y=y(idx):z=z(idx)
-66 idx=idx+1
-67 REM rotation
-68 yr = y*tcos(th+1) - z*tsin(th+1)
-69 zr = y*tsin(th+1) + z*tcos(th+1)
-70 xp=(x-zr)/sq2
-80 yp=(x+2*yr+zr)/sq6
-90 xs = xp*scl+W/2
-100 ys= (H/2)-yp*scl
-110 IF j=0
-120 x0=xs:y0=ys
-130 PL. xs,ys
-140 ELSE
-150 PL. x1,y1:DR.xs,ys
+30 idx=1
+35 FOR i=1 TO 360 step 5
+40     tcos(idx) = COS(i*PI/180)
+45     tsin(idx) = SIN(i*PI/180)
+50     print ".";
+55     idx=idx+1
+60 NEXT i
+65 F.th=0 TO 360 STEP 5
+70 idx=1
+75 GR.7+16:SE.1,1,14:C.1
+80 F.i=0 TO 5
+85 F.j=0 TO 3
+90 x=x(idx):y=y(idx):z=z(idx)
+95 idx=idx+1
+100 REM rotation
+105 yr = y*tcos(th+1) - z*tsin(th+1)
+110 zr = y*tsin(th+1) + z*tcos(th+1)
+115 xp=(x-zr)/sq2
+120 yp=(x+2*yr+zr)/sq6
+125 xs = xp*scl+W/2
+130 ys= (H/2)-yp*scl
+135 IF j=0
+140 x0=xs:y0=ys
+145 PL. xs,ys
+150 ELSE
+155 PL. x1,y1:DR.xs,ys
 160 ENDIF
-170 x1=xs:y1=ys
-200 N.j
-205 DR. x0,y0
-210 N.i
-220 N.th
+165 x1=xs:y1=ys
+170 N.j
+175 DR. x0,y0
+180 N.i
+190 N.th
 1000 DATA -1,-1,-1,-1, 1,-1,-1, 1, 1,-1,-1, 1,1,-1,-1,1, 1,-1,1, 1, 1,1,-1, 1
 1010 DATA -1,-1,-1,-1,-1, 1,1,-1, 1,1,-1,-1,1,-1, 1,-1,-1, 1,-1, 1, 1,1, 1, 1
 1020 DATA 1, 1, 1, 1, 1,-1,-1, 1,-1,1, 1,-1,-1,-1,-1, 1,-1,-1,1, 1,-1,-1, 1,-1
