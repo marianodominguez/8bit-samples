@@ -3,44 +3,54 @@
 20 print "Pre-calculating cos and sin"
 25 F.i=1 TO 4*6: READ x,y,z: x(i)=x:y(i)=y:z(i)=z:N.i
 30 REM precalculate cos and sin
-35 idx=1
-40 FOR i=1 TO 360 STEP 5
-45     tcos(idx) = COS(i*PI/180)
-50     tsin(idx) = SIN(i*PI/180)
+35 idx=1:DEG
+40 FOR i=0 TO 360 STEP 5
+45     tcos(idx) = COS(i)
+50     tsin(idx) = SIN(i)
 55     print ".";
-60     idx=idx+1
+60    idx=idx+1
 65 NEXT i
-70 RT=PEEK(106)-16:GRAPHICS 6+16:POKE 88,0:POKE 89,RT-8:? #6;CHR$(125):POKE 106,RT:GRAPHICS 6+16:PAGE=0
-75 DL=PEEK(560)+256*PEEK(561):DL4=DL+4:DL5=DL+5:POKE DL4,0:POKE DL5,RT+4
-77 POKE DL5,RT+PAGE:SETCOLOR 4,PAGE,2
-80 F.th=0 TO 360 STEP 5
-90 idx=1
-95 POKE 88,0:POKE 89,RT+PAGE:? #6;CHR$(125)
-100 SE.1,1,14:C.1
-105 F.i=0 TO 5
-110 F.j=0 TO 3
-115 x=x(idx):y=y(idx):z=z(idx)
-120 idx=idx+1
-125 REM rotation
-130 yr = y*tcos(th+1) - z*tsin(th+1)
-135 zr = y*tsin(th+1) + z*tcos(th+1)
-140 xp=(x-zr)/sq2
-145 yp=(x+2*yr+zr)/sq6
-150 xs = xp*scl+W/2
-155 ys= (H/2)-yp*scl
-160 IF j=0
-165 x0=xs:y0=ys
-170 PL. xs,ys
-175 ELSE
-180 PL. x1,y1:DR.xs,ys
-185 ENDIF
-190 x1=xs:y1=ys
-200 N.j
-205 DR. x0,y0
-210 N.i
-215 POKE DL5,RT+PAGE:SETCOLOR 4,PAGE,2
-225 IF PAGE=0:PAGE=8:ELSE:PAGE=0:ENDIF 
-230 N.th
+67 NP=i
+70 RT=PEEK(106)-32:GRAPHICS 6+16
+80 POKE 88,0:POKE 89,RT-8:POKE 106,RT:? #6;CHR$(125):GRAPHICS 6+16:PAGE=8
+90 POKE 88,0:POKE 89,RT-16:GRAPHICS 6+16
+100 DL=PEEK(560)+256*PEEK(561):DL4=DL+4:DL5=DL+5:POKE DL4,0:POKE DL5,RT+4
+110 POKE DL5,RT:REM hide drawing page
+120 FOR th=0 TO NP-1
+130 idx=1
+140 POKE 88,0:POKE 89,RT+PAGE:GOSUB 500
+150 SETCOLOR 1,1,14:COLOR 1
+160 FOR i=0 TO 5
+170 FOR j=0 TO 3
+180 x=x(idx):y=y(idx):z=z(idx)
+190 idx=idx+1
+200 REM rotation
+210 yr = y*tcos(th+1) - z*tsin(th+1)
+220 zr = y*tsin(th+1) + z*tcos(th+1)
+230 xp=(x-zr)/sq2
+240 yp=(x+2*yr+zr)/sq6
+250 xs = xp*scl+W/2
+260 ys= (H/2)-yp*scl
+270 IF j=0
+280 x0=xs:y0=ys
+290 PLOT xs,ys
+300 ELSE
+310 PLOT x1,y1:DRAWTO xs,ys
+320 ENDIF
+330 x1=xs:y1=ys
+340 NEXT j
+350 DRAWTO x0,y0
+360 NEXT i
+370 POKE DL5,RT+PAGE:SETCOLOR 4,PAGE,2
+380 IF PAGE=0:PAGE=8:ELSE:PAGE=0:ENDIF 
+390 NEXT th
+400 GOTO 120
+450 END
+500 REM FAST SCREEN CLEAN
+510 ADDR=PEEK(88)+256*PEEK(89)
+520 MEM=(RT+16)*256
+530 MOVE MEM,ADDR,2174
+540 RETURN
 1000 DATA -1,-1,-1,-1, 1,-1,-1, 1, 1,-1,-1, 1,1,-1,-1,1, 1,-1,1, 1, 1,1,-1, 1
 1010 DATA -1,-1,-1,-1,-1, 1,1,-1, 1,1,-1,-1,1,-1, 1,-1,-1, 1,-1, 1, 1,1, 1, 1
 1020 DATA 1, 1, 1, 1, 1,-1,-1, 1,-1,1, 1,-1,-1,-1,-1, 1,-1,-1,1, 1,-1,-1, 1,-1
