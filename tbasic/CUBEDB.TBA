@@ -10,28 +10,28 @@
 55     print ".";
 60    idx=idx+1
 65 NEXT i
-67 NP=i
+67 NP=idx
 70 RT=PEEK(106)-24:GRAPHICS 6+16
 80 POKE 88,0:POKE 89,RT-8:? #6;CHR$(125):POKE 106,RT:GRAPHICS 6+16:PAGE=16
 90 POKE 88,0:POKE 89,RT-16:GRAPHICS 6+16
 100 DL=PEEK(560)+256*PEEK(561):DL4=DL+4:DL5=DL+5:POKE DL4,0:POKE DL5,RT+4
 110 POKE DL5,RT:REM hide drawing page
-120 FOR th=0 TO NP-1
+120 FOR th=1 TO NP
 130 idx=1
 140 POKE 88,0:POKE 89,RT+PAGE:GOSUB 500
 150 SETCOLOR 1,1,14:COLOR 1
-160 FOR i=0 TO 5
-170 FOR j=0 TO 3
+160 FOR i=1 TO 5
+170 FOR j=1 TO 4
 180 x=x(idx):y=y(idx):z=z(idx)
 190 idx=idx+1
 200 REM rotation
-210 yr = y*tcos(th+1) - z*tsin(th+1)
-220 zr = y*tsin(th+1) + z*tcos(th+1)
+210 yr = y*tcos(th) - z*tsin(th)
+220 zr = y*tsin(th) + z*tcos(th)
 230 xp=(x-zr)/sq2
 240 yp=(x+2*yr+zr)/sq6
 250 xs = xp*scl+W/2
 260 ys = (H/2)-yp*scl
-270 IF j=0
+270 IF j=1
 280 x0=xs:y0=ys
 290 PLOT xs,ys
 300 ELSE
