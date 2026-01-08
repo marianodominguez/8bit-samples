@@ -12,23 +12,24 @@
 65 NEXT i
 67 NP=idx:CLS
 100 DIM VX(20*NP):DIM VY(20*NP)
-120 FOR TH=1 TO NP
-125 idx=1
+105 idx2=1
+110 FOR TH=1 TO NP
+120 idx=1
 130 FOR i=1 TO 5
 140 FOR j=1 TO 4
 160 x=x(idx):y=y(idx):z=z(idx)
-180 REM rotation
+185 REM rotation
 190 yr = y*tcos(TH) - z*tsin(TH)
 200 zr = y*tsin(TH) + z*tcos(TH)
 210 xp=(x-zr)/sq2
 220 yp=(x+2*yr+zr)/sq6
 230 xs = xp*scl+W/2
 240 ys = (H/2)-yp*scl
-250 VX(idx*TH)=xs:VY(idx*TH)=ys
-255 idx=idx+1
+250 VX(idx2)=INT(xs):VY(idx2)=INT(ys)
+252 POS.10,10:? idx2;"/";NP*20;
+255 idx=idx+1:idx2=idx2+1
 260 NEXT j
-270 NEXT i
-275 POS.10,10:? (idx-1)*TH;"/";NP*20;
+275 NEXT i
 280 NEXT TH
 400 idx=1
 410 RT=PEEK(106)-24:GRAPHICS 6+16
@@ -36,14 +37,13 @@
 430 POKE 88,0:POKE 89,RT-16:GRAPHICS 6+16
 440 DL=PEEK(560)+256*PEEK(561):DL4=DL+4:DL5=DL+5:POKE DL4,0:POKE DL5,RT+4
 450 POKE DL5,RT:REM hide drawing page
+455 idx=1
 460 FOR TH=1 TO NP
-465 idx=1
 470 POKE 88,0:POKE 89,RT+PAGE:GOSUB 800
 480 SETCOLOR 0,8,10:COLOR 1
 490 FOR i=1 TO 5
 500 FOR j=1 TO 4
-510 xs=VX(idx*TH):ys=VY(idx*TH)
-520 idx=idx+1
+510 xs=VX(idx):ys=VY(idx):idx=idx+1
 530 IF j=1
 540 x0=xs:y0=ys
 550 PLOT xs,ys
@@ -57,7 +57,7 @@
 630 POKE DL5,RT+PAGE
 640 IF PAGE=8:PAGE=16:ELSE:PAGE=8:ENDIF
 650 NEXT TH
-660 GOTO 400
+660 GOTO 455
 670 END
 800 REM FAST SCREEN CLEAN
 810 ADDR=PEEK(88)+256*PEEK(89)
