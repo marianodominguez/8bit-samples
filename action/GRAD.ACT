@@ -1,9 +1,11 @@
 PROC GRAD() INT X,Y
-Graphics(8)
+Graphics(8+16)
 COLOR=1
-FOR X=0 TO 319
+SETCOLOR(2,7,2)
+SETCOLOR(1,0,14)
+FOR Y=0 TO 191
 DO
-    FOR Y=0 TO 191
+    FOR X=0 TO 319
     DO
         IF Rand(192)<Y THEN
             PLOT(X,Y)
