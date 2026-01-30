@@ -1,0 +1,14 @@
+5 DIM a$(7):a$="EXPRESS"
+10 GRAPHICS 8+16:COLOR 1:SETCOLOR 1,1,14
+20 xc=320/2:yc=192/2:DEG:i=1
+30 FOR angle = 0 TO 500 STEP 1
+40   dist=angle/5
+50   x = xc + dist * COS(angle)
+60   y = yc + dist * SIN(angle)
+70   PLOT x, y
+90   IF angle MOD 50 = 0 AND i<8 
+95      TEXT x+10,y,a$(i,i)
+100     i=i+1
+105 ENDIF
+110 NEXT angle
+120 DO:LOOP
