@@ -1,14 +1,15 @@
-5 DIM a$(7):a$="EXPRESS"
+5 DIM a(8):FOR i=0 TO 6:READ a:a(i)=a:NEXT i
 10 GRAPHICS 8+16:COLOR 1:SETCOLOR 1,1,14
-20 xc=320/2:yc=192/2:DEG:i=1
-30 FOR angle = 0 TO 500 STEP 1
-40   dist=angle/5
-50   x = xc + dist * COS(angle)
-60   y = yc + dist * SIN(angle)
+20 xc=320/2:yc=192/2:DEG:i=0
+30 FOR th = 1 TO 800 STEP 1
+40   dist=th/10
+50   x = xc + dist * COS(th)
+60   y = yc + dist * SIN(th)
 70   PLOT x, y
-90   IF angle MOD 50 = 0 AND i<8 
-95      TEXT x+10,y,a$(i,i)
+90   IF th MOD 100 = 0 AND i<7
+95      TEXT x+10,y,CHR$(a(i))
 100     i=i+1
 105 ENDIF
-110 NEXT angle
+110 NEXT th
 120 DO:LOOP
+200 DATA 69, 88, 80, 82, 69, 83, 83, 0
