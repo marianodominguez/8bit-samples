@@ -1,5 +1,5 @@
 10 GR.0: SE. 1,1,14:SE. 2,0,0
-15 XMAX=39:YMAX=24:NBALLS=6
+15 XMAX=39:YMAX=24:NBALLS=7
 17 REM hide cursor
 18 POKE 752,1
 20 DIM x(NBALLS):DIM y(NBALLS):DIM dx(NBALLS):DIM dy(NBALLS):DIM cx(NBALLS):DIM cy(NBALLS):DIM CH(NBALLS)
@@ -20,8 +20,8 @@
 150    y(i)=y(i)+dy(i)
 160    IF x(i)<=0: x(i)=0:dx(i)=-dx(i) :ENDIF
 170    IF y(i)<=0: y(i)=0:dy(i)=-dy(i) :ENDIF
-180    IF x(i)>=XMAX: x(i)=XMAX-1:dx(i)=-dx(i) :ENDIF
-190    IF y(i)>=YMAX: y(i)=YMAX-1:dy(i)=-dy(i) :ENDIF
+180    IF x(i)>=XMAX: x(i)=XMAX-2:dx(i)=-dx(i) :ENDIF
+190    IF y(i)>=YMAX: y(i)=YMAX-2:dy(i)=-dy(i) :ENDIF
 200    cx(i)=x(i):cy(i)=y(i)
 210    LOCATE x(i),y(i),CH:CH(i)=CH
 230    POS. x(i),y(i): PRINT CHR$(20);: REM o
