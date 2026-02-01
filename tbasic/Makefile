@@ -12,7 +12,7 @@ ATR_CMD=$(ATR) "bin/disk.atr" put -l bin/AUTORUN.BAS AUTORUN.BAS
 endif
 
 ATR_R := $(shell which $(ATR))
-PARSER_R := $(shell which $(BASICPARSER)))
+PARSER_R := $(shell which $(BASICPARSER))
 
 ifeq ($(ATR_R),)
 $(error "$(ATR) program not found, install it before running" )
