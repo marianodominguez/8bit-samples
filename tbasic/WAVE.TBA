@@ -1,6 +1,9 @@
-10 graphics 7+16
-20 for X=0 to 159
-30 Y = 80 - 50 * sin(X/50)
-40 color 1:plot X,Y
-60 next X
-80 GOTO 10
+10 GRAPHICS 7+16
+20 FOR X=0 TO 159
+32 COLOR 0
+35 PLOT X,0:DRAWTO X,95
+40 Y = 48 - 30 * SIN(15*(X-K)/159)
+50 COLOR 1: PLOT X,Y
+60 NEXT X
+70 K=K+4
+80 GOTO 20
