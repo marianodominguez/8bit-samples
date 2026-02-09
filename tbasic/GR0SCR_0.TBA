@@ -1,5 +1,5 @@
 POKE 82,0
-VSCROL=$d405
+VSCROL=$d405:page=0:FINE=0: REM FINE=1 for broken fine scrolling
 #BEGIN
 RT=PEEK(106)-16:GR.0:POKE 88,0:POKE 89,RT-4:?#6;CHR$(125):POKE 106,RT:GR.0:POKE 752,1
 SETCOLOR 4,15,6
@@ -19,13 +19,24 @@ POKE 205, PEEK(560)
 POKE 206, PEEK(561)
 POKE $CF,0
 DO
-    vscroll=PEEK(VSCROL)
-    IF vscroll<8
-        POKE VSCROL,vscroll+1
+    IF page>=8
+        page=0
+        POKE VSCROL,0
+        vscroll=0
+        PAUSE 1
+        POKE DL+4,0
+        POKE DL+5,RT
+    ENDIF
+    IF vscroll<8 AND FINE=1
+        vscroll=vscroll+1
+        POKE VSCROL,vscroll
     ELSE
-        SCADDR=PEEK(DL+4)+256*PEEK(DL+5)
-        CSCROL=DPEEK(SCADDR)
-        DPOKE SCADDR,CSCROL+40
+        POKE VSCROL,0
+        vscroll=0
+        CSCROL=PEEK(DL+4)+256*PEEK(DL+5)
+        PAUSE 8
+        DPOKE DL+4,CSCROL+40
+        page=PEEK(DL+5)-RT
     ENDIF
 LOOP
 END
