@@ -1,33 +1,33 @@
 10 GR.0: SE. 1,1,14:SE. 2,0,0
 15 XMAX=39:YMAX=24:NBALLS=7
-17 REM hide cursor
+17 REM HIDE CURSOR
 18 POKE 752,1
-20 DIM x(NBALLS):DIM y(NBALLS):DIM dx(NBALLS):DIM dy(NBALLS):DIM cx(NBALLS):DIM cy(NBALLS):DIM CH(NBALLS)
-25 FOR i=1 TO NBALLS
-30   x(i)=RAND(XMAX)
-40   y(i)=RAND(YMAX)
-50   IF(RAND(2)=1):dx(i)=1:ELSE:dx(i)=-1:ENDIF
-60   IF(RAND(2)=1):dy(i)=1:ELSE:dy(i)=-1:ENDIF
-70   cx(i)=x(i)
-80   cy(i)=y(i)
-90 NEXT i
+20 DIM X(NBALLS):DIM Y(NBALLS):DIM DX(NBALLS):DIM DY(NBALLS):DIM CX(NBALLS):DIM CY(NBALLS):DIM CH(NBALLS)
+25 FOR I=1 TO NBALLS
+30   X(I)=RAND(XMAX)
+40   Y(I)=RAND(YMAX)
+50   IF(RAND(2)=1):DX(I)=1:ELSE:DX(I)=-1:ENDIF
+60   IF(RAND(2)=1):DY(I)=1:ELSE:DY(I)=-1:ENDIF
+70   CX(I)=X(I)
+80   CY(I)=Y(I)
+90 NEXT I
 95 GOSUB 400
 100 DO
-110   FOR i=1 TO NBALLS
-120    POS. cx(i),cy(i)
-130    IF CH(i)=ASC("."):PRINT ".";:ELSE:PRINT " ";:ENDIF
-140    x(i)=x(i)+dx(i)
-150    y(i)=y(i)+dy(i)
-160    IF x(i)<=0: x(i)=0:dx(i)=-dx(i) :ENDIF
-170    IF y(i)<=0: y(i)=0:dy(i)=-dy(i) :ENDIF
-180    IF x(i)>=XMAX: x(i)=XMAX-2:dx(i)=-dx(i) :ENDIF
-190    IF y(i)>=YMAX: y(i)=YMAX-2:dy(i)=-dy(i) :ENDIF
-200    cx(i)=x(i):cy(i)=y(i)
-210    LOCATE x(i),y(i),CH:CH(i)=CH
-230    POS. x(i),y(i): PRINT CHR$(20);: REM o
-240  NEXT i
+110   FOR I=1 TO NBALLS
+120    POS. CX(I),CY(I)
+130    IF CH(I)=ASC("."):PRINT ".";:ELSE:PRINT " ";:ENDIF
+140    X(I)=X(I)+DX(I)
+150    Y(I)=Y(I)+DY(I)
+160    IF X(I)<=0: X(I)=0:DX(I)=-DX(I) :ENDIF
+170    IF Y(I)<=0: Y(I)=0:DY(I)=-DY(I) :ENDIF
+180    IF X(I)>=XMAX: X(I)=XMAX-2:DX(I)=-DX(I) :ENDIF
+190    IF Y(I)>=YMAX: Y(I)=YMAX-2:DY(I)=-DY(I) :ENDIF
+200    CX(I)=X(I):CY(I)=Y(I)
+210    LOCATE X(I),Y(I),CH:CH(I)=CH
+230    POS. X(I),Y(I): PRINT CHR$(20);: REM O
+240  NEXT I
 260 LOOP
-400 FOR i=1 TO 100
+400 FOR I=1 TO 100
 410  POS. RAND(XMAX),RAND(YMAX): PRINT ".";
-420 NEXT i
+420 NEXT I
 430 RETURN
