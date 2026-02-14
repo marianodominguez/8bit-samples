@@ -1,41 +1,41 @@
-10 graphics 8+16:setcolor 1,1,12:setcolor 2,0,0:color 1
-20 PI=3.141592:idx=0:dim buf(361): dim sbuf(361)
-25 for i=0 to 360:buf(i)=-99:sbuf(i)=-99:next i
-30 p1=cos(PI/6):p2=cos(PI/2-p1)
-40 while v<2*PI
-50 poke 77,0
-60 cosv=cos(v)
-70 sinv=sin(v)
-100 while u<PI
-110 if buf(idx)=-99 
-112 cosu=cos(u):buf(i)=cosu
-113 else 
-115 cosu=buf(idx)
-116 endif
-120 if sbuf(idx)=-99 
-122 sinu=sin(u):sbuf(idx)=sinu
-124 else
-125 sinu=sbuf(idx)
-126 endif
-130	c7u=cosu*cosu*cosu*cosu*cosu*cosu*cosu
-140	c6u=cosu*cosu*cosu*cosu*cosu*cosu
-150	c5u=cosu*cosu*cosu*cosu*cosu
-160	c4u=cosu*cosu*cosu*cosu
-170	c3u=cosu*cosu*cosu
-180	x=(-2/15)*cosu*(3*cosv-30*sinu+90*c4u*sinu-60*c6u*sinu+5*cosu*cosv*sinu)
-185 t1=3*cosv-3*cosu*cosu*cosv-48*c4u*cosv+48*c6u*cosv-60
-190	y=-1/15*sinu*(t1*sinu+5*cosu*cosv*sinv-5*c3u*cosv*sinu-80*c5u*cosv*sinu+80*c7u*cosv*sinu)
-200	z=(2/15)*(3+5*cosu*sinu)*sinv
-210	x=25*x:y=25*y:z=25*z
-220	xp=int(-p1*x+p1*y)
-230	yp=int(-p2*x-p2*y+z)
-240	if u=0
-250	  plot xp+100,80-yp
-260	else
-270	  drawto xp+100,80-yp
-280	endif
-300 u=u+PI/20:idx=idx+1
-310  wend
-320    v=v+PI/20
-330    u=0:idx=0
-340 wend
+10 GRAPHICS 8+16:SETCOLOR 1,1,12:SETCOLOR 2,0,0:COLOR 1
+20 PI=3.141592:IDX=0:DIM BUF(361): DIM SBUF(361)
+25 FOR I=0 TO 360:BUF(I)=-99:SBUF(I)=-99:NEXT I
+30 P1=COS(PI/6):P2=COS(PI/2-P1)
+40 WHILE V<2*PI
+50 POKE 77,0
+60 COSV=COS(V)
+70 SINV=SIN(V)
+100 WHILE U<PI
+110 IF BUF(IDX)=-99 
+112 COSU=COS(U):BUF(I)=COSU
+113 ELSE 
+115 COSU=BUF(IDX)
+116 ENDIF
+120 IF SBUF(IDX)=-99 
+122 SINU=SIN(U):SBUF(IDX)=SINU
+124 ELSE
+125 SINU=SBUF(IDX)
+126 ENDIF
+130	C7U=COSU*COSU*COSU*COSU*COSU*COSU*COSU
+140	C6U=COSU*COSU*COSU*COSU*COSU*COSU
+150	C5U=COSU*COSU*COSU*COSU*COSU
+160	C4U=COSU*COSU*COSU*COSU
+170	C3U=COSU*COSU*COSU
+180	X=(-2/15)*COSU*(3*COSV-30*SINU+90*C4U*SINU-60*C6U*SINU+5*COSU*COSV*SINU)
+185 T1=3*COSV-3*COSU*COSU*COSV-48*C4U*COSV+48*C6U*COSV-60
+190	Y=-1/15*SINU*(T1*SINU+5*COSU*COSV*SINV-5*C3U*COSV*SINU-80*C5U*COSV*SINU+80*C7U*COSV*SINU)
+200	Z=(2/15)*(3+5*COSU*SINU)*SINV
+210	X=25*X:Y=25*Y:Z=25*Z
+220	XP=INT(-P1*X+P1*Y)
+230	YP=INT(-P2*X-P2*Y+Z)
+240	IF U=0
+250	  PLOT XP+100,80-YP
+260	ELSE
+270	  DRAWTO XP+100,80-YP
+280	ENDIF
+300 U=U+PI/20:IDX=IDX+1
+310  WEND
+320    V=V+PI/20
+330    U=0:IDX=0
+340 WEND
