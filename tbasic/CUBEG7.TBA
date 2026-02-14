@@ -1,40 +1,40 @@
-10 DIM x(25): DIM y(25):DIM z(25):DIM tcos(360):DIM tsin(360):sq2=SQR(2):sq6=SQR(6)
-15 PI=3.1415926535:W=159:H=95:scl=25
-17 print "Pre-calculating cos and sin"
-20 F.i=1 TO 4*6: READ x,y,z: x(i)=x:y(i)=y:z(i)=z:N.i
-25 REM precalculate cos and sin
-30 idx=1
-35 FOR i=1 TO 360 step 5
-40     tcos(idx) = COS(i*PI/180)
-45     tsin(idx) = SIN(i*PI/180)
-50     print ".";
-55     idx=idx+1
-60 NEXT i
-65 F.th=0 TO 360 STEP 5
-70 idx=1
+10 DIM X(25): DIM Y(25):DIM Z(25):DIM TCOS(360):DIM TSIN(360):SQ2=SQR(2):SQ6=SQR(6)
+15 PI=3.1415926535:W=159:H=95:SCL=25
+17 PRINT "PRE-CALCULATING COS AND SIN"
+20 F.I=1 TO 4*6: READ X,Y,Z: X(I)=X:Y(I)=Y:Z(I)=Z:N.I
+25 REM PRECALCULATE COS AND SIN
+30 IDX=1
+35 FOR I=1 TO 360 STEP 5
+40     TCOS(IDX) = COS(I*PI/180)
+45     TSIN(IDX) = SIN(I*PI/180)
+50     PRINT ".";
+55     IDX=IDX+1
+60 NEXT I
+65 F.TH=0 TO 360 STEP 5
+70 IDX=1
 75 GR.7+16:SE.1,1,14:C.1
-80 F.i=0 TO 5
-85 F.j=0 TO 3
-90 x=x(idx):y=y(idx):z=z(idx)
-95 idx=idx+1
-100 REM rotation
-105 yr = y*tcos(th+1) - z*tsin(th+1)
-110 zr = y*tsin(th+1) + z*tcos(th+1)
-115 xp=(x-zr)/sq2
-120 yp=(x+2*yr+zr)/sq6
-125 xs = xp*scl+W/2
-130 ys= (H/2)-yp*scl
-135 IF j=0
-140 x0=xs:y0=ys
-145 PL. xs,ys
+80 F.I=0 TO 5
+85 F.J=0 TO 3
+90 X=X(IDX):Y=Y(IDX):Z=Z(IDX)
+95 IDX=IDX+1
+100 REM ROTATION
+105 YR = Y*TCOS(TH+1) - Z*TSIN(TH+1)
+110 ZR = Y*TSIN(TH+1) + Z*TCOS(TH+1)
+115 XP=(X-ZR)/SQ2
+120 YP=(X+2*YR+ZR)/SQ6
+125 XS = XP*SCL+W/2
+130 YS= (H/2)-YP*SCL
+135 IF J=0
+140 X0=XS:Y0=YS
+145 PL. XS,YS
 150 ELSE
-155 PL. x1,y1:DR.xs,ys
+155 PL. X1,Y1:DR.XS,YS
 160 ENDIF
-165 x1=xs:y1=ys
-170 N.j
-175 DR. x0,y0
-180 N.i
-190 N.th
+165 X1=XS:Y1=YS
+170 N.J
+175 DR. X0,Y0
+180 N.I
+190 N.TH
 1000 DATA -1,-1,-1,-1, 1,-1,-1, 1, 1,-1,-1, 1,1,-1,-1,1, 1,-1,1, 1, 1,1,-1, 1
 1010 DATA -1,-1,-1,-1,-1, 1,1,-1, 1,1,-1,-1,1,-1, 1,-1,-1, 1,-1, 1, 1,1, 1, 1
 1020 DATA 1, 1, 1, 1, 1,-1,-1, 1,-1,1, 1,-1,-1,-1,-1, 1,-1,-1,1, 1,-1,-1, 1,-1
