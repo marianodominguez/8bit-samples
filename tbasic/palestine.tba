@@ -1,12 +1,12 @@
-10 gr.7+16:se.0,0,0:se.2,12,4:se.1,3,4:se.4,0,14
-20 c.1:f.Y=0 to 31:pl.0,y:dr.159,y:n.y
-30 c.3:f.y=64 to 95:pl.0,y:dr.159,y:n.y
-40 c.2
-50 f.y=0 to 48:pl.0,y:dr.y,y:n.y
-60 f.y=49 to 95:pl.0,y:dr.95-y,y:n.y
-70 do
-80 c.3:text 60,10,"FREE!!"
-90 pause 50
-100 c.3:text 60,10,"PEACE!"
-110 pause 50
-120 loop
+10 GR.7+16:SE.0,0,0:SE.2,12,4:SE.1,3,4:SE.4,0,14
+20 C.1:F.Y=0 TO 31:PL.0,Y:DR.159,Y:N.Y
+30 C.3:F.Y=64 TO 95:PL.0,Y:DR.159,Y:N.Y
+40 C.2
+50 F.Y=0 TO 48:PL.0,Y:DR.Y,Y:N.Y
+60 F.Y=49 TO 95:PL.0,Y:DR.95-Y,Y:N.Y
+70 DO
+80 C.3:TEXT 60,10,"FREE!!"
+90 PAUSE 50
+100 C.3:TEXT 60,10,"PEACE!"
+110 PAUSE 50
+120 LOOP
