@@ -39,7 +39,7 @@ POFF   =   $D4      ; Offset of player in memory
 start	JSR init_ram
 		JSR init_gra
 		JSR pm_init
-		JSR load_plays
+		JSR load_players
 
 ; **************************************
 ; Main loop
