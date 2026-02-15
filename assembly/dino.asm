@@ -30,10 +30,71 @@ INITY  =   $D1       ; Initial Y value
 STOTOP =   $100      ; Temporary storage (ADRESS)
 STICK  =   $d300     ; PORTA - Hardware STICK(0) location
 HPOSP0 =   $D000     ; Horizontal position Player 0
+PSIZE =   $C0		; Size of player in bytes
+TMP    =   $D2      ; Temporary storage
+POFF   =   $D4      ; Offset of player in memory
 
-		ORG $600
+		ORG $0600
 ; lower ramtop
-start	LDA RAMTOP
+start	JSR init_ram
+		JSR init_gra
+		JSR pm_init
+		JSR load_plays
+
+; **************************************
+; Main loop
+; **************************************
+
+MAIN    
+		JSR RDSTK     ; Read stick - move player
+		LDX #5        ; To control the
+		LDY #0        ; player, we
+DELAY
+		DEY           ; have to add
+		BNE DELAY     ; a delay - this
+		DEX           ; routine slows
+		BNE DELAY     ; things down.
+		JMP MAIN      ; And do it again
+
+; **************************************
+; Subroutines
+; **************************************
+
+load_players
+		LDA #0
+		STA POFF
+		STA POFF+1
+		LDA #player0/256
+		STA TMP+1
+		LDA #player0&255
+		STA TMP
+		LDA #24
+		STA PSIZE
+		JSR copy_player
+		LDA #128
+		STA POFF
+		LDA #player1/256
+		STA TMP+1
+		LDA #player1&255
+		STA TMP
+		LDA #24
+		STA PSIZE
+		JSR copy_player
+		LDA #0
+		STA POFF
+		LDA #1
+		STA POFF+1
+		LDA #player2/256
+		STA TMP+1
+		LDA #player2&255
+		STA TMP
+		LDA #24
+		STA PSIZE
+		JSR copy_player
+		RTS
+
+init_ram	
+		LDA RAMTOP
 		STA TMPTOP
 		SEC
 		SBC #8			;reserve 8 pages
@@ -42,9 +103,11 @@ start	LDA RAMTOP
 		STA XLOC+1  	;erase PM ram
 		LDA #0
 		STA XLOC
+		RTS
 		
-; reset gr. 0
-		LDA #0
+init_gra
+; reset gr. 2
+		LDA #2
 		PHA
 		LDX #$60 		;screen
 		LDA #$C 		; CLOSE
@@ -64,6 +127,8 @@ start	LDA RAMTOP
 		ORA #$C
 		STA ICAX1,X
 		JSR CIOV
+		RTS
+pm_init
 ; PM graphics setup
 		LDA #120
 		STA INITX
@@ -82,38 +147,40 @@ clear
 		LDA XLOC+1
 		CMP TMPTOP
 		BEQ clear 	;one extra page
-		BCC clear		
-; copy player data
+		BCC clear
+		RTS
+
+copy_player
 		LDA	RAMTOP
 		CLC
 		ADC #2
+		ADC POFF+1
 		STA YLOC+1
 		LDA INITY
+		ADC POFF ; player offset
 		STA YLOC
 		LDY #0
 insert
-		LDA player,Y
+		LDA (TMP),Y
 		STA (YLOC),Y
 		INY
-		CPY #8			;player Size
+		CPY PSIZE			;player Size
 		BNE insert
 		LDA INITX
 		STA HPOSP0
 		STA XLOC
-		LDA #68  		;color red
+		CLC
+		ADC #8
+		STA HPOSP0+1
+		ADC #8
+		STA HPOSP0+2
+		LDA #14 		;color white
 		STA PCOLR0
+		STA PCOLR0+1
+		STA PCOLR0+2
 		LDA #3			;enable player
 		STA GRACTL 		; resolution
-MAIN
-		JSR RDSTK     ; Read stick - move player
-		LDX #5        ; To control the
-		LDY #0        ; player, we
-DELAY
-		DEY           ; have to add
-		BNE DELAY     ; a delay - this
-		DEX           ; routine slows
-		BNE DELAY     ; things down.
-		JMP MAIN      ; And do it again
+		RTS
 RDSTK
 		LDA STICK     ; Get joystick value
 		AND #1        ; Is bit 0 = 1?
@@ -135,19 +202,23 @@ SIDE	LDA STICK     ; Get it again
  ; ******************************
 UP		LDY #1        ; Setup for moving byte 1
 		DEC YLOC      ; Now 1 less than YLOC
-		LDA (YLOC),Y  ; Get 1st byte
+UP1		LDA (YLOC),Y  ; Get 1st byte
 		DEY           ; To move it up one position
 		STA (YLOC),Y  ; Move it
 		INY           ; Now original value
-		INY           ; Now set for next byte
-		CPY #10       ; Are we done?
+		INY
+		CLC           ; Now set for next byte
+		LDA PSIZE
+		ADC #2
+		STA TMP
+		CPY TMP    ; Are we done?
 		BCC UP1       ; No
 		BCS SIDE      ; Forced branch!!!
  ; ******************************
  ; Now move player down
  ; ******************************
-DOWN	LDY #7       ; Move top byte first
-DOWN1 LDA (YLOC),Y ; Get top byte
+DOWN	LDY PSIZE   ; Move top byte first
+DOWN1	LDA (YLOC),Y ; Get top byte
 		INY          ; to move it down screen
 		STA (YLOC),Y ; Move it
 		DEY          ; Now back to starting value
@@ -165,6 +236,10 @@ DOWN1 LDA (YLOC),Y ; Get top byte
 LEFT	DEC XLOC     ; To move it left
 		LDA XLOC     ; Get it
 		STA HPOSP0   ; Move it
+		ADC #8   
+		STA HPOSP0+1 ; Move p1
+		ADC #8
+		STA HPOSP0+2
 		RTS          ; Back to MAIN - we're done
  ; ******************************
  ; Now right movement
@@ -172,10 +247,22 @@ LEFT	DEC XLOC     ; To move it left
 RIGHT	INC XLOC     ; To move it right
 		LDA XLOC     ; Get it
 		STA HPOSP0   ; Move it
+		ADC #8   
+		STA HPOSP0+1 ; Move p1
+		ADC #8
+		STA HPOSP0+2
 		RTS          ; Back to MAIN - we're done
-
-player .BYTE 255,129,129,129,129,129,129,255
-name   .BYTE "S:",$9B
+		
+player0 .BYTE 0,0,0,0,0,0,0,0 	
+		.BYTE 0,0,128,128,192,231,255,255
+		.BYTE 127,63,31,15,7,6,4,6
+player1 .BYTE 0,0,0,7,15,27,31,31
+		.BYTE 31,28,63,124,252,255,253,252
+		.BYTE 248,248,240,224,96,32,32,48
+player2 .BYTE 0,0,0,224,240,240,240,240
+		.BYTE 240,0,224,0,0,0,0,0
+		.BYTE 0,0,0,0,0,0,0,0
+name    .BYTE "S:",$9B
 	 	run start 	;Define run address
 	
 	
