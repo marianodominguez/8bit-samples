@@ -44,6 +44,6 @@ PRN   LDA (STRP),Y
       BNE PRN
 PRE   RTS
 STR
-  .BY "|    THIS COMPUTER CAN'T RUN WIN11     |",$9B
+  .BY 156,"   THIS COMPUTER CAN'T RUN WIN11    ",156,$9B
 STR1
-  .BY "|       LEARN 6502 ASSEMBLER           |",$9B
+  .BY 156,"      LEARN 6502 ASSEMBLER          ",156,$9B

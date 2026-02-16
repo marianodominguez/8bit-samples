@@ -22,15 +22,18 @@ PMBASE =	54279
 PCOLR0 =	704
 
 ; other var
-TMPTOP =   $100
+
 XLOC   =   $CE
 YLOC   =   $CC
+YLOC1  =   $C1
+YLOC2  =   $C3
+
 INITX  =   $D0       ; Initial X value
 INITY  =   $D1       ; Initial Y value
-STOTOP =   $100      ; Temporary storage (ADRESS)
+TMPTOP =   $100      ; Temporary storage (ADRESS)
 STICK  =   $d300     ; PORTA - Hardware STICK(0) location
 HPOSP0 =   $D000     ; Horizontal position Player 0
-PSIZE =   $C0		; Size of player in bytes
+PSIZE  =   $C0		; Size of player in bytes
 TMP    =   $D2      ; Temporary storage
 POFF   =   $D4      ; Offset of player in memory
 
@@ -61,6 +64,8 @@ DELAY
 ; **************************************
 
 load_players
+		LDA #24
+		STA PSIZE
 		LDA #0
 		STA POFF
 		STA POFF+1
@@ -68,8 +73,6 @@ load_players
 		STA TMP+1
 		LDA #player0&255
 		STA TMP
-		LDA #24
-		STA PSIZE
 		JSR copy_player
 		LDA #128
 		STA POFF
@@ -77,8 +80,6 @@ load_players
 		STA TMP+1
 		LDA #player1&255
 		STA TMP
-		LDA #24
-		STA PSIZE
 		JSR copy_player
 		LDA #0
 		STA POFF
@@ -88,8 +89,6 @@ load_players
 		STA TMP+1
 		LDA #player2&255
 		STA TMP
-		LDA #24
-		STA PSIZE
 		JSR copy_player
 		RTS
 
@@ -247,13 +246,13 @@ LEFT	DEC XLOC     ; To move it left
 RIGHT	INC XLOC     ; To move it right
 		LDA XLOC     ; Get it
 		STA HPOSP0   ; Move it
-		ADC #8   
+		ADC #8
 		STA HPOSP0+1 ; Move p1
 		ADC #8
 		STA HPOSP0+2
 		RTS          ; Back to MAIN - we're done
 		
-player0 .BYTE 0,0,0,0,0,0,0,0 	
+player0 .BYTE 0,0,0,0,0,0,0,0
 		.BYTE 0,0,128,128,192,231,255,255
 		.BYTE 127,63,31,15,7,6,4,6
 player1 .BYTE 0,0,0,7,15,27,31,31
