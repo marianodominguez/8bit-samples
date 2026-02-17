@@ -36,6 +36,7 @@ HPOSP0 =   $D000     ; Horizontal position Player 0
 PSIZE  =   $C0		; Size of player in bytes
 TMP    =   $D2      ; Temporary storage
 POFF   =   $D4      ; Offset of player in memory
+TMP2   =   $D6      ; Temporary storage
 
 		ORG $0600
 ; lower ramtop
@@ -69,26 +70,29 @@ load_players
 		LDA #0
 		STA POFF
 		STA POFF+1
+		; Push player0 address onto stack (high byte first)
 		LDA #player0/256
-		STA TMP+1
+		PHA
 		LDA #player0&255
-		STA TMP
+		PHA
 		JSR copy_player
 		LDA #128
 		STA POFF
+		; Push player1 address onto stack (high byte first)
 		LDA #player1/256
-		STA TMP+1
+		PHA
 		LDA #player1&255
-		STA TMP
+		PHA
 		JSR copy_player
 		LDA #0
 		STA POFF
 		LDA #1
 		STA POFF+1
+		; Push player2 address onto stack (high byte first)
 		LDA #player2/256
-		STA TMP+1
+		PHA
 		LDA #player2&255
-		STA TMP
+		PHA
 		JSR copy_player
 		RTS
 
@@ -150,6 +154,22 @@ clear
 		RTS
 
 copy_player
+		; Pull return address from stack and save it
+		PLA
+		STA TMP2		; Save return address low byte
+		PLA
+		STA TMP2+1		; Save return address high byte
+		; Now pull the player address parameters
+		PLA
+		STA TMP			; Player address low byte
+		PLA
+		STA TMP+1		; Player address high byte
+		; Push return address back onto stack
+		LDA TMP2+1
+		PHA
+		LDA TMP2
+		PHA
+		; Continue with copy operation
 		LDA	RAMTOP
 		CLC
 		ADC #2
@@ -263,5 +283,4 @@ player2 .BYTE 0,0,0,224,240,240,240,240
 		.BYTE 0,0,0,0,0,0,0,0
 name    .BYTE "S:",$9B
 	 	run start 	;Define run address
-	
-	
+
