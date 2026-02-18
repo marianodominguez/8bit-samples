@@ -20,6 +20,7 @@ GRACTL=	   53277
 RAMTOP =	106
 PMBASE =	54279
 PCOLR0 =	704
+SAVMSC   =  $58
 
 ; other var
 
@@ -37,6 +38,8 @@ PSIZE  =   $C0		; Size of player in bytes
 TMP    =   $D2      ; Temporary storage
 POFF   =   $D4      ; Offset of player in memory
 TMP2   =   $D6      ; Temporary storage
+STRADR =   $D8      ; Address of string to print
+MAXLEN =   20       ; Maximum length of string
 
 		ORG $0600
 ; lower ramtop
@@ -44,6 +47,16 @@ start	JSR init_ram
 		JSR init_gra
 		JSR pm_init
 		JSR load_players
+		LDA #fence&255
+		STA STRADR
+		LDA #fence/256
+		STA STRADR+1
+		LDA #60 ; row offset
+		PHA
+		JSR puts
+		LDA #160
+		PHA
+		JSR puts
 
 ; **************************************
 ; Main loop
@@ -109,28 +122,27 @@ init_ram
 		RTS
 		
 init_gra
-; reset gr. 2
-		LDA #2
-		PHA
-		LDX #$60 		;screen
-		LDA #$C 		; CLOSE
-		STA ICCOM,X
-		JSR CIOV 		;do close
-		LDX #$60
-		LDA #3 			;open
-		STA ICCOM,X
-		LDA #name&255
-		STA ICBAL,X
-		LDA #name/256
-		STA ICBAH,X
-		PLA
-		STA ICAX2,X
-		AND #$F0
-		EOR #$10
-		ORA #$C
-		STA ICAX1,X
-		JSR CIOV
-		RTS
+       LDA #2
+       PHA           ; Store on stack
+       LDX #$60      ; IOCB6 for screen
+       LDA #$C       ; CLOSE command
+       STA ICCOM,X   ; in command byte
+       JSR CIOV      ; Do the CLOSE
+       LDX #$60      ; The screen again
+       LDA #3        ; OPEN command
+       STA ICCOM,X   ; in command byte
+       LDA #NAME&255 ; Name is "S:"
+       STA ICBAL,X   ; Low byte
+       LDA #NAME/256 ; High byte
+       STA ICBAH,X
+       PLA           ; Get GRAPHICS n
+       STA ICAX2,X   ; Graphics mode
+       AND #$F0      ; Get high 4 bits
+       EOR #$10      ; Flip high bit
+       ORA #$C       ; Read or write
+       STA ICAX1,X   ; n+16, n+32 etc.
+       JSR CIOV      ; Setup GRAPHICS n
+       RTS           ; All done
 pm_init
 ; PM graphics setup
 		LDA #120
@@ -142,6 +154,7 @@ pm_init
 ;pm area clear
 		LDY	#0
 clear
+
 		LDA #0
 		STA (XLOC),Y
 		DEY
@@ -272,6 +285,35 @@ RIGHT	INC XLOC     ; To move it right
 		STA HPOSP0+2
 		RTS          ; Back to MAIN - we're done
 		
+; *** PRINT a String ***
+puts 	
+		; Pull return address
+		PLA
+		STA TMP2
+		PLA
+		STA TMP2+1
+		CLC
+		PLA				; Row offset
+		ADC SAVMSC
+		STA TMP
+		LDA SAVMSC+1
+		ADC #0
+		STA TMP+1
+		LDY #0
+loop	LDA (STRADR),Y
+		CMP #$9B
+		BEQ DONE
+		STA (TMP),Y
+		INY
+		CPY #MAXLEN
+		BNE loop
+		LDA TMP2+1 ; Restore return address
+		PHA
+		LDA TMP2
+		PHA
+DONE	RTS
+
+
 player0 .BYTE 0,0,0,0,0,0,0,0
 		.BYTE 0,0,128,128,192,231,255,255
 		.BYTE 127,63,31,15,7,6,4,6
@@ -281,6 +323,8 @@ player1 .BYTE 0,0,0,7,15,27,31,31
 player2 .BYTE 0,0,0,224,240,240,240,240
 		.BYTE 240,0,224,0,0,0,0,0
 		.BYTE 0,0,0,0,0,0,0,0
-name    .BYTE "S:",$9B
+fence 	.BYTE "--------------------",$9B
+blanks	.BYTE "                    ",$9B
+NAME    .BY "S:",$9B
 	 	run start 	;Define run address
 
