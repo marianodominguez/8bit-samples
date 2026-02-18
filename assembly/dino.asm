@@ -39,7 +39,7 @@ TMP    =   $D2      ; Temporary storage
 POFF   =   $D4      ; Offset of player in memory
 TMP2   =   $D6      ; Temporary storage
 STRADR =   $D8      ; Address of string to print
-MAXLEN =   20       ; Maximum length of string
+MAXLEN =   $C5       ; Maximum length of string
 
 		ORG $0600
 ; lower ramtop
@@ -51,9 +51,13 @@ start	JSR init_ram
 		STA STRADR
 		LDA #fence/256
 		STA STRADR+1
-		LDA #60 ; row offset
+		LDA #18
+		STA MAXLEN
+		LDA #62 ; row offset
 		PHA
 		JSR puts
+		LDA #20
+		STA MAXLEN
 		LDA #160
 		PHA
 		JSR puts
@@ -305,7 +309,7 @@ loop	LDA (STRADR),Y
 		BEQ DONE
 		STA (TMP),Y
 		INY
-		CPY #MAXLEN
+		CPY MAXLEN
 		BNE loop
 		LDA TMP2+1 ; Restore return address
 		PHA
