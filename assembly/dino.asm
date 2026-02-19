@@ -17,29 +17,31 @@ CIOV  =    $E456
 GRACTL=	   53277
 
 ; sys equates
-RAMTOP =	106
-PMBASE =	54279
-PCOLR0 =	704
-SAVMSC   =  $58
-
+RAMTOP =  106
+PMBASE =  54279
+PCOLR0 =  704
+SAVMSC =  $58
+CHARSET1  =  57344
+CHBAS  =  $2F4
 ; other var
 
 XLOC   =   $CE
 YLOC   =   $CC
 YLOC1  =   $C1
 YLOC2  =   $C3
+CHSET  =   $C4 		;C5 HI
 
 INITX  =   $D0       ; Initial X value
 INITY  =   $D1       ; Initial Y value
 TMPTOP =   $100      ; Temporary storage (ADRESS)
-STICK  =   $d300     ; PORTA - Hardware STICK(0) location
+STICK  =   $D300     ; PORTA - Hardware STICK(0) location
 HPOSP0 =   $D000     ; Horizontal position Player 0
 PSIZE  =   $C0		; Size of player in bytes
 TMP    =   $D2      ; Temporary storage
 POFF   =   $D4      ; Offset of player in memory
 TMP2   =   $D6      ; Temporary storage
 STRADR =   $D8      ; Address of string to print
-MAXLEN =   $C5       ; Maximum length of string
+MAXLEN =   $DA       ; Maximum length of string
 
 		ORG $0600
 ; lower ramtop
@@ -56,11 +58,12 @@ start	JSR init_ram
 		LDA #62 ; row offset
 		PHA
 		JSR puts
-		LDA #20
+		LDA #18
 		STA MAXLEN
 		LDA #160
 		PHA
 		JSR puts
+		JSR load_chset
 
 ; **************************************
 ; Main loop
@@ -317,6 +320,73 @@ loop	LDA (STRADR),Y
 		PHA
 DONE	RTS
 
+load_chset
+		LDA RAMTOP  ;First 8 pages are for PM
+		SBC #12		;reserve 4 pages more for chars
+		STA CHSET
+		STA TMP     ; copy the charset address
+		LDA #0
+		STA CHSET+1
+		STA TMP+1
+		CLC
+		LDA CHARSET1
+		STA TMP2
+		LDY #0
+		LDX #0
+loop_page
+		LDY #0
+loop_load
+		LDA TMP2,Y   ;tmp2 is the address of the charset
+		STA (TMP),Y
+		INY
+		BNE loop_load
+		INX
+		LDA TMP2
+		ADC #1
+		STA TMP2
+		LDA TMP2+1
+		ADC #0
+		STA TMP2+1
+		LDA TMP
+		ADC #1
+		STA TMP
+		LDA TMP+1
+		ADC #0
+		STA TMP+1    ; move forward to next page of memory
+		CPX #4
+		BNE loop_page
+		CLC
+		LDY #0
+		; load cactus characrers in an offset of 8 characters
+		LDA CHSET
+		PHA    		; save the address of the charset
+		ADC #13*8
+		STA CHSET
+		LDA CHSET+1
+		ADC #0
+		STA CHSET+1
+		
+loopc	LDA cactus1,y
+		STA (CHSET),y
+		INY
+		CPY #16
+		BNE loopc
+		LDY #16
+loopc2	LDA cactus2,y
+		STA (CHSET),y
+		INY
+		CPY #32
+		BNE loopc2
+		LDY #32
+loopc3	LDA cactus3,y
+		STA (CHSET),y
+		INY
+		CPY #48
+		BNE loopc3
+		PLA   				;restore the address of the charset
+		STA CHSET
+		STA CHBAS
+		RTS
 
 player0 .BYTE 0,0,0,0,0,0,0,0
 		.BYTE 0,0,128,128,192,231,255,255
@@ -327,6 +397,11 @@ player1 .BYTE 0,0,0,7,15,27,31,31
 player2 .BYTE 0,0,0,224,240,240,240,240
 		.BYTE 240,0,224,0,0,0,0,0
 		.BYTE 0,0,0,0,0,0,0,0
+
+cactus1 .BYTE 0,0,0,48,48,50,50,178,190,176,240,48,48,48,48,48
+cactus2 .BYTE 0,0,0,24,26,26,26,94,88,88,88,120,24,24,24,24
+cactus3 .BYTE 0,0,26,26,90,90,90,94,88,120,24,24,24,24,24,24
+
 fence 	.BYTE "--------------------",$9B
 blanks	.BYTE "                    ",$9B
 NAME    .BY "S:",$9B
