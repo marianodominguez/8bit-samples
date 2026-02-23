@@ -57,12 +57,12 @@ start	JSR init_ram
 		STA STRADR+1
 		LDA #18
 		STA MAXLEN
-		LDA #62 ; row offset
+		LDA #62 ; top row offset
 		PHA
 		JSR puts
-		LDA #18
+		LDA #18   
 		STA MAXLEN
-		LDA #160
+		LDA #140 ;fence bottom row offset
 		PHA
 		JSR puts
 		JSR load_chset
@@ -72,7 +72,7 @@ start	JSR init_ram
 ; **************************************
 
 MAIN    
-		JSR RDSTK     ; Read stick - move player
+		
 		LDX #5        ; To control the
 		LDY #0        ; player, we
 DELAY
@@ -154,16 +154,18 @@ init_gra
        RTS           ; All done
 pm_init
 ; PM graphics setup
-		LDA #120
+		LDA #60
 		STA INITX
 		LDA #50
 		STA INITY
 		LDA #46
 		STA 559 	;SDMCTL
-;pm area clear
+		LDA #1
+		STA 623  ; priority 
+
+		;pm area clear
 		LDY	#0
 clear
-
 		LDA #0
 		STA (XLOC),Y
 		DEY
