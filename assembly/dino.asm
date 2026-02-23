@@ -23,6 +23,7 @@ PCOLR0 =  704
 SAVMSC =  $58
 CHARSET1= $E000
 CHBAS  =  $2F4
+KEYPRES = $2FC
 ; other var
 
 XLOC   =   $CC
@@ -75,7 +76,9 @@ MAIN
 		
 		LDX #5        ; To control the
 		LDY #0        ; player, we
+		JSR READKEY
 DELAY
+
 		DEY           ; have to add
 		BNE DELAY     ; a delay - this
 		DEX           ; routine slows
@@ -89,32 +92,38 @@ DELAY
 load_players
 		LDA #24
 		STA PSIZE
-		LDA #0
-		STA POFF
-		STA POFF+1
+		
 		; Push player0 address onto stack (high byte first)
 		LDA #player0/256
 		PHA
 		LDA #player0&255
 		PHA
-		JSR copy_player
-		LDA #128
+		LDA YLOC
 		STA POFF
+		LDA YLOC+1
+		STA POFF+1
+		JSR copy_player
+
 		; Push player1 address onto stack (high byte first)
 		LDA #player1/256
 		PHA
 		LDA #player1&255
 		PHA
-		JSR copy_player
-		LDA #0
+		LDA YLOC1
 		STA POFF
-		LDA #1
+		LDA YLOC1+1
 		STA POFF+1
+		JSR copy_player
+		
 		; Push player2 address onto stack (high byte first)
 		LDA #player2/256
 		PHA
 		LDA #player2&255
 		PHA
+		LDA YLOC2
+		STA POFF
+		LDA YLOC2+1
+		STA POFF+1
 		JSR copy_player
 		RTS
 
@@ -175,6 +184,24 @@ clear
 		CMP TMPTOP
 		BEQ clear 	;one extra page
 		BCC clear
+
+		;save locations for players
+		LDA YLOC
+		STA TMP2
+		LDA YLOC+1
+		STA TMP2+1
+		LDA YLOC
+		ADC #128
+		STA YLOC1
+		LDA YLOC+1
+		ADC #0
+		STA YLOC1+1
+		LDA YLOC
+		STA YLOC2
+		LDA YLOC+1
+		ADC #1
+		STA YLOC2+1
+
 		RTS
 
 copy_player
@@ -194,18 +221,18 @@ copy_player
 		LDA TMP2
 		PHA
 		; Continue with copy operation
+
 		LDA	RAMTOP
 		CLC
 		ADC #2
-		ADC POFF+1
-		STA YLOC+1
+		STA POFF+1
 		LDA INITY
 		ADC POFF ; player offset
-		STA YLOC
+		STA POFF
 		LDY #0
 insert
 		LDA (TMP),Y
-		STA (YLOC),Y
+		STA (POFF),Y
 		INY
 		CPY PSIZE			;player Size
 		BNE insert
@@ -224,20 +251,26 @@ insert
 		LDA #3			;enable player
 		STA GRACTL 		; resolution
 		RTS
-RDSTK
-		LDA STICK     ; Get joystick value
-		AND #1        ; Is bit 0 = 1?
-		BEQ UP        ; No - 11, 12 or 1 o'clock
-		LDA STICK     ; Get it again
-		AND #2        ; Is bit 1 = 1?
-		BEQ DOWN      ; No - 5, 6 or 7 o'clock
-SIDE	LDA STICK     ; Get it again
-		AND #4        ; Is bit 3 = 1?
-		BEQ LEFT      ; No - 8, 9 or 10 o'clock
-		LDA STICK     ; Get it again
-		AND #8        ; Is bit 4 = 1?
-		BEQ RIGHT     ; No - 2, 3 or 4 o'clock
-		RTS           ; Joystick straight up
+
+; read key
+READKEY
+		LDA KEYPRES
+		CMP #33
+		BNE retk
+; Jump routine 
+		LDX #20
+keep	JSR UP
+		DEX
+		BNE keep
+		LDX #0
+keep2	JSR DOWN
+		INX
+		CPX #20
+		BNE keep2
+
+retk	LDA #255
+		STA KEYPRES
+		RTS			
 		
  ; ******************************
  ; Now move player appropriately,
@@ -256,7 +289,8 @@ UP1		LDA (YLOC),Y  ; Get 1st byte
 		STA TMP
 		CPY TMP    ; Are we done?
 		BCC UP1       ; No
-		BCS SIDE      ; Forced branch!!!
+		RTS
+
  ; ******************************
  ; Now move player down
  ; ******************************
@@ -271,8 +305,8 @@ DOWN1	LDA (YLOC),Y ; Get top byte
 		LDA #0       ; to clear top byte
 		STA (YLOC),Y ; Clear it
 		INC YLOC     ; Now is 1 higher
-		CLC          ; Setup for forced branch
-		BCC SIDE     ; Forced branch again
+		RTS
+
  ; ******************************
  ; Now side-to-side - left first
  ; ******************************
