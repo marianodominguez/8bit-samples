@@ -21,15 +21,15 @@ RAMTOP =  106
 PMBASE =  54279
 PCOLR0 =  704
 SAVMSC =  $58
-CHARSET1  =  57344
+CHARSET1= $E000
 CHBAS  =  $2F4
 ; other var
 
-XLOC   =   $CE
-YLOC   =   $CC
+XLOC   =   $CC
+YLOC   =   $CE
 YLOC1  =   $C1
 YLOC2  =   $C3
-CHSET  =   $C4 		;C5 HI
+CHSET  =   $C5 		;C5 HI
 
 INITX  =   $D0       ; Initial X value
 INITY  =   $D1       ; Initial Y value
@@ -49,6 +49,8 @@ start	JSR init_ram
 		JSR init_gra
 		JSR pm_init
 		JSR load_players
+
+		; print fence 
 		LDA #fence&255
 		STA STRADR
 		LDA #fence/256
@@ -319,73 +321,68 @@ loop	LDA (STRADR),Y
 		LDA TMP2
 		PHA
 DONE	RTS
-
+; ******************************
+; Load custom character set
+; ******************************
 load_chset
+		LDA #0
+		STA TMP
 		LDA RAMTOP  ;First 8 pages are for PM
 		SBC #12		;reserve 4 pages more for chars
 		STA CHSET
-		STA TMP     ; copy the charset address
-		LDA #0
-		STA CHSET+1
-		STA TMP+1
+		STA TMP+1     ; copy the charset address
+
 		CLC
-		LDA CHARSET1
+		LDA #CHARSET1&255
 		STA TMP2
+		LDA #CHARSET1/256
+		STA TMP2+1
 		LDY #0
 		LDX #0
-loop_page
+lp_page
 		LDY #0
 loop_load
-		LDA TMP2,Y   ;tmp2 is the address of the charset
+		LDA (TMP2),Y   ;tmp2 is the address of the charset
 		STA (TMP),Y
 		INY
+		CPY #0
 		BNE loop_load
+		INC TMP+1
+		INC TMP2+1
 		INX
-		LDA TMP2
-		ADC #1
-		STA TMP2
-		LDA TMP2+1
-		ADC #0
-		STA TMP2+1
-		LDA TMP
-		ADC #1
-		STA TMP
-		LDA TMP+1
-		ADC #0
-		STA TMP+1    ; move forward to next page of memory
 		CPX #4
-		BNE loop_page
-		CLC
+		BNE lp_page
 		LDY #0
-		; load cactus characrers in an offset of 8 characters
+		; load cactus characters in an offset of 8 characters
+		LDA #13*8
+		STA TMP
 		LDA CHSET
-		PHA    		; save the address of the charset
-		ADC #13*8
-		STA CHSET
-		LDA CHSET+1
-		ADC #0
-		STA CHSET+1
-		
+		STA TMP+1
+
+
 loopc	LDA cactus1,y
-		STA (CHSET),y
+		STA (TMP),y
 		INY
 		CPY #16
 		BNE loopc
 		LDY #16
 loopc2	LDA cactus2,y
-		STA (CHSET),y
+		STA (TMP),y
 		INY
 		CPY #32
 		BNE loopc2
 		LDY #32
 loopc3	LDA cactus3,y
-		STA (CHSET),y
+		STA (TMP),y
 		INY
 		CPY #48
 		BNE loopc3
-		PLA   				;restore the address of the charset
-		STA CHSET
+				
+		LDA CHSET ;switch charset
 		STA CHBAS
+		LDA #0
+		STA TMP
+		STA TMP2
 		RTS
 
 player0 .BYTE 0,0,0,0,0,0,0,0
