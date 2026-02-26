@@ -124,7 +124,6 @@ load_players
 		LDA #player2&255
 		PHA
 		LDA YLOC2
-		ADC #1
 		STA POFF
 		LDA YLOC2+1
 		ADC #0
@@ -190,12 +189,15 @@ clear
 		BEQ clear 	;one extra page
 		BCC clear
 
-		;save locations for players
-		LDA INITY
-		STA YLOC
-		LDA #0
+		LDA	RAMTOP
+		CLC
+		ADC #2
 		STA YLOC+1
-
+		LDA INITY
+		ADC #0
+		STA YLOC
+		;save locations for players
+		
 		LDA YLOC
 		ADC #128
 		STA YLOC1
@@ -228,11 +230,6 @@ copy_player
 		PHA
 		; Continue with copy operation
 
-		LDA	RAMTOP
-		CLC
-		ADC #2
-		ADC POFF+1
-		STA POFF+1
 		LDY #0
 insert
 		LDA (TMP),Y
@@ -261,23 +258,7 @@ READKEY
 		LDA KEYPRES
 		CMP #33
 		BNE retk
-; Jump routine 
-		LDX #24
-keep	JSR UP
-		DEX
-		
-		;debug
-		;STX 712
-		
-		BNE keep
-		LDX #0
-keep2	JSR DOWN
-		INX
-		;debug
-		;STX 712
-		CPX #24
-		BNE keep2
-
+        JSR UP
 		LDA #255
 		STA KEYPRES
 retk	RTS			
@@ -288,9 +269,19 @@ retk	RTS
  ; ******************************
 UP		LDY #1        ; Setup for moving byte 1
 		DEC YLOC      ; Now 1 less than YLOC
+		DEC YLOC1
+		DEC YLOC2
 UP1		LDA (YLOC),Y  ; Get 1st byte
 		DEY           ; To move it up one position
-		STA (YLOC),Y  ; Move it
+		STA (YLOC),Y
+		INY
+		LDA (YLOC1),Y  ; Get 1st byte
+		DEY
+		STA (YLOC1),Y  ; Move it
+		INY
+		LDA (YLOC2),Y  ; Get 1st byte
+		DEY
+		STA (YLOC2),Y  ; Move it
 		INY           ; Now original value
 		INY
 		CLC           ; Now set for next byte
@@ -298,10 +289,6 @@ UP1		LDA (YLOC),Y  ; Get 1st byte
 		ADC #2
 		STA TMP
 		CPY TMP    ; Are we done?
-
-		;debug
-		STY COLWN
-
 		BCC UP1       ; No
 		RTS
 
@@ -312,13 +299,27 @@ DOWN	LDY PSIZE   ; Move top byte first
 DOWN1	LDA (YLOC),Y ; Get top byte
 		INY          ; to move it down screen
 		STA (YLOC),Y ; Move it
+		DEY
+		LDA (YLOC1),Y ; Get top byte
+		INY 
+		STA (YLOC1),Y ; Move it
+		DEY
+		LDA (YLOC2),Y ; Get top byte
+		INY 
+		STA (YLOC2),Y ; Move it
+
 		DEY          ; Now back to starting value
 		DEY          ; Set for next lower byte
+
 		BPL DOWN1    ; If Y >= 0 keep going
 		INY          ; Set to zero
 		LDA #0       ; to clear top byte
 		STA (YLOC),Y ; Clear it
+		STA (YLOC1),Y
+		STA (YLOC2),Y
 		INC YLOC     ; Now is 1 higher
+		INC YLOC1
+		INC YLOC2
 		RTS
 
  ; ******************************
