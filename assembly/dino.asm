@@ -26,6 +26,9 @@ CHBAS  =  $2F4
 KEYPRES = $2FC
 ; other var
 
+COLWN = 710
+COLBK = 711
+
 XLOC   =   $CC
 YLOC   =   $CE
 YLOC1  =   $C1
@@ -121,8 +124,10 @@ load_players
 		LDA #player2&255
 		PHA
 		LDA YLOC2
+		ADC #1
 		STA POFF
 		LDA YLOC2+1
+		ADC #0
 		STA POFF+1
 		JSR copy_player
 		RTS
@@ -186,22 +191,23 @@ clear
 		BCC clear
 
 		;save locations for players
-		LDA YLOC
-		STA TMP2
-		LDA YLOC+1
-		STA TMP2+1
+		LDA INITY
+		STA YLOC
+		LDA #0
+		STA YLOC+1
+
 		LDA YLOC
 		ADC #128
 		STA YLOC1
 		LDA YLOC+1
 		ADC #0
 		STA YLOC1+1
+
 		LDA YLOC
 		STA YLOC2
 		LDA YLOC+1
 		ADC #1
 		STA YLOC2+1
-
 		RTS
 
 copy_player
@@ -225,10 +231,8 @@ copy_player
 		LDA	RAMTOP
 		CLC
 		ADC #2
+		ADC POFF+1
 		STA POFF+1
-		LDA INITY
-		ADC POFF ; player offset
-		STA POFF
 		LDY #0
 insert
 		LDA (TMP),Y
@@ -258,19 +262,25 @@ READKEY
 		CMP #33
 		BNE retk
 ; Jump routine 
-		LDX #20
+		LDX #24
 keep	JSR UP
 		DEX
+		
+		;debug
+		;STX 712
+		
 		BNE keep
 		LDX #0
 keep2	JSR DOWN
 		INX
-		CPX #20
+		;debug
+		;STX 712
+		CPX #24
 		BNE keep2
 
-retk	LDA #255
+		LDA #255
 		STA KEYPRES
-		RTS			
+retk	RTS			
 		
  ; ******************************
  ; Now move player appropriately,
@@ -288,6 +298,10 @@ UP1		LDA (YLOC),Y  ; Get 1st byte
 		ADC #2
 		STA TMP
 		CPY TMP    ; Are we done?
+
+		;debug
+		STY COLWN
+
 		BCC UP1       ; No
 		RTS
 
