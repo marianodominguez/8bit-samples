@@ -46,6 +46,9 @@ POFF   =   $D4      ; Offset of player in memory
 TMP2   =   $D6      ; Temporary storage
 STRADR =   $D8      ; Address of string to print
 MAXLEN =   $DA       ; Maximum length of string
+JMPPOS =   $DB		; jump position
+JMPIDX =   $DC		; jump index
+JMPNG  =   $DD		; is the dino jumping?
 
 		ORG $0600
 ; lower ramtop
@@ -141,6 +144,10 @@ init_ram
 		STA XLOC+1  	;erase PM ram
 		LDA #0
 		STA XLOC
+		LDA #0
+		STA JMPPOS
+		STA JMPIDX
+		STA JMPNG
 		RTS
 		
 init_gra
@@ -255,19 +262,51 @@ insert
 
 ; read key
 READKEY
+		LDA JMPNG
+		CMP #1
+		BEQ jp
 		LDA KEYPRES
 		CMP #33
 		BNE retk
-        JSR UP
+		LDA #1
+		STA JMPNG
+jp		JSR jump
+		
 		LDA #255
 		STA KEYPRES
 retk	RTS			
-		
+
+
+; Jump routine
+jump
+		LDY JMPIDX
+		LDA jumpseq,Y
+		CMP JMPPOS
+		BEQ jstep_done
+		BCS jmove_up        ; A > JMPPOS -> move up
+		JSR DOWN            ; A < JMPPOS -> move down
+		DEC JMPPOS
+		RTS
+jmove_up
+		JSR UP
+		INC JMPPOS
+		RTS
+jstep_done
+		INC JMPIDX
+		LDA #10
+		CMP JMPIDX
+		BNE jxit
+		LDA #0
+		STA JMPIDX
+		LDA #0
+		STA JMPNG
+jxit	RTS
+
  ; ******************************
  ; Now move player appropriately,
  ; starting with upward movement.
  ; ******************************
-UP		LDY #1        ; Setup for moving byte 1
+UP		LDY JMPIDX        ; Setup for moving byte 1
 		DEC YLOC      ; Now 1 less than YLOC
 		DEC YLOC1
 		DEC YLOC2
@@ -452,6 +491,7 @@ cactus3 .BYTE 0,0,26,26,90,90,90,94,88,120,24,24,24,24,24,24
 
 fence 	.BYTE "--------------------",$9B
 blanks	.BYTE "                    ",$9B
+jumpseq	.BYTE 2,4,6,8,8,7,6,4,2,0
 NAME    .BY "S:",$9B
 	 	run start 	;Define run address
 
