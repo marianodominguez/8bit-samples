@@ -28,12 +28,15 @@ KEYPRES = $2FC
 
 COLWN = 710
 COLBK = 711
+NSTEP = 9
 
 XLOC   =   $CC
 YLOC   =   $CE
 YLOC1  =   $C1
 YLOC2  =   $C3
 CHSET  =   $C5 		;C5 HI
+CTPOS1 = $C7		; cactus position
+CTPOS2 = $C9
 
 INITX  =   $D0       ; Initial X value
 INITY  =   $D1       ; Initial Y value
@@ -89,6 +92,12 @@ DELAY
 		BNE DELAY     ; a delay - this
 		DEX           ; routine slows
 		BNE DELAY     ; things down.
+		DEC CTPOS1
+		LDA CTPOS1
+		CMP #0
+		BNE MAIN
+		LDA #10
+		STA CTPOS1
 		JMP MAIN      ; And do it again
 
 ; **************************************
@@ -148,6 +157,10 @@ init_ram
 		STA JMPPOS
 		STA JMPIDX
 		STA JMPNG
+		LDA #10
+		STA CTPOS1
+		LDA #10
+		STA CTPOS2
 		RTS
 		
 init_gra
@@ -293,7 +306,7 @@ jmove_up
 		RTS
 jstep_done
 		INC JMPIDX
-		LDA #10
+		LDA #NSTEP
 		CMP JMPIDX
 		BNE jxit
 		LDA #0
@@ -475,6 +488,27 @@ loopc3	LDA cactus3,y
 		STA TMP2
 		RTS
 
+; Display Cactus
+DisplayCactus
+		LDY #0
+		LDX CTPOS1
+		; print 1 char of cactus per column
+		LDA #c1&255
+		STA STRADR
+		LDA #c1/256
+		STA STRADR+1
+		LDA #1
+		STA MAXLEN
+		LDA #72
+		ADC CTPOS1 ; top row offset
+		PHA
+		JSR puts
+		LDA #92
+		ADC CTPOS1 ; top row offset
+		PHA 
+		JSR puts
+		RTS
+
 player0 .BYTE 0,0,0,0,0,0,0,0
 		.BYTE 0,0,128,128,192,231,255,255
 		.BYTE 127,63,31,15,7,6,4,6
@@ -490,8 +524,14 @@ cactus2 .BYTE 0,0,0,24,26,26,26,94,88,88,88,120,24,24,24,24
 cactus3 .BYTE 0,0,26,26,90,90,90,94,88,120,24,24,24,24,24,24
 
 fence 	.BYTE "--------------------",$9B
+c1 .BYTE "-@",$9B
+c2 .BYTE "#$",$9B
+c3 .BYTE "&*",$9B
+clr .BYTE " ",$9B
+
 blanks	.BYTE "                    ",$9B
-jumpseq	.BYTE 2,4,6,8,8,7,6,4,2,0
+
+jumpseq	.BYTE 4, 8, 16, 24, 24, 16, 8, 4, 0
 NAME    .BY "S:",$9B
 	 	run start 	;Define run address
 
