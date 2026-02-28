@@ -54,10 +54,10 @@ JMPPOS EQU   $DB		; jump position
 JMPIDX EQU   $DC		; jump index
 JMPNG  EQU   $DD		; is the dino jumping?
 
-VCOUNT	equ $d40b				;vertical screen lines counter address
-KEY		equ $2fc				;keypressed code
-VLINE	equ 16					;screen line for synchronization
+rtclok	= $12
+vcount	= $d40b
 
+	org $2400
 	.proc music
 STEREOMODE	equ 0				;0 => compile RMTplayer for mono 4 tracks
 init_song = RASTERMUSICTRACKER+0
@@ -67,28 +67,18 @@ play	  = RASTERMUSICTRACKER+3
 
 player
 	icl "music/rmt_player.asm"			;include RMT player routine
-	
-	icl 'music/rmt_relocator.asm'	
-
+	icl 'music/rmt_relocator.asm'			;include RMT relocator
 module
-	rmt_relocator 'music.rmt' module	;include music RMT module
-	
+	rmt_relocator 'music/bassandnoise.rmt' module	;include music RMT module
 	.endp
 
-		ORG $0600
-; lower ramtop
-start	
-	;
-		ldx #<music.module					;low byte of RMT module to X reg
-		ldy #>music.module					;hi byte of RMT module to Y reg
-		lda #0						;starting song line 0-255 to A reg
-		jsr music.init_song		;Init
-	;
+		.proc start	
+		
 		JSR init_ram
 		JSR init_gra
 		JSR pm_init
 		JSR load_players
-
+			;
 	; print fence 
 		LDA #fence&255
 		STA STRADR
@@ -106,38 +96,25 @@ start
 		JSR puts
 		JSR load_chset
 
+		ldx #<music.module
+		ldy #>music.module
+		lda #0
+		jsr music.init_song
+
 ; **************************************
 ; Main loop
 ; **************************************
 
-MAIN    nop
-acpapx1	lda #$ff				;parameter overwrite (sync line counter value)
-	clc
-acpapx2	adc #$ff				;parameter overwrite (sync line counter spacing)
-	cmp #156
-	bcc lop4
-	sbc #156
-lop4
-	sta acpapx1+1
-waipap
-	cmp VCOUNT				;vertical line counter synchro
-	bne waipap
-;
-	mva #$0f $d01a
+MAIN    jsr wait
+		LDA #$34
+		STA $d01a
+		jsr music.play
+		LDA #$00
+		STA $d01a
 
-	jsr RASTERMUSICTRACKER+3        	;1 play
-
-	mva #$00 $d01a
-
-		LDX #5        ; To control the
-		LDY #0        ; player, we
+		LDX #5        
+		LDY #0        
 		JSR READKEY
-DELAY
-
-		DEY           ; have to add
-		BNE DELAY     ; a delay - this
-		DEX           ; routine slows
-		BNE DELAY     ; things down.
 		JSR DisplayCactus
 		; DEC CTPOS1
 		LDA CTPOS1
@@ -145,13 +122,13 @@ DELAY
 		BNE MAIN
 		LDA #19
 		STA CTPOS1
-		JMP MAIN      ; And do it again
-
+		JMP MAIN      
+	.endp
 ; **************************************
 ; Subroutines
 ; **************************************
 
-load_players
+		.proc load_players
 		LDA #24
 		STA PSIZE
 		
@@ -189,8 +166,10 @@ load_players
 		STA POFF+1
 		JSR copy_player
 		RTS
+		.endp
 
-init_ram	
+		; *** Initial RAM setup ****
+		.proc init_ram	
 		LDA RAMTOP
 		STA TMPTOP
 		SEC
@@ -209,8 +188,9 @@ init_ram
 		LDA #19
 		STA CTPOS2
 		RTS
+		.endp		
 		
-init_gra
+		.proc init_gra
        LDA #2
        PHA           ; Store on stack
        LDX #$60      ; IOCB6 for screen
@@ -232,7 +212,9 @@ init_gra
        STA ICAX1,X   ; n+16, n+32 etc.
        JSR CIOV      ; Setup GRAPHICS n
        RTS           ; All done
-pm_init
+		.endp
+		
+		.proc pm_init
 ; PM graphics setup
 		LDA #60
 		STA INITX
@@ -278,8 +260,9 @@ clear
 		ADC #1
 		STA YLOC2+1
 		RTS
+		.endp
 
-copy_player
+		.proc copy_player
 		; Pull return address from stack and save it
 		PLA
 		STA TMP2		; Save return address low byte
@@ -319,9 +302,10 @@ insert
 		LDA #3			;enable player
 		STA GRACTL 		; resolution
 		RTS
+		.endp
 
+		.proc READKEY
 ; read key
-READKEY
 		LDA JMPNG
 		CMP #1
 		BEQ jp
@@ -336,10 +320,9 @@ jp		JSR jump
 		LDA #255
 		STA KEYPRES
 retk	RTS			
+		.endp
 
-
-; Jump routine
-jump
+		.proc jump
 		LDY JMPIDX
 		LDA jumpseq,Y
 		CMP JMPPOS
@@ -348,6 +331,8 @@ jump
 		JSR DOWN            ; A < JMPPOS -> move down
 		DEC JMPPOS
 		RTS
+		.endp
+		
 jmove_up
 		JSR UP
 		INC JMPPOS
@@ -575,6 +560,13 @@ DisplayCactus
 		PHA 
 		JSR puts
 		RTS
+
+	.proc wait
+loopw	lda vcount
+	cmp #$20
+	bne loopw
+	rts
+	.endp
 
 player0 .BYTE 0,0,0,0,0,0,0,0
 		.BYTE 0,0,128,128,192,231,255,255

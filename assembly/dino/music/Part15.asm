@@ -28,7 +28,7 @@ module
 	
 	.endp
 
-	.proc main
+	.proc start
 	
 	ldx #<music.module
 	ldy #>music.module
