@@ -54,35 +54,34 @@ JMPPOS EQU   $DB		; jump position
 JMPIDX EQU   $DC		; jump index
 JMPNG  EQU   $DD		; is the dino jumping?
 
-VCOUNT	equ $d40b				;vertical screen lines counter address
-KEY		equ $2fc				;keypressed code
-VLINE	equ 16					;screen line for synchronization
+MODUL	EQU $4000				;address of RMT module
+VCOUNT	EQU $d40b				;vertical screen lines counter address
+KEY		EQU $2fc				;keypressed code
+VLINE	EQU 16
 
-	.proc music
-STEREOMODE	equ 0				;0 => compile RMTplayer for mono 4 tracks
-init_song = RASTERMUSICTRACKER+0
-play	  = RASTERMUSICTRACKER+3
-
-	icl "music/music.feat"
-
-player
-	icl "music/rmt_player.asm"			;include RMT player routine
-	
-	icl 'music/rmt_relocator.asm'	
-
-module
-	rmt_relocator 'music.rmt' module	;include music RMT module
-	
-	.endp
+STEREOMODE	equ 0				;0 EQU> compile RMTplayer for mono 4 tracks
+;
+	icl "music/rmtplayr.a65"			;include RMT player routine
+;
+;
+	opt h-						;RMT module is standard Atari binary file already
+	ins "music/music.rmt"				;include music RMT module
+	opt h+
 
 		ORG $0600
 ; lower ramtop
 start	
 	;
-		ldx #<music.module					;low byte of RMT module to X reg
-		ldy #>music.module					;hi byte of RMT module to Y reg
+		ldx #<MODUL					;low byte of RMT module to X reg
+		ldy #>MODUL					;hi byte of RMT module to Y reg
 		lda #0						;starting song line 0-255 to A reg
-		jsr music.init_song		;Init
+		jsr RASTERMUSICTRACKER		;Init
+
+		tay
+		lda tabpp-1,y
+		sta acpapx2+1				;sync counter spacing
+		lda #16+0
+		sta acpapx1+1				;sync counter init
 	;
 		JSR init_ram
 		JSR init_gra
@@ -112,22 +111,17 @@ start
 
 MAIN    nop
 acpapx1	lda #$ff				;parameter overwrite (sync line counter value)
-	clc
+		clc
 acpapx2	adc #$ff				;parameter overwrite (sync line counter spacing)
-	cmp #156
-	bcc lop4
-	sbc #156
+		cmp #156
+		bcc lop4
+		sbc #156
 lop4
-	sta acpapx1+1
+		sta acpapx1+1
 waipap
-	cmp VCOUNT				;vertical line counter synchro
-	bne waipap
-;
-	mva #$0f $d01a
-
-	jsr RASTERMUSICTRACKER+3        	;1 play
-
-	mva #$00 $d01a
+		cmp VCOUNT					;vertical line counter synchro
+		bne waipap
+		jsr RASTERMUSICTRACKER+3	;1 play
 
 		LDX #5        ; To control the
 		LDY #0        ; player, we
@@ -576,31 +570,32 @@ DisplayCactus
 		JSR puts
 		RTS
 
-player0 .BYTE 0,0,0,0,0,0,0,0
-		.BYTE 0,0,128,128,192,231,255,255
-		.BYTE 127,63,31,15,7,6,4,6
-player1 .BYTE 0,0,0,7,15,27,31,31
-		.BYTE 31,28,63,124,252,255,253,252
-		.BYTE 248,248,240,224,96,32,32,48
-player2 .BYTE 0,0,0,224,240,240,240,240
-		.BYTE 240,0,224,0,0,0,0,0
-		.BYTE 0,0,0,0,0,0,0,0
+player0 DTA 0,0,0,0,0,0,0,0
+		DTA 0,0,128,128,192,231,255,255
+		DTA 127,63,31,15,7,6,4,6
+player1 DTA 0,0,0,7,15,27,31,31
+		DTA 31,28,63,124,252,255,253,252
+		DTA 248,248,240,224,96,32,32,48
+player2 DTA 0,0,0,224,240,240,240,240
+		DTA 240,0,224,0,0,0,0,0
+		DTA 0,0,0,0,0,0,0,0
 
-cactus1 .BYTE 0,0,0,48,48,50,50,178,190,176,240,48,48,48,48,48
-cactus2 .BYTE 0,0,0,24,26,26,26,94,88,88,88,120,24,24,24,24
-cactus3 .BYTE 0,0,26,26,90,90,90,94,88,120,24,24,24,24,24,24
+cactus1 DTA 0,0,0,48,48,50,50,178,190,176,240,48,48,48,48,48
+cactus2 DTA 0,0,0,24,26,26,26,94,88,88,88,120,24,24,24,24
+cactus3 DTA 0,0,26,26,90,90,90,94,88,120,24,24,24,24,24,24
 
-fence 	.BYTE "--------------------",$9B
-c1 		.BYTE "-"+130,"-"+131,$9B
-c2 		.BYTE "-"+128,"-"+129,$9B
-c3 		.BYTE "-"+132,"-"+133,$9B
-clr 	.BYTE " ",$9B
+fence 	DTA d"--------------------",$9B
+c1 		DTA 13+130,13+131,$9B
+c2 		DTA 13+128,13+129,$9B
+c3 		DTA 13+132,13+133,$9B
+clr 	DTA d" ",$9B
 
-blanks	.BYTE "                    ",$9B
+blanks	DTA d"                    ",$9B
 
-jumpseq	.BYTE 4,8,16,24,24,16,8,4,0
-NAME    .BYTE c"S:",$9B
-tabpp  .BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
+jumpseq	DTA 4,8,16,24,24,16,8,4,0
+NAME    DTA c"S:",$9B
+;NAME   DTA $53,$3A,$9B
+tabpp  DTA 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 
 	 	run start 	;Define run address
 

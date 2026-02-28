@@ -1,6 +1,7 @@
 .PHONY: clean
 
-XASM = xasm
+ASSEMBLER = mads
+
 
 TARGET = bin/dino
 
@@ -9,7 +10,7 @@ SOURCE = dino.asm
 all: $(TARGET)
 
 $(TARGET): $(SOURCE)
-	$(XASM) $(SOURCE) /o:$(TARGET) 
+	$(ASSEMBLER) $(SOURCE) -o:$(TARGET) 
 
 clean:
 	rm -f $(TARGET)
