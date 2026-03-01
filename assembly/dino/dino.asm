@@ -24,6 +24,7 @@ SAVMSC EQU  $58
 CHARSET1 EQU $E000
 CHBAS  EQU  $2F4
 KEYPRES EQU $2FC
+CONSOL  EQU $D01F		; Console keys (START=bit0)
 ; other var
 ; *********************************************
 ; DO NOT USE DB to DF, reserved for RMT
@@ -56,6 +57,7 @@ MAXLEN EQU   $EA       ; Maximum length of string
 JMPPOS EQU   $EB		; jump position
 JMPIDX EQU   $ED		; jump index
 JMPNG  EQU   $EF		; is the dino jumping?
+INTROTK EQU  $C0		; intro tick counter (1 byte)
 
 rtclok	= $12
 vcount	= $d40b
@@ -65,6 +67,7 @@ vcount	= $d40b
 STEREOMODE	equ 0				;0 => compile RMTplayer for mono 4 tracks
 init_song = RASTERMUSICTRACKER+0
 play	  = RASTERMUSICTRACKER+3
+stop	  = RASTERMUSICTRACKER+9
 
 	icl "music/flimbo.feat"
 
@@ -97,6 +100,17 @@ module
 		LDA #140 ;fence bottom row offset
 		PHA
 		JSR puts
+		
+		; print PRESS START message
+		LDA #pressstart&255
+		STA STRADR
+		LDA #pressstart/256
+		STA STRADR+1
+		LDA #11
+		STA MAXLEN
+		LDA #240		; text window row 0, centered (200 + 10)
+		PHA
+		JSR puts
 
 		JSR load_chset
 
@@ -105,28 +119,45 @@ module
 		lda #0
 		jsr music.init_song
 
+
 ; **************************************
-; Main loop
+; Intro loop - auto-jump every ~1 sec
+; exits on START key press
 ; **************************************
 
-MAIN    jsr wait
-		;LDA #$34
-		;STA $d01a
+		; init intro tick counter
+		LDA #0
+		STA INTROTK
+
+INTRO   jsr wait
 		jsr music.play
-		;LDA #$00
-		;STA $d01a
 
-		LDX #5        
-		LDY #0        
-		JSR READKEY
-		JSR DisplayCactus
-		; DEC CTPOS1
-		LDA CTPOS1
-		CMP #0
-		BNE MAIN
-		LDA #19
-		STA CTPOS1
-		JMP MAIN      
+		; check START key (CONSOL bit 0 = 0 when pressed)
+		LDA CONSOL
+		AND #1
+		BEQ GAME_START
+
+		; auto-jump every ~50 frames (~1 second)
+		INC INTROTK
+		LDA INTROTK
+		CMP #50
+		BCC intro_no_jump
+		LDA #0
+		STA INTROTK
+		LDA #1
+		STA JMPNG		; trigger a jump
+intro_no_jump
+		LDA JMPNG
+		BEQ INTRO
+		LDX #5
+		LDY #0
+		JSR autojump
+		JMP INTRO
+
+GAME_START
+		; *** Start actual game here ***
+		JSR music.stop
+		JMP GAME_START	; placeholder - replace with real game loop
 	.endp
 ; **************************************
 ; Subroutines
@@ -201,7 +232,7 @@ MAIN    jsr wait
 		
 		.proc init_gra
        LDA #2
-       PHA           ; Store on stack
+       PHA           ; Store on stack (GR.2+16 = split screen + text window)
        LDX #$60      ; IOCB6 for screen
        LDA #$C       ; CLOSE command
        STA ICCOM,X   ; in command byte
@@ -321,6 +352,21 @@ insert
 		LDA KEYPRES
 		CMP #33
 		BNE retk
+		LDA #1
+		STA JMPNG
+		DEC CTPOS1
+jp		JSR jump
+		
+		LDA #255
+		STA KEYPRES
+retk	RTS			
+		.endp
+
+		.proc autojump
+; read key
+		LDA JMPNG
+		CMP #1
+		BEQ jp
 		LDA #1
 		STA JMPNG
 		DEC CTPOS1
@@ -595,6 +641,7 @@ c3 		.BYTE "-"+132,"-"+133,$9B
 clr 	.BYTE " ",$9B
 
 blanks	.BYTE "                    ",$9B
+pressstart .BYTE "PRESS START",$9B
 
 jumpseq	.BYTE 4,8,16,24,24,16,8,4,0
 NAME    .BYTE c"S:",$9B
