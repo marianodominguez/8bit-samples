@@ -76,7 +76,6 @@ module
 		
 		JSR init_ram
 		JSR init_gra
-		JSR load_chset
 		JSR pm_init
 		JSR load_players
 			;
@@ -95,11 +94,12 @@ module
 		LDA #140 ;fence bottom row offset
 		PHA
 		JSR puts
+		JSR load_chset
 
 		ldx #<music.module
 		ldy #>music.module
 		lda #0
-		jsr music.init_song
+		;jsr music.init_song
 
 ; **************************************
 ; Main loop
@@ -108,7 +108,7 @@ module
 MAIN    jsr wait
 		LDA #$34
 		STA $d01a
-		jsr music.play
+		;jsr music.play
 		LDA #$00
 		STA $d01a
 
@@ -174,13 +174,9 @@ MAIN    jsr wait
 		STA TMPTOP
 		SEC
 		SBC #8			;reserve 8 pages
-
-		STA PMBASE  	
-		STA XLOC+1  	
-		SBC #4
-		STA CHSET
 		STA RAMTOP		;new ramtop
-
+		STA PMBASE  	;
+		STA XLOC+1  	;erase PM ram
 		LDA #0
 		STA XLOC
 		LDA #0
@@ -242,7 +238,7 @@ clear
 		BEQ clear 	;one extra page
 		BCC clear
 
-		LDA	TMPTOP
+		LDA	RAMTOP
 		CLC
 		ADC #2
 		STA YLOC+1
@@ -469,7 +465,7 @@ load_chset
 		STA TMP1
 		LDA RAMTOP  ;First 8 pages are for PM
 		SBC #12		;reserve 4 pages more for chars
-		;STA CHSET
+		STA CHSET
 		STA TMP1+1     ; copy the charset address
 
 		CLC
