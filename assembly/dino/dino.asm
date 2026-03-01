@@ -78,7 +78,7 @@ module
 		JSR init_gra
 		JSR pm_init
 		JSR load_players
-			;
+	;
 	; print fence 
 		LDA #fence&255
 		STA STRADR
@@ -94,6 +94,7 @@ module
 		LDA #140 ;fence bottom row offset
 		PHA
 		JSR puts
+
 		JSR load_chset
 
 		ldx #<music.module
@@ -173,12 +174,17 @@ MAIN    jsr wait
 		LDA RAMTOP
 		STA TMPTOP
 		SEC
-		SBC #8			;reserve 8 pages
+		SBC #4			;reserve 4 pages for charset
+
+		STA CHSET  	;
+		SEC
+		SBC #8			;reserve 8 pages for PM
+		STA PMBASE
 		STA RAMTOP		;new ramtop
-		STA PMBASE  	;
 		STA XLOC+1  	;erase PM ram
 		LDA #0
 		STA XLOC
+
 		LDA #0
 		STA JMPPOS
 		STA JMPIDX
@@ -463,9 +469,7 @@ DONE	RTS
 load_chset
 		LDA #0
 		STA TMP1
-		LDA RAMTOP  ;First 8 pages are for PM
-		SBC #12		;reserve 4 pages more for chars
-		STA CHSET
+		LDA CHSET
 		STA TMP1+1     ; copy the charset address
 
 		CLC
@@ -494,7 +498,6 @@ loop_load
 		STA TMP1
 		LDA CHSET
 		STA TMP1+1
-
 
 loopc	LDA cactus1,y
 		STA (TMP1),y
