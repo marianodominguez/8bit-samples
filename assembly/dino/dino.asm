@@ -25,34 +25,37 @@ CHARSET1 EQU $E000
 CHBAS  EQU  $2F4
 KEYPRES EQU $2FC
 ; other var
+; *********************************************
+; DO NOT USE DB to DF, reserved for RMT
+; *********************************************
 
 COLWN EQU 710
 COLBK EQU 711
 NSTEP EQU 9
 
-XLOC   EQU   $CC
-YLOC   EQU   $CE
-YLOC1  EQU   $C1
-YLOC2  EQU   $C3
-CHSET  EQU   $C5 		;C5 HI
-CTPOS1 EQU $C7		; cactus position
-CTPOS2 EQU $C9
+XLOC   EQU   $FA
+YLOC   EQU   $FB
+YLOC1  EQU   $F1
+YLOC2  EQU   $F3
+CHSET  EQU   $F5 		;C5 HI
+CTPOS1 EQU $F7		; cactus position
+CTPOS2 EQU $F9
 
-INITX  EQU   $D0       ; Initial X value
-INITY  EQU   $D1       ; Initial Y value
+INITX  EQU   $E0       ; Initial X value
+INITY  EQU   $E1       ; Initial Y value
 TMPTOP EQU   $100      ; Temporary storage (ADRESS)
 STICK  EQU   $D300     ; PORTA - Hardware STICK(0) location
 HPOSP0 EQU   $D000     ; Horizontal position Player 0
-PSIZE  EQU   $C0		; Size of player in bytes
-TMP1    EQU   $D2      ; Temporary storage
-POFF   EQU   $D4      ; Offset of player in memory
+PSIZE  EQU   $F0		; Size of player in bytes
+TMP1    EQU   $E2      ; Temporary storage
+POFF   EQU   $E4      ; Offset of player in memory
 
-TMP2   EQU   $D6      ; Temporary storage
-STRADR EQU   $D8      ; Address of string to print
-MAXLEN EQU   $DA       ; Maximum length of string
-JMPPOS EQU   $DB		; jump position
-JMPIDX EQU   $DC		; jump index
-JMPNG  EQU   $DD		; is the dino jumping?
+TMP2   EQU   $E6      ; Temporary storage
+STRADR EQU   $E8      ; Address of string to print
+MAXLEN EQU   $EA       ; Maximum length of string
+JMPPOS EQU   $EB		; jump position
+JMPIDX EQU   $ED		; jump index
+JMPNG  EQU   $EF		; is the dino jumping?
 
 rtclok	= $12
 vcount	= $d40b
@@ -63,13 +66,13 @@ STEREOMODE	equ 0				;0 => compile RMTplayer for mono 4 tracks
 init_song = RASTERMUSICTRACKER+0
 play	  = RASTERMUSICTRACKER+3
 
-	icl "music/music.feat"
+	icl "music/flimbo.feat"
 
 player
 	icl "music/rmt_player.asm"			;include RMT player routine
 	icl 'music/rmt_relocator.asm'			;include RMT relocator
 module
-	rmt_relocator 'music/bassandnoise.rmt' module	;include music RMT module
+	rmt_relocator 'music/flimbo.rmt' module	;include music RMT module
 	.endp
 
 		.proc start	
@@ -100,18 +103,18 @@ module
 		ldx #<music.module
 		ldy #>music.module
 		lda #0
-		;jsr music.init_song
+		jsr music.init_song
 
 ; **************************************
 ; Main loop
 ; **************************************
 
 MAIN    jsr wait
-		LDA #$34
-		STA $d01a
-		;jsr music.play
-		LDA #$00
-		STA $d01a
+		;LDA #$34
+		;STA $d01a
+		jsr music.play
+		;LDA #$00
+		;STA $d01a
 
 		LDX #5        
 		LDY #0        
