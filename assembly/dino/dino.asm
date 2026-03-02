@@ -58,7 +58,7 @@ MAXLEN 	EQU   $EA       ; Maximum length of string
 JMPPOS 	EQU   $EB		; jump position
 JMPIDX 	EQU   $ED		; jump index
 JMPNG  	EQU   $EF		; is the dino jumping?
-INTROTK EQU  $C0		; intro tick counter (1 byte)
+TICKER EQU  $C0		; intro tick counter (1 byte)
 
 RTCLOCK	EQU $12
 vcount	EQU $d40b
@@ -128,7 +128,7 @@ module
 
 		; init intro tick counter
 		LDA #0
-		STA INTROTK
+		STA TICKER
 		LDA #19
 		STA CTPOS1
 
@@ -141,14 +141,14 @@ INTRO   jsr wait
 		BEQ GAME_START
 
 		; auto-jump every ~50 frames (~1 second)
-		INC INTROTK
-		LDA INTROTK
+		INC TICKER
+		LDA TICKER
 		CMP #40
 		BEQ move_cactus
 		CMP #50
 		BCC intro_no_jump
 		LDA #0
-		STA INTROTK
+		STA TICKER
 		LDA #1
 		STA JMPNG		; trigger a jump
 intro_no_jump
@@ -173,23 +173,26 @@ GAME_START
 		; *** Start actual game here ***
 		JSR music.stop
 		LDA #0
-		STA RTCLOCK     ; Low byte
-		STA RTCLOCK+1   ; Mid byte
+		STA TICKER     
+		LDA #200
+		STA CTPOS1
 MAINLOOP
-		LDA RTCLOCK+1
-		CMP #1
+		INC TICKER
+		LDA TICKER
+		CMP #2
 		BMI skip_move
 		DEC CTPOS1
 		LDA CTPOS1
 		CMP #50
 		BNE skip_reset
-		LDA #128
+		LDA #200
 		STA CTPOS1
 skip_reset
 		STA HPOSP0+3
+		DEC CTPOS1
+		STA HPOSP0+3
 		LDA #0
-		STA RTCLOCK     ; Low byte
-		STA RTCLOCK+1   ; Mid byte
+		STA TICKER     ; Low byte
 skip_move
 		JSR wait
 		JSR READKEY
@@ -314,9 +317,9 @@ skip_move
 		STA INITX
 		LDA #50
 		STA INITY
-		LDA #128
+		LDA #100
 		STA CTPOS1
-		LDA #128
+		LDA #100
 		STA CTPOS2
 		
 		LDA #46
@@ -361,6 +364,7 @@ clear
 
 		LDA YLOC2
 		ADC #128
+		ADC #8   ; cactrus vertical position
 		STA CTLOC1
 		LDA YLOC2+1
 		ADC #0
@@ -402,7 +406,8 @@ loop
 		ADC #8
 		STA HPOSP0+2
 
-		LDA CTPOS1     ; Set cactus position
+		; Set cactus position off screen
+		LDA #255
 		STA HPOSP0+3
 		LDA #$C4        ; color green
 		STA PCOLR0+3
@@ -426,7 +431,6 @@ loop
 		BNE retk
 		LDA #1
 		STA JMPNG
-		DEC CTPOS1
 jp		JSR jump
 		
 		LDA #255
@@ -435,13 +439,11 @@ retk	RTS
 		.endp
 
 		.proc autojump
-; read key
 		LDA JMPNG
 		CMP #1
 		BEQ jp
 		LDA #1
 		STA JMPNG
-		DEC CTPOS1
 jp		JSR jump
 		
 		LDA #255
@@ -694,7 +696,7 @@ cont	LDA #1
 
 	.proc wait
 loopw	lda vcount
-	cmp #$20
+	cmp #$10
 	bne loopw
 	rts
 	.endp
@@ -735,7 +737,7 @@ clr 	.BYTE " ",$9B
 
 blanks	.BYTE "                    ",$9B
 pressstart .BYTE "PRESS START",$9B
-score .BYTE "SCORE:","000000",$9B
+score .BYTE "SCORE:","123456",$9B
 
 jumpseq	.BYTE 4,8,16,24,24,16,8,4,0
 NAME    .BYTE c"S:",$9B
