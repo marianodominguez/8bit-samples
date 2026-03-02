@@ -41,6 +41,7 @@ YLOC2  	EQU   $F3
 CHSET  	EQU   $F5 		;C5 HI
 CTPOS1 	EQU $F7		; cactus position
 CTPOS2 	EQU $F9
+CTLOC1 	EQU $C1      ; Cactus location
 
 INITX  	EQU   $E0       ; Initial X value
 INITY  	EQU   $E1       ; Initial Y value
@@ -213,6 +214,17 @@ GAME_START
 		ADC #0
 		STA POFF+1
 		JSR copy_player
+
+		; Player 3 is the cactus
+		LDA #cactus1/256
+		PHA 
+		LDA #cactus1&255
+		PHA
+		LDA CTLOC1
+		STA POFF
+		LDA CTLOC1+1
+		STA POFF+1
+		JSR copy_player
 		RTS
 		.endp
 
@@ -269,10 +281,15 @@ GAME_START
 		
 		.proc pm_init
 ; PM graphics setup
-		LDA #68
+		LDA #68     ; Initial postitions fort players
 		STA INITX
 		LDA #50
 		STA INITY
+		LDA #128
+		STA CTPOS1
+		LDA #128
+		STA CTPOS2
+		
 		LDA #46
 		STA 559 	;SDMCTL
 		LDA #1
@@ -312,6 +329,13 @@ clear
 		LDA YLOC+1
 		ADC #1
 		STA YLOC2+1
+
+		LDA YLOC2
+		ADC #128
+		STA CTLOC1
+		LDA YLOC2+1
+		ADC #0
+		STA CTLOC1+1
 		RTS
 		.endp
 
@@ -334,12 +358,12 @@ clear
 		; Continue with copy operation
 
 		LDY #0
-insert
+loop
 		LDA (TMP1),Y
 		STA (POFF),Y
 		INY
 		CPY PSIZE			;player Size
-		BNE insert
+		BNE loop
 		LDA INITX
 		STA HPOSP0
 		STA XLOC
@@ -348,6 +372,12 @@ insert
 		STA HPOSP0+1
 		ADC #8
 		STA HPOSP0+2
+
+		LDA CTPOS1     ; Set cactus position
+		STA HPOSP0+3
+		LDA #C4        ; color green
+		STA PCOLR0+3
+		
 		LDA #14 		;color white
 		STA PCOLR0
 		STA PCOLR0+1
