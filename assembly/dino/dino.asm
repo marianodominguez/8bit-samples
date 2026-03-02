@@ -60,8 +60,8 @@ JMPIDX 	EQU   $ED		; jump index
 JMPNG  	EQU   $EF		; is the dino jumping?
 INTROTK EQU  $C0		; intro tick counter (1 byte)
 
-rtclok	= $12
-vcount	= $d40b
+RTCLOCK	EQU $12
+vcount	EQU $d40b
 
 	ORG $2400
 	.proc music
@@ -168,10 +168,34 @@ move_cactus
 cont	JSR DisplayCactus
 		JMP INTRO
 
+
 GAME_START
 		; *** Start actual game here ***
 		JSR music.stop
-		JMP GAME_START	; placeholder - replace with real game loop
+		LDA #0
+		STA RTCLOCK     ; Low byte
+		STA RTCLOCK+1   ; Mid byte
+MAINLOOP
+		LDA RTCLOCK+1
+		CMP #1
+		BMI skip_move
+		DEC CTPOS1
+		LDA CTPOS1
+		CMP #50
+		BNE skip_reset
+		LDA #128
+		STA CTPOS1
+skip_reset
+		STA HPOSP0+3
+		LDA #0
+		STA RTCLOCK     ; Low byte
+		STA RTCLOCK+1   ; Mid byte
+skip_move
+		JSR wait
+		JSR READKEY
+		JSR print_score
+		JMP MAINLOOP
+		
 	.endp
 ; **************************************
 ; Subroutines
@@ -215,6 +239,8 @@ GAME_START
 		STA POFF+1
 		JSR copy_player
 
+		LDA #16
+		STA PSIZE
 		; Player 3 is the cactus
 		LDA #cactus1/256
 		PHA 
@@ -225,6 +251,9 @@ GAME_START
 		LDA CTLOC1+1
 		STA POFF+1
 		JSR copy_player
+
+		LDA #24
+		STA PSIZE
 		RTS
 		.endp
 
@@ -375,10 +404,10 @@ loop
 
 		LDA CTPOS1     ; Set cactus position
 		STA HPOSP0+3
-		LDA #C4        ; color green
+		LDA #$C4        ; color green
 		STA PCOLR0+3
 		
-		LDA #14 		;color white
+		LDA #$0E 		;color white
 		STA PCOLR0
 		STA PCOLR0+1
 		STA PCOLR0+2
@@ -670,6 +699,20 @@ loopw	lda vcount
 	rts
 	.endp
 
+	; print SCORE message
+	.proc print_score
+		LDA #score&255
+		STA STRADR
+		LDA #score/256
+		STA STRADR+1
+		LDA #11
+		STA MAXLEN
+		LDA #240		; text window row 0, centered (200 + 10)
+		PHA
+		JSR puts
+		RTS
+	.endp
+
 player0 .BYTE 0,0,0,0,0,0,0,0
 		.BYTE 0,0,128,128,192,231,255,255
 		.BYTE 127,63,31,15,7,6,4,6
@@ -692,6 +735,7 @@ clr 	.BYTE " ",$9B
 
 blanks	.BYTE "                    ",$9B
 pressstart .BYTE "PRESS START",$9B
+score .BYTE "SCORE:","000000",$9B
 
 jumpseq	.BYTE 4,8,16,24,24,16,8,4,0
 NAME    .BYTE c"S:",$9B
