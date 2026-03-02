@@ -128,6 +128,8 @@ module
 		; init intro tick counter
 		LDA #0
 		STA INTROTK
+		LDA #19
+		STA CTPOS1
 
 INTRO   jsr wait
 		jsr music.play
@@ -140,6 +142,8 @@ INTRO   jsr wait
 		; auto-jump every ~50 frames (~1 second)
 		INC INTROTK
 		LDA INTROTK
+		CMP #40
+		BEQ move_cactus
 		CMP #50
 		BCC intro_no_jump
 		LDA #0
@@ -152,6 +156,15 @@ intro_no_jump
 		LDX #5
 		LDY #0
 		JSR autojump
+		JMP INTRO
+move_cactus
+		DEC CTPOS1
+		LDA CTPOS1
+		CMP #0
+		BNE cont
+		LDA #18
+		STA CTPOS1
+cont	JSR DisplayCactus
 		JMP INTRO
 
 GAME_START
@@ -256,7 +269,7 @@ GAME_START
 		
 		.proc pm_init
 ; PM graphics setup
-		LDA #60
+		LDA #68
 		STA INITX
 		LDA #50
 		STA INITY
@@ -599,7 +612,15 @@ DisplayCactus
 		STA STRADR
 		LDA #c1/256
 		STA STRADR+1
-		LDA #1
+		LDA CTPOS1
+		CMP #1
+		BNE cont
+		LDA #clr&255 ;If reach 0 clear cactus
+		STA STRADR
+		LDA #clr/256
+		STA STRADR+1
+
+cont	LDA #1
 		STA MAXLEN
 		CLC
 		LDA #100
