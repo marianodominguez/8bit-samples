@@ -1,73 +1,73 @@
 
 ; ******************************
 ; CIO equates
-ICHID EQU    $0340
-ICDNO EQU    $0341
-ICCOM EQU    $0342
-ICSTA EQU    $0343
-ICBAL EQU    $0344
-ICBAH EQU    $0345
-ICPTL EQU    $0346
-ICPTH EQU    $0347
-ICBLL EQU    $0348
-ICBLH EQU    $0349
-ICAX1 EQU    $034A
-ICAX2 EQU    $034B
-CIOV  EQU    $E456
-GRACTL EQU	   53277
+ICHID 	EQU    $0340
+ICDNO 	EQU    $0341
+ICCOM 	EQU    $0342
+ICSTA 	EQU    $0343
+ICBAL 	EQU    $0344
+ICBAH 	EQU    $0345
+ICPTL 	EQU    $0346
+ICPTH 	EQU    $0347
+ICBLL 	EQU    $0348
+ICBLH 	EQU    $0349
+ICAX1 	EQU    $034A
+ICAX2 	EQU    $034B
+CIOV  	EQU    $E456
+GRACTL 	EQU	   53277
 
 ; sys equates
-RAMTOP EQU  106
-PMBASE EQU  54279
-PCOLR0 EQU  704
-SAVMSC EQU  $58
-CHARSET1 EQU $E000
-CHBAS  EQU  $2F4
-KEYPRES EQU $2FC
-CONSOL  EQU $D01F		; Console keys (START=bit0)
+RAMTOP 	EQU  106
+PMBASE 	EQU  54279
+PCOLR0 	EQU  704
+SAVMSC 	EQU  $58
+CHARSET1 	EQU $E000
+CHBAS  		EQU  $2F4
+KEYPRES 	EQU $2FC
+CONSOL  	EQU $D01F		; Console keys (START=bit0)
 ; other var
 ; *********************************************
 ; DO NOT USE DB to DF, reserved for RMT
 ; *********************************************
 
-COLWN EQU 710
-COLBK EQU 711
-NSTEP EQU 9
+COLWN 	EQU 710
+COLBK 	EQU 711
+NSTEP 	EQU 9
 
-XLOC   EQU   $FA
-YLOC   EQU   $FB
-YLOC1  EQU   $F1
-YLOC2  EQU   $F3
-CHSET  EQU   $F5 		;C5 HI
-CTPOS1 EQU $F7		; cactus position
-CTPOS2 EQU $F9
+XLOC   	EQU   $FA
+YLOC   	EQU   $FB
+YLOC1  	EQU   $F1
+YLOC2  	EQU   $F3
+CHSET  	EQU   $F5 		;C5 HI
+CTPOS1 	EQU $F7		; cactus position
+CTPOS2 	EQU $F9
 
-INITX  EQU   $E0       ; Initial X value
-INITY  EQU   $E1       ; Initial Y value
-TMPTOP EQU   $100      ; Temporary storage (ADRESS)
-STICK  EQU   $D300     ; PORTA - Hardware STICK(0) location
-HPOSP0 EQU   $D000     ; Horizontal position Player 0
-PSIZE  EQU   $F0		; Size of player in bytes
-TMP1    EQU   $E2      ; Temporary storage
-POFF   EQU   $E4      ; Offset of player in memory
+INITX  	EQU   $E0       ; Initial X value
+INITY  	EQU   $E1       ; Initial Y value
+TMPTOP 	EQU   $100      ; Temporary storage (ADRESS)
+STICK  	EQU   $D300     ; PORTA - Hardware STICK(0) location
+HPOSP0 	EQU   $D000     ; Horizontal position Player 0
+PSIZE  	EQU   $F0		; Size of player in bytes
+TMP1   	EQU   $E2      ; Temporary storage
+POFF   	EQU   $E4      ; Offset of player in memory
 
-TMP2   EQU   $E6      ; Temporary storage
-STRADR EQU   $E8      ; Address of string to print
-MAXLEN EQU   $EA       ; Maximum length of string
-JMPPOS EQU   $EB		; jump position
-JMPIDX EQU   $ED		; jump index
-JMPNG  EQU   $EF		; is the dino jumping?
+TMP2   	EQU   $E6      ; Temporary storage
+STRADR 	EQU   $E8      ; Address of string to print
+MAXLEN 	EQU   $EA       ; Maximum length of string
+JMPPOS 	EQU   $EB		; jump position
+JMPIDX 	EQU   $ED		; jump index
+JMPNG  	EQU   $EF		; is the dino jumping?
 INTROTK EQU  $C0		; intro tick counter (1 byte)
 
 rtclok	= $12
 vcount	= $d40b
 
-	org $2400
+	ORG $2400
 	.proc music
 STEREOMODE	equ 0				;0 => compile RMTplayer for mono 4 tracks
-init_song = RASTERMUSICTRACKER+0
-play	  = RASTERMUSICTRACKER+3
-stop	  = RASTERMUSICTRACKER+9
+init_song 	= RASTERMUSICTRACKER+0
+play	  	= RASTERMUSICTRACKER+3
+stop	  	= RASTERMUSICTRACKER+9
 
 	icl "music/flimbo.feat"
 
@@ -399,8 +399,6 @@ retk	RTS
 		JSR DOWN            ; A < JMPPOS -> move down
 		DEC JMPPOS
 		RTS
-		.endp
-		
 jmove_up
 		JSR UP
 		INC JMPPOS
@@ -415,7 +413,7 @@ jstep_done
 		LDA #0
 		STA JMPNG
 jxit	RTS
-
+		.endp
  ; ******************************
  ; Now move player appropriately,
  ; starting with upward movement.
@@ -528,7 +526,7 @@ DONE	RTS
 ; ******************************
 ; Load custom character set
 ; ******************************
-load_chset
+	.proc load_chset
 		LDA #0
 		STA TMP1
 		LDA CHSET
@@ -585,6 +583,7 @@ loopc3	LDA cactus3,y
 		STA TMP1
 		STA TMP2
 		RTS
+	.endp
 
 ; Display Cactus
 DisplayCactus
