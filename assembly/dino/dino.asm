@@ -614,8 +614,8 @@ loop_load
 		CPX #4
 		BNE lp_page
 		LDY #0
-		; load cactus characters in an offset of 8 characters
-		LDA #13*8
+		; load cactus characters in an offset of 1 characters (!)
+		LDA #8
 		STA TMP1
 		LDA CHSET
 		STA TMP1+1
@@ -696,7 +696,7 @@ cont	LDA #1
 
 	.proc wait
 loopw	lda vcount
-	cmp #$10
+	cmp #$05
 	bne loopw
 	rts
 	.endp
@@ -729,10 +729,10 @@ cactus1 .BYTE 0,0,0,48,48,50,50,178,190,176,240,48,48,48,48,48
 cactus2 .BYTE 0,0,0,24,26,26,26,94,88,88,88,120,24,24,24,24
 cactus3 .BYTE 0,0,26,26,90,90,90,94,88,120,24,24,24,24,24,24
 
-fence 	.BYTE "--------------------",$9B
-c1 		.BYTE "-"+130,"-"+131,$9B
-c2 		.BYTE "-"+128,"-"+129,$9B
-c3 		.BYTE "-"+132,"-"+133,$9B
+fence 	.BYTE "!!!!!!!!!!!!!!!!!!",$9B
+c1 		.BYTE "!"+130,"!"+131,$9B
+c2 		.BYTE "!"+128,"!"+129,$9B
+c3 		.BYTE "!"+132,"!"+133,$9B
 clr 	.BYTE " ",$9B
 
 blanks	.BYTE "                    ",$9B
