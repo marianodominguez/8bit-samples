@@ -14,7 +14,7 @@ ICBLH 	EQU    $0349
 ICAX1 	EQU    $034A
 ICAX2 	EQU    $034B
 CIOV  	EQU    $E456
-GRACTL 	EQU	   53277
+GRACTL 	EQU	   $D01D
 
 ; sys equates
 RAMTOP 	EQU  106
@@ -25,6 +25,15 @@ CHARSET1 	EQU $E000
 CHBAS  		EQU  $2F4
 KEYPRES 	EQU $2FC
 CONSOL  	EQU $D01F		; Console keys (START=bit0)
+PRIOR		EQU $D01B
+GPRIOR		EQU $26F
+STICK  	EQU   $D300     ; PORTA - Hardware STICK(0) location
+HPOSP0 	EQU   $D000     ; Horizontal position Player 0
+COLPF3 	EQU $D018		; Color PF3
+DMACTL 	EQU $D20F		; DMA control
+HPOSM0 	EQU $D004     ; Horizontal position Missile 0
+
+
 ; other var
 ; *********************************************
 ; DO NOT USE DB to DF, reserved for RMT
@@ -41,13 +50,12 @@ YLOC2  	EQU   $F3 ; $F4
 CHSET  	EQU   $F5 		;C5 HI
 CTPOS1 	EQU $F7		; cactus position
 CTPOS2 	EQU $F9
-CTLOC1 	EQU $C1      ; Cactus location
+CTLOC1 	EQU $C3 ; $C4      ; Cactus location
+CTLOC2 	EQU $C5 ; $C6      ; Cactus location
 
 INITX  	EQU   $E0       ; Initial X value
 INITY  	EQU   $E1       ; Initial Y value
 TMPTOP 	EQU   $100      ; Temporary storage (ADRESS)
-STICK  	EQU   $D300     ; PORTA - Hardware STICK(0) location
-HPOSP0 	EQU   $D000     ; Horizontal position Player 0
 PSIZE  	EQU   $F0		; Size of player in bytes
 TMP1   	EQU   $E2      ; Temporary storage
 POFF   	EQU   $E4      ; Offset of player in memory
@@ -100,8 +108,6 @@ module
 		LDA #62 ; top row offset
 		PHA
 		JSR puts
-		LDA #18   
-		STA MAXLEN
 		LDA #140 ;fence bottom row offset
 		PHA
 		JSR puts
@@ -120,25 +126,57 @@ module
 		STA CTPOS1
 		JSR INTRO
 
+		;Clear space between fences
+		LDA #blanks&255
+		STA STRADR
+		LDA #blanks/256
+		STA STRADR+1
+		LDA #19
+		STA MAXLEN
+		LDA #120 
+		PHA
+		JSR puts
+		LDA #100 
+		PHA
+		JSR puts
+
 GAME_START
 		; *** Start actual game here ***
 		LDA #0
 		STA TICKER     
 		LDA #190
 		STA CTPOS1
+		LDA #140
+		STA CTPOS2
 MAINLOOP
 		INC TICKER
 		LDA TICKER
 		CMP #1
 		BMI skip_move
 		DEC CTPOS1
+		DEC CTPOS2
 		LDA CTPOS1
 		CMP #50
 		BNE skip_reset
 		LDA #190
 		STA CTPOS1
+		LDA CTPOS2
+		CMP #50
+		BNE skip_reset
+		LDA #140
+		STA CTPOS2
 skip_reset
+		LDA CTPOS1
 		STA HPOSP0+3
+		LDA CTPOS2
+		STA HPOSM0+3
+		CLC
+		ADC #2
+		STA HPOSM0+2
+		ADC #2
+		STA HPOSM0+1
+		ADC #2
+		STA HPOSM0
 		LDA #0
 		STA TICKER     ; Low byte
 skip_move
@@ -202,6 +240,20 @@ skip_move
 		LDA CTLOC1+1
 		STA POFF+1
 		JSR copy_player
+
+		LDA #16
+		STA PSIZE
+		; Player 4 is the second cactus
+		LDA #cactus2/256
+		PHA 
+		LDA #cactus2&255
+		PHA
+		LDA CTLOC2
+		STA POFF
+		LDA CTLOC2+1
+		STA POFF+1
+		JSR copy_player
+
 
 		LDA #24
 		STA PSIZE
@@ -272,8 +324,10 @@ skip_move
 		
 		LDA #46
 		STA 559 	;SDMCTL
-		LDA #1
-		STA 623  ; priority 
+		LDA #17
+		STA GPRIOR  ; priority
+		;LDA #32
+		;STA PRIOR  ;Enable missiles as 5th player
 
 		;pm area clear
 		LDY	#0
@@ -312,12 +366,21 @@ clear
 
 		LDA YLOC2
 		ADC #128
-		ADC #8   ; cactrus vertical position
+		ADC #8   ; cactus 1 vertical position
 		STA CTLOC1
 		LDA YLOC2+1
 		ADC #0
 		STA CTLOC1+1
+		
+		LDA YLOC
+		SEC
+		SBC #120
+		STA CTLOC2
+		LDA YLOC+1
+		SBC #0
+		STA CTLOC2+1
 		RTS
+
 		.endp
 
 		.proc copy_player
@@ -359,12 +422,14 @@ loop
 		STA HPOSP0+3
 		LDA #$C4        ; color green
 		STA PCOLR0+3
+		LDA #$C3        ; color green
+		STA COLPF3
 		
 		LDA #$0E 		;color white
 		STA PCOLR0
 		STA PCOLR0+1
 		STA PCOLR0+2
-		LDA #3			;enable player
+		LDA #3		;enable player
 		STA GRACTL 		; resolution
 		RTS
 		.endp
@@ -670,13 +735,13 @@ c2 		.BYTE "!"+128,"!"+129,$9B
 c3 		.BYTE "!"+132,"!"+133,$9B
 clr 	.BYTE " ",$9B
 
-blanks	.BYTE "                    ",$9B
-pressstart .BYTE " *** PRESS START TO BEGIN ***",$9B
-score .BYTE "SCORE:  ","000000  ",$9B
+blanks		.BYTE "                    ",$9B
+pressstart 	.BYTE " *** PRESS START TO BEGIN ***",$9B
+score 	    .BYTE "   SCORE:    ","000000       ",$9B
 
 ; Snappier, faster peak
-jumpseq .BYTE 6,16,20,20,16,6,0,0,0
-;jumpseq	.BYTE 4,8,16,24,24,16,8,4,0
+;jumpseq .BYTE 6,16,20,20,16,6,0
+jumpseq	.BYTE 4,8,16,24,24,16,8,4,0
 NAME    .BYTE c"S:",$9B
 tabpp  .BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 
