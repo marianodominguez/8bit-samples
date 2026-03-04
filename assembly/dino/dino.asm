@@ -35,9 +35,9 @@ COLBK 	EQU 711
 NSTEP 	EQU 9
 
 XLOC   	EQU   $FA
-YLOC   	EQU   $FB
-YLOC1  	EQU   $F1
-YLOC2  	EQU   $F3
+YLOC   	EQU   $FB ; $FC
+YLOC1  	EQU   $F1 ; $F2
+YLOC2  	EQU   $F3 ; $F4
 CHSET  	EQU   $F5 		;C5 HI
 CTPOS1 	EQU $F7		; cactus position
 CTPOS2 	EQU $F9
@@ -59,6 +59,7 @@ JMPPOS 	EQU   $EB		; jump position
 JMPIDX 	EQU   $ED		; jump index
 JMPNG  	EQU   $EF		; is the dino jumping?
 TICKER EQU  $C0		; intro tick counter (1 byte)
+TMP3   	EQU $C1 ; $C2
 
 RTCLOK	EQU $12
 vcount	EQU $d40b
@@ -78,6 +79,9 @@ player
 module
 	rmt_relocator 'music/flimbo.rmt' module	;include music RMT module
 	.endp
+
+	icl 'puts.asm'
+	icl 'intro.asm'
 
 		.proc start	
 		
@@ -101,17 +105,6 @@ module
 		LDA #140 ;fence bottom row offset
 		PHA
 		JSR puts
-		
-		; print PRESS START message
-		LDA #pressstart&255
-		STA STRADR
-		LDA #pressstart/256
-		STA STRADR+1
-		LDA #11
-		STA MAXLEN
-		LDA #240		; text window row 0, centered (200 + 10)
-		PHA
-		JSR puts
 
 		JSR load_chset
 
@@ -120,58 +113,15 @@ module
 		lda #0
 		jsr music.init_song
 
-
-; **************************************
-; Intro loop - auto-jump every ~1 sec
-; exits on START key press
-; **************************************
-
 		; init intro tick counter
 		LDA #0
 		STA TICKER
 		LDA #19
 		STA CTPOS1
-
-INTRO   jsr wait
-		jsr music.play
-
-		; check START key (CONSOL bit 0 = 0 when pressed)
-		LDA CONSOL
-		AND #1
-		BEQ GAME_START
-
-		; auto-jump every ~50 frames (~1 second)
-		INC TICKER
-		LDA TICKER
-		CMP #40
-		BEQ move_cactus
-		CMP #50
-		BCC intro_no_jump
-		LDA #0
-		STA TICKER
-		LDA #1
-		STA JMPNG		; trigger a jump
-intro_no_jump
-		LDA JMPNG
-		BEQ INTRO
-		LDX #5
-		LDY #0
-		JSR autojump
-		JMP INTRO
-move_cactus
-		DEC CTPOS1
-		LDA CTPOS1
-		CMP #0
-		BNE cont
-		LDA #18
-		STA CTPOS1
-cont	JSR DisplayCactus
-		JMP INTRO
-
+		JSR INTRO
 
 GAME_START
 		; *** Start actual game here ***
-		JSR music.stop
 		LDA #0
 		STA TICKER     
 		LDA #190
@@ -555,34 +505,6 @@ RIGHT	INC XLOC     ; To move it right
 		STA HPOSP0+2
 		RTS          ; Back to MAIN - we're done
 		
-; *** PRINT a String ***
-.proc puts 	
-		; Pull return address
-		PLA
-		STA TMP2
-		PLA
-		STA TMP2+1
-		CLC
-		PLA				; Row offset
-		ADC SAVMSC
-		STA TMP1
-		LDA SAVMSC+1
-		ADC #0
-		STA TMP1+1
-		LDY #0
-loop	LDA (STRADR),Y
-		CMP #$9B
-		BEQ DONE
-		STA (TMP1),Y
-		INY
-		CPY MAXLEN
-		BNE loop
-		LDA TMP2+1 ; Restore return address
-		PHA
-		LDA TMP2
-		PHA
-DONE	RTS
-	.endp
 
 ; ******************************
 ; Load custom character set
@@ -714,11 +636,13 @@ wait	cmp RTCLOK+2    ; Has it changed yet?
 		STA STRADR
 		LDA #score/256
 		STA STRADR+1
-		LDA #11
+		LDA #27
 		STA MAXLEN
-		LDA #240		; text window row 0, centered (200 + 10)
+		LDA #0
 		PHA
-		JSR puts
+		LDA #12		; text window row 0, centered (200 + 10)
+		PHA
+		JSR putstring
 		RTS
 	.endp
 
@@ -747,10 +671,12 @@ c3 		.BYTE "!"+132,"!"+133,$9B
 clr 	.BYTE " ",$9B
 
 blanks	.BYTE "                    ",$9B
-pressstart .BYTE "PRESS START",$9B
-score .BYTE "SCORE:","123456",$9B
+pressstart .BYTE " *** PRESS START TO BEGIN ***",$9B
+score .BYTE "SCORE:  ","000000  ",$9B
 
-jumpseq	.BYTE 4,8,16,24,24,16,8,4,0
+; Snappier, faster peak
+jumpseq .BYTE 6,16,20,20,16,6,0,0,0
+;jumpseq	.BYTE 4,8,16,24,24,16,8,4,0
 NAME    .BYTE c"S:",$9B
 tabpp  .BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 
