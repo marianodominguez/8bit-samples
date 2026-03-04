@@ -60,7 +60,7 @@ JMPIDX 	EQU   $ED		; jump index
 JMPNG  	EQU   $EF		; is the dino jumping?
 TICKER EQU  $C0		; intro tick counter (1 byte)
 
-RTCLOCK	EQU $12
+RTCLOK	EQU $12
 vcount	EQU $d40b
 
 	ORG $2400
@@ -174,27 +174,25 @@ GAME_START
 		JSR music.stop
 		LDA #0
 		STA TICKER     
-		LDA #200
+		LDA #190
 		STA CTPOS1
 MAINLOOP
 		INC TICKER
 		LDA TICKER
-		CMP #2
+		CMP #1
 		BMI skip_move
 		DEC CTPOS1
 		LDA CTPOS1
 		CMP #50
 		BNE skip_reset
-		LDA #200
+		LDA #190
 		STA CTPOS1
 skip_reset
-		STA HPOSP0+3
-		DEC CTPOS1
 		STA HPOSP0+3
 		LDA #0
 		STA TICKER     ; Low byte
 skip_move
-		JSR wait
+		JSR wait_lp
 		JSR READKEY
 		JSR print_score
 		JMP MAINLOOP
@@ -558,7 +556,7 @@ RIGHT	INC XLOC     ; To move it right
 		RTS          ; Back to MAIN - we're done
 		
 ; *** PRINT a String ***
-puts 	
+.proc puts 	
 		; Pull return address
 		PLA
 		STA TMP2
@@ -584,6 +582,8 @@ loop	LDA (STRADR),Y
 		LDA TMP2
 		PHA
 DONE	RTS
+	.endp
+
 ; ******************************
 ; Load custom character set
 ; ******************************
@@ -695,10 +695,17 @@ cont	LDA #1
 		RTS
 
 	.proc wait
-loopw	lda vcount
-	cmp #$05
-	bne loopw
+loop	lda vcount
+	cmp #$20
+	bne loop
 	rts
+	.endp
+
+	.proc wait_lp
+		lda RTCLOK+2    ; Load current timer value
+wait	cmp RTCLOK+2    ; Has it changed yet?
+		beq wait        ; No, wait for VBLANK
+		rts             ; Yes, VBLANK has occurred
 	.endp
 
 	; print SCORE message
@@ -717,13 +724,17 @@ loopw	lda vcount
 
 player0 .BYTE 0,0,0,0,0,0,0,0
 		.BYTE 0,0,128,128,192,231,255,255
-		.BYTE 127,63,31,15,7,6,4,6
+leg1	.BYTE 127,63,31,15,7,6,4,6
 player1 .BYTE 0,0,0,7,15,27,31,31
 		.BYTE 31,28,63,124,252,255,253,252
-		.BYTE 248,248,240,224,96,32,32,48
+leg2	.BYTE 248,248,240,224,96,32,32,48
 player2 .BYTE 0,0,0,224,240,240,240,240
 		.BYTE 240,0,224,0,0,0,0,0
 		.BYTE 0,0,0,0,0,0,0,0
+
+fr1 	.BYTE $7F,$3F,$1F,$0F,$07,$06,$03,$00
+fr2 	.BYTE $F8,$F8,$F0,$E0,$60,$38,$00,$00
+eye 	.BYTE $00,$00,$00,$07,$08,$18,$18,$18
 
 cactus1 .BYTE 0,0,0,48,48,50,50,178,190,176,240,48,48,48,48,48
 cactus2 .BYTE 0,0,0,24,26,26,26,94,88,88,88,120,24,24,24,24
