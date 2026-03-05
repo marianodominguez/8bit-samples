@@ -185,7 +185,7 @@ skip_move
 		JSR print_score
 		JMP MAINLOOP
 		
-	.endp
+		.endp
 ; **************************************
 ; Subroutines
 ; **************************************
@@ -253,7 +253,6 @@ skip_move
 		LDA CTLOC2+1
 		STA POFF+1
 		JSR copy_player
-
 
 		LDA #24
 		STA PSIZE
@@ -471,9 +470,11 @@ retk	RTS
 		BEQ jstep_done
 		BCS jmove_up        ; A > JMPPOS -> move up
 		JSR DOWN            ; A < JMPPOS -> move down
+		JSR DOWN
 		DEC JMPPOS
 		RTS
 jmove_up
+		JSR UP
 		JSR UP
 		INC JMPPOS
 		RTS
@@ -741,7 +742,7 @@ score 	    .BYTE "   SCORE:    ","000000       ",$9B
 
 ; Snappier, faster peak
 ;jumpseq .BYTE 6,16,20,20,16,6,0
-jumpseq	.BYTE 4,8,16,24,24,16,8,4,0
+jumpseq	.BYTE 2,4,8,12,12,12,8,2,0
 NAME    .BYTE c"S:",$9B
 tabpp  .BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 
