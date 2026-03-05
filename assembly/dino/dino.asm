@@ -29,7 +29,7 @@ PRIOR		EQU $D01B
 GPRIOR		EQU $26F
 STICK  	EQU   $D300     ; PORTA - Hardware STICK(0) location
 HPOSP0 	EQU   $D000     ; Horizontal position Player 0
-COLPF3 	EQU $D018		; Color PF3
+COLPF3 	EQU $D019		; Color PF3
 DMACTL 	EQU $D20F		; DMA control
 HPOSM0 	EQU $D004     ; Horizontal position Missile 0
 
@@ -144,26 +144,37 @@ GAME_START
 		; *** Start actual game here ***
 		LDA #0
 		STA TICKER     
-		LDA #190
+		LDA #249
 		STA CTPOS1
-		LDA #140
+		LDA #255
 		STA CTPOS2
 MAINLOOP
+		CLC
 		INC TICKER
 		LDA TICKER
 		CMP #1
 		BMI skip_move
 		DEC CTPOS1
 		DEC CTPOS2
-		LDA CTPOS1
+		LDA CTPOS1   ; if cactus is too close to the left side of the screen
 		CMP #50
-		BNE skip_reset
-		LDA #190
-		STA CTPOS1
+		BNE cc2
+		LDA #210
+		STA CTPOS1  ; move cactus to the right side of the screen
+
+cc2		LDA CTPOS2
+		CMP #50
+		BNE skip_reset		
+		LDA #250
+		STA CTPOS2
+
+		SEC
 		LDA CTPOS2
+		SBC CTPOS1
 		CMP #50
-		BNE skip_reset
-		LDA #140
+		BPL skip_reset
+		LDA CTPOS1
+		ADC #8
 		STA CTPOS2
 skip_reset
 		LDA CTPOS1
@@ -421,7 +432,7 @@ loop
 		STA HPOSP0+3
 		LDA #$C4        ; color green
 		STA PCOLR0+3
-		LDA #$C3        ; color green
+		LDA #$C5        ; color green
 		STA COLPF3
 		
 		LDA #$0E 		;color white
