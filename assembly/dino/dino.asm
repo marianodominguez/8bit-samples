@@ -79,13 +79,13 @@ init_song 	= RASTERMUSICTRACKER+0
 play	  	= RASTERMUSICTRACKER+3
 stop	  	= RASTERMUSICTRACKER+9
 
-	icl "music/flimbo.feat"
+	icl "music/eleph.feat"
 
 player
 	icl "music/rmt_player.asm"			;include RMT player routine
 	icl 'music/rmt_relocator.asm'			;include RMT relocator
 module
-	rmt_relocator 'music/flimbo.rmt' module	;include music RMT module
+	rmt_relocator 'music/eleph.rmt' module	;include music RMT module
 	.endp
 
 	icl 'puts.asm'
@@ -168,14 +168,15 @@ cc2		LDA CTPOS2
 		LDA #250
 		STA CTPOS2
 
-		SEC
-		LDA CTPOS2
-		SBC CTPOS1
-		CMP #50
-		BPL skip_reset
 		LDA CTPOS1
-		ADC #8
-		STA CTPOS2
+		ADC #RTCLOK  ; User clock as randomizer 0-255
+		ASL          ; divide by 4 0-128
+		ASL          ; divide again 0-64
+		ADC #16      ; minimum distance between cacti 16-48
+		CMP #32
+		BMI st
+		LDA #8      ; minimum distance between cacti
+st		STA CTPOS2
 skip_reset
 		LDA CTPOS1
 		STA HPOSP0+3
