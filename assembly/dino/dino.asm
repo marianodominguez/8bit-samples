@@ -29,7 +29,7 @@ PRIOR		EQU $D01B
 GPRIOR		EQU $26F
 STICK  	EQU   $D300     ; PORTA - Hardware STICK(0) location
 HPOSP0 	EQU   $D000     ; Horizontal position Player 0
-COLPF3 	EQU $D019		; Color PF3
+
 DMACTL 	EQU $D20F		; DMA control
 HPOSM0 	EQU $D004     ; Horizontal position Missile 0
 
@@ -40,7 +40,8 @@ HPOSM0 	EQU $D004     ; Horizontal position Missile 0
 ; *********************************************
 
 COLWN 	EQU 710
-COLBK 	EQU 711
+COLPF3 	EQU 711		; Color PF3
+COLBK 	EQU 712
 NSTEP 	EQU 9
 
 XLOC   	EQU   $FA
@@ -68,6 +69,7 @@ JMPIDX 	EQU   $ED		; jump index
 JMPNG  	EQU   $EF		; is the dino jumping?
 TICKER EQU  $C0		; intro tick counter (1 byte)
 TMP3   	EQU $C1 ; $C2
+RANDOM EQU $D20A
 
 RTCLOK	EQU $12
 vcount	EQU $d40b
@@ -153,31 +155,33 @@ MAINLOOP
 		INC TICKER
 		LDA TICKER
 		CMP #1
-		BMI skip_move
+		BCC skip_move
 		DEC CTPOS1
 		DEC CTPOS2
 		LDA CTPOS1   ; if cactus is too close to the left side of the screen
 		CMP #50
 		BNE cc2
-		LDA #210
+		LDA #250
 		STA CTPOS1  ; move cactus to the right side of the screen
 
-cc2		LDA CTPOS2
+cc2		CLC
+		LDA CTPOS2
 		CMP #50
-		BNE skip_reset		
+		BNE skip_reset		; if greater than 50, keep going
 		LDA #250
 		STA CTPOS2
 
-		LDA CTPOS1
-		ADC #RTCLOK  ; User clock as randomizer 0-255
-		ASL          ; divide by 4 0-128
-		ASL          ; divide again 0-64
-		ADC #16      ; minimum distance between cacti 16-48
-		CMP #32
-		BMI st
-		LDA #8      ; minimum distance between cacti
-st		STA CTPOS2
+		LDA RANDOM  ; random byte 0-255
+		
+		LSR          ; divide by 2 0-128
+		LSR          ; divide again 0-64
+		CLC
+		ADC #24      ; minimum distance between cacti 24-88
+
+st		ADC CTPOS1
+		STA CTPOS2
 skip_reset
+		CLC
 		LDA CTPOS1
 		STA HPOSP0+3
 		LDA CTPOS2
@@ -192,6 +196,7 @@ skip_reset
 		LDA #0
 		STA TICKER     ; Low byte
 skip_move
+		CLC
 		JSR wait_lp
 		JSR READKEY
 		JSR print_score
@@ -433,7 +438,7 @@ loop
 		STA HPOSP0+3
 		LDA #$C4        ; color green
 		STA PCOLR0+3
-		LDA #$C5        ; color green
+		LDA #$C4        ; color green
 		STA COLPF3
 		
 		LDA #$0E 		;color white
