@@ -34,6 +34,7 @@ DMACTL 	EQU $D20F		; DMA control
 HPOSM0 	EQU $D004     ; Horizontal position Missile 0
 AUDF1   EQU $D200     ; POKEY voice 0 frequency
 AUDC1   EQU $D201     ; POKEY voice 0 control (distortion/volume)
+SKCTL  EQU $D20F
 HITCLR  EQU $D01E     ; Clear hit flag
 
 M0PL EQU $D008
@@ -100,19 +101,19 @@ init_song 	= RASTERMUSICTRACKER+0
 play	  	= RASTERMUSICTRACKER+3
 stop	  	= RASTERMUSICTRACKER+9
 
-	icl "music/eleph.feat"
+	icl "music/eleph2.feat"
 
 player
 	icl "music/rmt_player.asm"			;include RMT player routine
 	icl 'music/rmt_relocator.asm'			;include RMT relocator
 module
-	rmt_relocator 'music/eleph.rmt' module	;include music RMT module
+	rmt_relocator 'music/eleph2.rmt' module	;include music RMT module
 	.endp
 
 	icl 'utils.asm'
 	icl 'intro.asm'
 
-		.proc start	
+	.proc start	
 		
 		JSR init_ram
 		JSR init_gra
@@ -169,7 +170,7 @@ GAME_START
 		STA STRADR+1
 		LDA #19
 		STA MAXLEN
-		LDA #2 ; top row offset
+		LDA #1 ; top row offset
 		PHA
 		JSR puts
 
@@ -248,7 +249,7 @@ skip_inc_score
 		JSR print_score
 		JSR collision	
 		JMP MAINLOOP
-		.endp
+	.endp
 
 ; **************************************
 ; Subroutines
@@ -301,14 +302,14 @@ skip
 		.proc play_hit_sound
 		LDA #0
 		STA SNDVOICE
-		LDA #10
+		LDA #$A8
 		STA SNDPITCH
 		LDA #100
 		STA SNDDIST
 		LDA #10
 		STA SNDVOL
 		JSR play_sound
-		JSR wait_lp
+		JSR delay
 		JSR stop_sound
 		RTS
 		.endp
@@ -605,7 +606,7 @@ retk	RTS
 		STA SNDVOICE
 		LDA #100
 		STA SNDPITCH
-		LDA #25
+		LDA #12
 		STA SNDDIST
 		LDA #10
 		STA SNDVOL
@@ -614,7 +615,6 @@ retk	RTS
 		.endp
 
 		.proc jump
-
 jump_step
 		LDY JMPIDX
 		LDA jumpseq,Y
@@ -664,6 +664,11 @@ jxit	RTS
 		LDA SNDPITCH
 		STA AUDF1,X
 
+		LDA #0
+		STA AUDC1
+		LDA #3
+		STA SKCTL
+		
 		LDA SNDVOL
 		AND #$0F
 		STA SNDVOL
@@ -900,6 +905,16 @@ wait	cmp RTCLOK+2    ; Has it changed yet?
 		PHA
 		JSR putstring
 		RTS
+	.endp
+
+	.proc delay
+		LDX #$FF      ; Outer loop counter
+OUTER   LDY #$FF      ; Inner loop counter
+INNER   DEY
+        BNE INNER
+        DEX
+        BNE OUTER
+	RTS
 	.endp
 
 player0 .BYTE 0,0,0,0,0,0,0,0
