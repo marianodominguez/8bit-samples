@@ -34,6 +34,15 @@ DMACTL 	EQU $D20F		; DMA control
 HPOSM0 	EQU $D004     ; Horizontal position Missile 0
 AUDF1   EQU $D200     ; POKEY voice 0 frequency
 AUDC1   EQU $D201     ; POKEY voice 0 control (distortion/volume)
+HITCLR  EQU $D01E     ; Clear hit flag
+
+M0PL EQU $D008
+M1PL EQU $D009
+M2PL EQU $D00A
+P0PL EQU $D00C
+P1PL EQU $D00D
+P2PL EQU $D00E
+P3PL EQU $D00F
 
 ; other var
 ; *********************************************
@@ -43,7 +52,7 @@ AUDC1   EQU $D201     ; POKEY voice 0 control (distortion/volume)
 COLWN 	EQU 710
 COLPF3 	EQU 711		; Color PF3
 COLBK 	EQU 712
-NSTEP 	EQU 9
+NSTEP 	EQU 10
 
 XLOC   	EQU   $FA
 YLOC   	EQU   $FB ; $FC
@@ -100,7 +109,7 @@ module
 	rmt_relocator 'music/eleph.rmt' module	;include music RMT module
 	.endp
 
-	icl 'puts.asm'
+	icl 'utils.asm'
 	icl 'intro.asm'
 
 		.proc start	
@@ -109,7 +118,7 @@ module
 		JSR init_gra
 		JSR pm_init
 		JSR load_players
-	;
+			
 	; print fence 
 		LDA #fence&255
 		STA STRADR
@@ -153,6 +162,17 @@ module
 		JSR puts
 
 GAME_START
+
+		LDA #blanks&255
+		STA STRADR
+		LDA #blanks/256
+		STA STRADR+1
+		LDA #19
+		STA MAXLEN
+		LDA #2 ; top row offset
+		PHA
+		JSR puts
+
 		; *** Start actual game here ***
 		LDA #0
 		STA TICKER
@@ -164,6 +184,7 @@ GAME_START
 		LDA #255
 		STA CTPOS2
 MAINLOOP
+		JSR play_step_sound
 		CLC
 		INC SCTICKR
 		INC TICKER
@@ -196,6 +217,8 @@ st		ADC CTPOS1
 		STA CTPOS2
 skip_reset
 		CLC
+		LDA #0
+		STA HITCLR  ; clear hit flag
 		LDA CTPOS1
 		STA HPOSP0+3
 		LDA CTPOS2
@@ -209,9 +232,9 @@ skip_reset
 		STA HPOSM0
 		LDA #0
 		STA TICKER     ; Low byte
+		JSR stop_sound
 skip_move
 		CLC
-		JSR play_step_sound
 		JSR wait_lp
 		LDA SCTICKR
 		CMP #10
@@ -223,119 +246,71 @@ skip_inc_score
 		JSR READKEY
 		JSR score_msg
 		JSR print_score
-		JSR stop_sound
+		JSR collision	
 		JMP MAINLOOP
-		
 		.endp
+
 ; **************************************
 ; Subroutines
 ; **************************************
 
-		.proc print_score
-		; Convert SCREHI:SCREMID:SCRELO (24-bit binary) to 6 decimal digits
-		; Atari internal screen code for '0'-'9' = $10-$19
-		; Algorithm: repeated 24-bit subtraction against pow10 table
-
-		; Make working copy of score
-		LDA SCRELO
-		STA work
-		LDA SCREMID
-		STA work+1
-		LDA SCREHI
-		STA work+2
-
-		LDX #0			; scr_buf index (0..5)
-		LDY #0			; pow10 table byte index (stride 3)
-
-dig_loop
-		; Load current power of 10 (little-endian, 3 bytes)
-		LDA pow10,Y
-		STA d_lo
-		LDA pow10+1,Y
-		STA d_mid
-		LDA pow10+2,Y
-		STA d_hi
-
-		LDA #0
-		STA d_cnt		; digit counter = 0
-
-sub_loop
-		; Is work >= (d_hi:d_mid:d_lo)?  Compare high to low.
-		LDA work+2
-		CMP d_hi
-		BCC do_store		; work.hi < d_hi -> done
-		BNE do_sub		; work.hi > d_hi -> subtract
-		LDA work+1
-		CMP d_mid
-		BCC do_store
-		BNE do_sub
-		LDA work
-		CMP d_lo
-		BCC do_store		; work < power -> done
-
-do_sub
-		; work -= power (24-bit)
-		SEC
-		LDA work
-		SBC d_lo
-		STA work
-		LDA work+1
-		SBC d_mid
-		STA work+1
-		LDA work+2
-		SBC d_hi
-		STA work+2
-		INC d_cnt
-		JMP sub_loop
-
-do_store
-		; digit = d_cnt, convert to Atari internal screen code
-		LDA d_cnt
+		.proc collision
 		CLC
-		ADC #$10		; '0' in Atari internal = $10
-		STA scr_buf,X
-		INX
-
-		; advance to next power-of-10 entry (3 bytes per entry)
-		INY
-		INY
-		INY
-		CPX #6
-		BNE dig_loop
-
-		; point STRADR at scr_buf and display
-		LDA #scr_buf&255
-		STA STRADR
-		LDA #scr_buf/256
-		STA STRADR+1
-		LDA #27
-		STA MAXLEN
-		LDA #10
-		PHA
-		LDA #12
-		PHA
-		JSR putstring
+		LDA P3PL
+		AND #1
+		BNE collide
+		LDA P3PL
+		AND #2
+		BNE collide
+		LDA P3PL
+		AND #4
+		BNE collide
+		LDA M0PL
+		AND #1
+		BNE collide
+		LDA M1PL
+		AND #1
+		BNE	collide
+		LDA #0
+		STA HITCLR
 		RTS
 
-		; Powers of 10 table (little-endian, 3 bytes each)
-pow10	.byte $A0,$86,$01	; 100000
-		.byte $10,$27,$00	; 10000
-		.byte $E8,$03,$00	; 1000
-		.byte $64,$00,$00	; 100
-		.byte $0A,$00,$00	; 10
-		.byte $01,$00,$00	; 1
+collide
+		JSR play_hit_sound
+		; print game over
+		LDA #gameover&255
+		STA STRADR
+		LDA #gameover/256
+		STA STRADR+1
+		LDA #19
+		STA MAXLEN
+		LDA #2 ; top row offset
+		PHA
+		JSR puts
+wait_start
+		; wait for start key
+		LDA $D01F
+		CMP #6
+		BNE skip
+		JMP start.GAME_START
+skip
+		JSR wait_lp
+		JMP wait_start
+		.endp
 
-		; Working copy of score (3 bytes)
-work	.byte 0,0,0
-
-		; Current power-of-10 (3 bytes, loaded per digit)
-d_lo	.byte 0
-d_mid	.byte 0
-d_hi	.byte 0
-d_cnt	.byte 0			; digit accumulator
-
-		; 6-char screen buffer + ATASCII EOL
-scr_buf	.byte 0,0,0,0,0,0,$9B
+		.proc play_hit_sound
+		LDA #0
+		STA SNDVOICE
+		LDA #10
+		STA SNDPITCH
+		LDA #100
+		STA SNDDIST
+		LDA #10
+		STA SNDVOL
+		JSR play_sound
+		JSR wait_lp
+		JSR stop_sound
+		RTS
 		.endp
 
 		.proc inc_score
@@ -632,7 +607,7 @@ retk	RTS
 		STA SNDPITCH
 		LDA #25
 		STA SNDDIST
-		LDA #5
+		LDA #10
 		STA SNDVOL
 		JSR play_sound
 		RTS
@@ -953,11 +928,11 @@ clr 	.BYTE " ",$9B
 
 blanks		.BYTE "                    ",$9B
 pressstart 	.BYTE " *** PRESS START TO BEGIN ***",$9B
-score 	    .BYTE "   SCORE:              ",$9B
-
+score 	    .BYTE "   SCORE:                    ",$9B
+gameover 	.BYTE "***    GAME OVER    ***",$9B
 ; Snappier, faster peak
-;jumpseq .BYTE 6,16,20,20,16,6,0
-jumpseq	.BYTE 2,4,8,12,12,12,8,2,0
+
+jumpseq	.BYTE 2,4,8,12,16,12,12,4,2,0
 NAME    .BYTE c"S:",$9B
 tabpp  .BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 
