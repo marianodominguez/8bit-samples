@@ -32,7 +32,8 @@ HPOSP0 	EQU   $D000     ; Horizontal position Player 0
 
 DMACTL 	EQU $D20F		; DMA control
 HPOSM0 	EQU $D004     ; Horizontal position Missile 0
-
+AUDF1   EQU $D200     ; POKEY voice 0 frequency
+AUDC1   EQU $D201     ; POKEY voice 0 control (distortion/volume)
 
 ; other var
 ; *********************************************
@@ -69,10 +70,19 @@ JMPIDX 	EQU   $ED		; jump index
 JMPNG  	EQU   $EF		; is the dino jumping?
 TICKER EQU  $C0		; intro tick counter (1 byte)
 TMP3   	EQU $C1 ; $C2
+SNDVOICE EQU $C7      ; 0..3
+SNDPITCH EQU $C8      ; 0..255
+SNDDIST  EQU $C9      ; 0..14 (even only)
+SNDVOL   EQU $CA      ; 1..15 (0 = silence)
 RANDOM EQU $D20A
 
 RTCLOK	EQU $12
 vcount	EQU $d40b
+
+SCRELO EQU $80			; Score
+SCREMID EQU $81
+SCREHI EQU $82
+SCTICKR EQU $83
 
 	ORG $2400
 	.proc music
@@ -145,13 +155,17 @@ module
 GAME_START
 		; *** Start actual game here ***
 		LDA #0
-		STA TICKER     
+		STA TICKER
+		STA SCRELO
+		STA SCREMID
+		STA SCREHI     
 		LDA #249
 		STA CTPOS1
 		LDA #255
 		STA CTPOS2
 MAINLOOP
 		CLC
+		INC SCTICKR
 		INC TICKER
 		LDA TICKER
 		CMP #1
@@ -197,15 +211,146 @@ skip_reset
 		STA TICKER     ; Low byte
 skip_move
 		CLC
+		JSR play_step_sound
 		JSR wait_lp
+		LDA SCTICKR
+		CMP #10
+		BNE skip_inc_score
+		JSR inc_score
+		LDA #0
+		STA SCTICKR
+skip_inc_score
 		JSR READKEY
+		JSR score_msg
 		JSR print_score
+		JSR stop_sound
 		JMP MAINLOOP
 		
 		.endp
 ; **************************************
 ; Subroutines
 ; **************************************
+
+		.proc print_score
+		; Convert SCREHI:SCREMID:SCRELO (24-bit binary) to 6 decimal digits
+		; Atari internal screen code for '0'-'9' = $10-$19
+		; Algorithm: repeated 24-bit subtraction against pow10 table
+
+		; Make working copy of score
+		LDA SCRELO
+		STA work
+		LDA SCREMID
+		STA work+1
+		LDA SCREHI
+		STA work+2
+
+		LDX #0			; scr_buf index (0..5)
+		LDY #0			; pow10 table byte index (stride 3)
+
+dig_loop
+		; Load current power of 10 (little-endian, 3 bytes)
+		LDA pow10,Y
+		STA d_lo
+		LDA pow10+1,Y
+		STA d_mid
+		LDA pow10+2,Y
+		STA d_hi
+
+		LDA #0
+		STA d_cnt		; digit counter = 0
+
+sub_loop
+		; Is work >= (d_hi:d_mid:d_lo)?  Compare high to low.
+		LDA work+2
+		CMP d_hi
+		BCC do_store		; work.hi < d_hi -> done
+		BNE do_sub		; work.hi > d_hi -> subtract
+		LDA work+1
+		CMP d_mid
+		BCC do_store
+		BNE do_sub
+		LDA work
+		CMP d_lo
+		BCC do_store		; work < power -> done
+
+do_sub
+		; work -= power (24-bit)
+		SEC
+		LDA work
+		SBC d_lo
+		STA work
+		LDA work+1
+		SBC d_mid
+		STA work+1
+		LDA work+2
+		SBC d_hi
+		STA work+2
+		INC d_cnt
+		JMP sub_loop
+
+do_store
+		; digit = d_cnt, convert to Atari internal screen code
+		LDA d_cnt
+		CLC
+		ADC #$10		; '0' in Atari internal = $10
+		STA scr_buf,X
+		INX
+
+		; advance to next power-of-10 entry (3 bytes per entry)
+		INY
+		INY
+		INY
+		CPX #6
+		BNE dig_loop
+
+		; point STRADR at scr_buf and display
+		LDA #scr_buf&255
+		STA STRADR
+		LDA #scr_buf/256
+		STA STRADR+1
+		LDA #27
+		STA MAXLEN
+		LDA #10
+		PHA
+		LDA #12
+		PHA
+		JSR putstring
+		RTS
+
+		; Powers of 10 table (little-endian, 3 bytes each)
+pow10	.byte $A0,$86,$01	; 100000
+		.byte $10,$27,$00	; 10000
+		.byte $E8,$03,$00	; 1000
+		.byte $64,$00,$00	; 100
+		.byte $0A,$00,$00	; 10
+		.byte $01,$00,$00	; 1
+
+		; Working copy of score (3 bytes)
+work	.byte 0,0,0
+
+		; Current power-of-10 (3 bytes, loaded per digit)
+d_lo	.byte 0
+d_mid	.byte 0
+d_hi	.byte 0
+d_cnt	.byte 0			; digit accumulator
+
+		; 6-char screen buffer + ATASCII EOL
+scr_buf	.byte 0,0,0,0,0,0,$9B
+		.endp
+
+		.proc inc_score
+		CLC
+		LDA SCRELO
+		ADC #1
+		STA SCRELO
+		LDA SCREMID
+		ADC #0			; propagate carry
+		STA SCREMID
+		LDA SCREHI
+		ADC #0			; propagate carry
+		STA SCREHI
+		RTS
+		.endp
 
 		.proc load_players
 		LDA #24
@@ -480,7 +625,22 @@ jp		JSR jump
 retk	RTS			
 		.endp
 
+		.proc play_step_sound
+		LDA #0
+		STA SNDVOICE
+		LDA #100
+		STA SNDPITCH
+		LDA #25
+		STA SNDDIST
+		LDA #5
+		STA SNDVOL
+		JSR play_sound
+		RTS
+		.endp
+
 		.proc jump
+
+jump_step
 		LDY JMPIDX
 		LDA jumpseq,Y
 		CMP JMPPOS
@@ -505,6 +665,44 @@ jstep_done
 		LDA #0
 		STA JMPNG
 jxit	RTS
+		.endp
+
+		.proc stop_sound
+		LDA #0
+		STA SNDVOICE
+		STA SNDVOL
+		JSR play_sound
+		RTS
+		.endp
+
+		; Inputs (via params):
+		;   SNDVOICE = voice 0..3
+		;   SNDPITCH = pitch 0..255
+		;   SNDDIST  = distortion 0..14 (even values)
+		;   SNDVOL   = volume 0..15 (1..15 audible)
+		.proc play_sound
+		LDA SNDVOICE
+		AND #3
+		ASL
+		TAX
+
+		LDA SNDPITCH
+		STA AUDF1,X
+
+		LDA SNDVOL
+		AND #$0F
+		STA SNDVOL
+
+		LDA SNDDIST
+		AND #$0E
+		ASL
+		ASL
+		ASL
+		ASL
+		CLC
+		ADC SNDVOL
+		STA AUDC1,X
+		RTS
 		.endp
  ; ******************************
  ; Now move player appropriately,
@@ -714,7 +912,7 @@ wait	cmp RTCLOK+2    ; Has it changed yet?
 	.endp
 
 	; print SCORE message
-	.proc print_score
+	.proc score_msg
 		LDA #score&255
 		STA STRADR
 		LDA #score/256
@@ -755,7 +953,7 @@ clr 	.BYTE " ",$9B
 
 blanks		.BYTE "                    ",$9B
 pressstart 	.BYTE " *** PRESS START TO BEGIN ***",$9B
-score 	    .BYTE "   SCORE:    ","000000       ",$9B
+score 	    .BYTE "   SCORE:              ",$9B
 
 ; Snappier, faster peak
 ;jumpseq .BYTE 6,16,20,20,16,6,0
@@ -764,4 +962,3 @@ NAME    .BYTE c"S:",$9B
 tabpp  .BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 
 	 	run start 	;Define run address
-
