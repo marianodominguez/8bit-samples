@@ -282,9 +282,9 @@ collide
 		STA STRADR
 		LDA #gameover/256
 		STA STRADR+1
-		LDA #19
+		LDA #17
 		STA MAXLEN
-		LDA #2 ; top row offset
+		LDA #1 ; top row offset
 		PHA
 		JSR puts
 wait_start
@@ -929,7 +929,7 @@ clr 	.BYTE " ",$9B
 blanks		.BYTE "                    ",$9B
 pressstart 	.BYTE " *** PRESS START TO BEGIN ***",$9B
 score 	    .BYTE "   SCORE:                    ",$9B
-gameover 	.BYTE "***    GAME OVER    ***",$9B
+gameover 	.BYTE "*** GAME OVER ***",$9B
 ; Snappier, faster peak
 
 jumpseq	.BYTE 2,4,8,12,16,12,12,4,2,0
