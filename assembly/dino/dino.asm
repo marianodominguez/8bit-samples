@@ -29,10 +29,20 @@ PRIOR		EQU $D01B
 GPRIOR		EQU $26F
 STICK  	EQU   $D300     ; PORTA - Hardware STICK(0) location
 HPOSP0 	EQU   $D000     ; Horizontal position Player 0
-COLPF3 	EQU $D018		; Color PF3
+
 DMACTL 	EQU $D20F		; DMA control
 HPOSM0 	EQU $D004     ; Horizontal position Missile 0
+AUDF1   EQU $D200     ; POKEY voice 0 frequency
+AUDC1   EQU $D201     ; POKEY voice 0 control (distortion/volume)
+HITCLR  EQU $D01E     ; Clear hit flag
 
+M0PL EQU $D008
+M1PL EQU $D009
+M2PL EQU $D00A
+P0PL EQU $D00C
+P1PL EQU $D00D
+P2PL EQU $D00E
+P3PL EQU $D00F
 
 ; other var
 ; *********************************************
@@ -40,8 +50,9 @@ HPOSM0 	EQU $D004     ; Horizontal position Missile 0
 ; *********************************************
 
 COLWN 	EQU 710
-COLBK 	EQU 711
-NSTEP 	EQU 9
+COLPF3 	EQU 711		; Color PF3
+COLBK 	EQU 712
+NSTEP 	EQU 10
 
 XLOC   	EQU   $FA
 YLOC   	EQU   $FB ; $FC
@@ -68,9 +79,19 @@ JMPIDX 	EQU   $ED		; jump index
 JMPNG  	EQU   $EF		; is the dino jumping?
 TICKER EQU  $C0		; intro tick counter (1 byte)
 TMP3   	EQU $C1 ; $C2
+SNDVOICE EQU $C7      ; 0..3
+SNDPITCH EQU $C8      ; 0..255
+SNDDIST  EQU $C9      ; 0..14 (even only)
+SNDVOL   EQU $CA      ; 1..15 (0 = silence)
+RANDOM EQU $D20A
 
 RTCLOK	EQU $12
 vcount	EQU $d40b
+
+SCRELO EQU $80			; Score
+SCREMID EQU $81
+SCREHI EQU $82
+SCTICKR EQU $83
 
 	ORG $2400
 	.proc music
@@ -79,16 +100,16 @@ init_song 	= RASTERMUSICTRACKER+0
 play	  	= RASTERMUSICTRACKER+3
 stop	  	= RASTERMUSICTRACKER+9
 
-	icl "music/flimbo.feat"
+	icl "music/eleph.feat"
 
 player
 	icl "music/rmt_player.asm"			;include RMT player routine
 	icl 'music/rmt_relocator.asm'			;include RMT relocator
 module
-	rmt_relocator 'music/flimbo.rmt' module	;include music RMT module
+	rmt_relocator 'music/eleph.rmt' module	;include music RMT module
 	.endp
 
-	icl 'puts.asm'
+	icl 'utils.asm'
 	icl 'intro.asm'
 
 		.proc start	
@@ -97,7 +118,7 @@ module
 		JSR init_gra
 		JSR pm_init
 		JSR load_players
-	;
+			
 	; print fence 
 		LDA #fence&255
 		STA STRADR
@@ -141,31 +162,63 @@ module
 		JSR puts
 
 GAME_START
+
+		LDA #blanks&255
+		STA STRADR
+		LDA #blanks/256
+		STA STRADR+1
+		LDA #19
+		STA MAXLEN
+		LDA #2 ; top row offset
+		PHA
+		JSR puts
+
 		; *** Start actual game here ***
 		LDA #0
-		STA TICKER     
-		LDA #190
+		STA TICKER
+		STA SCRELO
+		STA SCREMID
+		STA SCREHI     
+		LDA #249
 		STA CTPOS1
-		LDA #140
+		LDA #255
 		STA CTPOS2
 MAINLOOP
+		JSR play_step_sound
+		CLC
+		INC SCTICKR
 		INC TICKER
 		LDA TICKER
 		CMP #1
-		BMI skip_move
+		BCC skip_move
 		DEC CTPOS1
 		DEC CTPOS2
-		LDA CTPOS1
+		LDA CTPOS1   ; if cactus is too close to the left side of the screen
 		CMP #50
-		BNE skip_reset
-		LDA #190
-		STA CTPOS1
+		BNE cc2
+		LDA #250
+		STA CTPOS1  ; move cactus to the right side of the screen
+
+cc2		CLC
 		LDA CTPOS2
 		CMP #50
-		BNE skip_reset
-		LDA #140
+		BNE skip_reset		; if greater than 50, keep going
+		LDA #250
+		STA CTPOS2
+
+		LDA RANDOM  ; random byte 0-255
+		
+		LSR          ; divide by 2 0-128
+		LSR          ; divide again 0-64
+		CLC
+		ADC #24      ; minimum distance between cacti 24-88
+
+st		ADC CTPOS1
 		STA CTPOS2
 skip_reset
+		CLC
+		LDA #0
+		STA HITCLR  ; clear hit flag
 		LDA CTPOS1
 		STA HPOSP0+3
 		LDA CTPOS2
@@ -179,16 +232,100 @@ skip_reset
 		STA HPOSM0
 		LDA #0
 		STA TICKER     ; Low byte
+		JSR stop_sound
 skip_move
+		CLC
 		JSR wait_lp
+		LDA SCTICKR
+		CMP #10
+		BNE skip_inc_score
+		JSR inc_score
+		LDA #0
+		STA SCTICKR
+skip_inc_score
 		JSR READKEY
+		JSR score_msg
 		JSR print_score
+		JSR collision	
 		JMP MAINLOOP
-		
 		.endp
+
 ; **************************************
 ; Subroutines
 ; **************************************
+
+		.proc collision
+		CLC
+		LDA P3PL
+		AND #1
+		BNE collide
+		LDA P3PL
+		AND #2
+		BNE collide
+		LDA P3PL
+		AND #4
+		BNE collide
+		LDA M0PL
+		AND #1
+		BNE collide
+		LDA M1PL
+		AND #1
+		BNE	collide
+		LDA #0
+		STA HITCLR
+		RTS
+
+collide
+		JSR play_hit_sound
+		; print game over
+		LDA #gameover&255
+		STA STRADR
+		LDA #gameover/256
+		STA STRADR+1
+		LDA #19
+		STA MAXLEN
+		LDA #2 ; top row offset
+		PHA
+		JSR puts
+wait_start
+		; wait for start key
+		LDA $D01F
+		CMP #6
+		BNE skip
+		JMP start.GAME_START
+skip
+		JSR wait_lp
+		JMP wait_start
+		.endp
+
+		.proc play_hit_sound
+		LDA #0
+		STA SNDVOICE
+		LDA #10
+		STA SNDPITCH
+		LDA #100
+		STA SNDDIST
+		LDA #10
+		STA SNDVOL
+		JSR play_sound
+		JSR wait_lp
+		JSR stop_sound
+		RTS
+		.endp
+
+		.proc inc_score
+		CLC
+		LDA SCRELO
+		ADC #1
+		STA SCRELO
+		LDA SCREMID
+		ADC #0			; propagate carry
+		STA SCREMID
+		LDA SCREHI
+		ADC #0			; propagate carry
+		STA SCREHI
+		RTS
+		.endp
 
 		.proc load_players
 		LDA #24
@@ -421,7 +558,7 @@ loop
 		STA HPOSP0+3
 		LDA #$C4        ; color green
 		STA PCOLR0+3
-		LDA #$C3        ; color green
+		LDA #$C4        ; color green
 		STA COLPF3
 		
 		LDA #$0E 		;color white
@@ -463,7 +600,22 @@ jp		JSR jump
 retk	RTS			
 		.endp
 
+		.proc play_step_sound
+		LDA #0
+		STA SNDVOICE
+		LDA #100
+		STA SNDPITCH
+		LDA #25
+		STA SNDDIST
+		LDA #10
+		STA SNDVOL
+		JSR play_sound
+		RTS
+		.endp
+
 		.proc jump
+
+jump_step
 		LDY JMPIDX
 		LDA jumpseq,Y
 		CMP JMPPOS
@@ -488,6 +640,44 @@ jstep_done
 		LDA #0
 		STA JMPNG
 jxit	RTS
+		.endp
+
+		.proc stop_sound
+		LDA #0
+		STA SNDVOICE
+		STA SNDVOL
+		JSR play_sound
+		RTS
+		.endp
+
+		; Inputs (via params):
+		;   SNDVOICE = voice 0..3
+		;   SNDPITCH = pitch 0..255
+		;   SNDDIST  = distortion 0..14 (even values)
+		;   SNDVOL   = volume 0..15 (1..15 audible)
+		.proc play_sound
+		LDA SNDVOICE
+		AND #3
+		ASL
+		TAX
+
+		LDA SNDPITCH
+		STA AUDF1,X
+
+		LDA SNDVOL
+		AND #$0F
+		STA SNDVOL
+
+		LDA SNDDIST
+		AND #$0E
+		ASL
+		ASL
+		ASL
+		ASL
+		CLC
+		ADC SNDVOL
+		STA AUDC1,X
+		RTS
 		.endp
  ; ******************************
  ; Now move player appropriately,
@@ -697,7 +887,7 @@ wait	cmp RTCLOK+2    ; Has it changed yet?
 	.endp
 
 	; print SCORE message
-	.proc print_score
+	.proc score_msg
 		LDA #score&255
 		STA STRADR
 		LDA #score/256
@@ -738,13 +928,12 @@ clr 	.BYTE " ",$9B
 
 blanks		.BYTE "                    ",$9B
 pressstart 	.BYTE " *** PRESS START TO BEGIN ***",$9B
-score 	    .BYTE "   SCORE:    ","000000       ",$9B
-
+score 	    .BYTE "   SCORE:                    ",$9B
+gameover 	.BYTE "***    GAME OVER    ***",$9B
 ; Snappier, faster peak
-;jumpseq .BYTE 6,16,20,20,16,6,0
-jumpseq	.BYTE 2,4,8,12,12,12,8,2,0
+
+jumpseq	.BYTE 2,4,8,12,16,12,12,4,2,0
 NAME    .BYTE c"S:",$9B
 tabpp  .BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 
 	 	run start 	;Define run address
-
