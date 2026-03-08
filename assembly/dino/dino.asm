@@ -85,6 +85,7 @@ SNDPITCH EQU $C8      ; 0..255
 SNDDIST  EQU $C9      ; 0..14 (even only)
 SNDVOL   EQU $CA      ; 1..15 (0 = silence)
 RANDOM EQU $D20A
+LEVEL EQU $CB
 
 RTCLOK	EQU $12
 vcount	EQU $d40b
@@ -95,6 +96,7 @@ SCREHI EQU $82
 SCTICKR EQU $83
 
 	ORG $2400
+
 	.proc music
 STEREOMODE	equ 0				;0 => compile RMTplayer for mono 4 tracks
 init_song 	= RASTERMUSICTRACKER+0
@@ -114,13 +116,12 @@ module
 	icl 'intro.asm'
 
 	.proc start	
-		
 		JSR init_ram
 		JSR init_gra
 		JSR pm_init
 		JSR load_players
 			
-	; print fence 
+		; print fence 
 		LDA #fence&255
 		STA STRADR
 		LDA #fence/256
@@ -212,7 +213,12 @@ cc2		CLC
 		LSR          ; divide by 2 0-128
 		LSR          ; divide again 0-64
 		CLC
-		ADC #24      ; minimum distance between cacti 24-88
+		ADC #24+50      ; minimum distance between cacti 24-88
+		LDX #0
+loop	SBC LEVEL
+		INX
+		CPX #5
+		BNE loop
 
 st		ADC CTPOS1
 		STA CTPOS2
@@ -255,7 +261,7 @@ skip_inc_score
 ; Subroutines
 ; **************************************
 
-		.proc collision
+	.proc collision
 		CLC
 		LDA P3PL
 		AND #1
@@ -297,9 +303,9 @@ wait_start
 skip
 		JSR wait_lp
 		JMP wait_start
-		.endp
+	.endp
 
-		.proc play_hit_sound
+	.proc play_hit_sound
 		LDA #0
 		STA SNDVOICE
 		LDA #$A8
@@ -312,9 +318,9 @@ skip
 		JSR delay
 		JSR stop_sound
 		RTS
-		.endp
+	.endp
 
-		.proc inc_score
+	.proc inc_score
 		CLC
 		LDA SCRELO
 		ADC #1
@@ -325,10 +331,29 @@ skip
 		LDA SCREHI
 		ADC #0			; propagate carry
 		STA SCREHI
-		RTS
-		.endp
+		CLC
+		LDA SCRELO
+		CMP #100
+		BNE skip_level
+		INC LEVEL
+		LDA LEVEL
+		CMP #10
+		BCC skip_level
+		LDA #10
+		STA LEVEL ; MAX LEVEL 10
+skip_level
 
-		.proc load_players
+		LDA #$0E
+		ADC LEVEL
+		ADC LEVEL		
+		STA PCOLR0
+		STA PCOLR0+1
+		STA PCOLR0+2
+
+		RTS
+	.endp
+
+	.proc load_players
 		LDA #24
 		STA PSIZE
 		
@@ -395,10 +420,10 @@ skip
 		LDA #24
 		STA PSIZE
 		RTS
-		.endp
+	.endp
 
-		; *** Initial RAM setup ****
-		.proc init_ram	
+	; *** Initial RAM setup ****
+	.proc init_ram	
 		LDA RAMTOP
 		STA TMPTOP
 		SEC
@@ -421,10 +446,12 @@ skip
 		STA CTPOS1
 		LDA #19
 		STA CTPOS2
+		LDA #1
+		STA LEVEL
 		RTS
-		.endp		
-		
-		.proc init_gra
+	.endp		
+	
+	.proc init_gra
        LDA #2
        PHA           ; Store on stack (GR.2+16 = split screen + text window)
        LDX #$60      ; IOCB6 for screen
@@ -446,9 +473,9 @@ skip
        STA ICAX1,X   ; n+16, n+32 etc.
        JSR CIOV      ; Setup GRAPHICS n
        RTS           ; All done
-		.endp
-		
-		.proc pm_init
+	.endp
+	
+	.proc pm_init
 ; PM graphics setup
 		LDA #68     ; Initial postitions fort players
 		STA INITX
@@ -517,10 +544,9 @@ clear
 		SBC #0
 		STA CTLOC2+1
 		RTS
+	.endp
 
-		.endp
-
-		.proc copy_player
+	.proc copy_player
 		; Pull return address from stack and save it
 		PLA
 		STA TMP2		; Save return address low byte
@@ -569,9 +595,9 @@ loop
 		LDA #3		;enable player
 		STA GRACTL 		; resolution
 		RTS
-		.endp
+	.endp
 
-		.proc READKEY
+	.proc READKEY
 ; read key
 		LDA JMPNG
 		CMP #1
@@ -586,22 +612,21 @@ jp		JSR jump
 		LDA #255
 		STA KEYPRES
 retk	RTS			
-		.endp
+	.endp
 
-		.proc autojump
+	.proc autojump
 		LDA JMPNG
 		CMP #1
 		BEQ jp
 		LDA #1
 		STA JMPNG
-jp		JSR jump
-		
+jp		JSR jump	
 		LDA #255
 		STA KEYPRES
 retk	RTS			
-		.endp
+	.endp
 
-		.proc play_step_sound
+	.proc play_step_sound
 		LDA #0
 		STA SNDVOICE
 		LDA #100
@@ -612,10 +637,9 @@ retk	RTS
 		STA SNDVOL
 		JSR play_sound
 		RTS
-		.endp
+	.endp
 
-		.proc jump
-jump_step
+	.proc jump
 		LDY JMPIDX
 		LDA jumpseq,Y
 		CMP JMPPOS
@@ -640,22 +664,22 @@ jstep_done
 		LDA #0
 		STA JMPNG
 jxit	RTS
-		.endp
+	.endp
 
-		.proc stop_sound
+	.proc stop_sound
 		LDA #0
 		STA SNDVOICE
 		STA SNDVOL
 		JSR play_sound
 		RTS
-		.endp
+	.endp
 
 		; Inputs (via params):
 		;   SNDVOICE = voice 0..3
 		;   SNDPITCH = pitch 0..255
 		;   SNDDIST  = distortion 0..14 (even values)
 		;   SNDVOL   = volume 0..15 (1..15 audible)
-		.proc play_sound
+	.proc play_sound
 		LDA SNDVOICE
 		AND #3
 		ASL
@@ -743,10 +767,11 @@ DOWN1	LDA (YLOC),Y ; Get top byte
 		INC YLOC2
 		RTS
 
- ; ******************************
- ; Now side-to-side - left first
- ; ******************************
-LEFT	DEC XLOC     ; To move it left
+		; ******************************
+		; Now side-to-side - left first
+		; ******************************
+	.proc LEFT
+		DEC XLOC     ; To move it left
 		LDA XLOC     ; Get it
 		STA HPOSP0   ; Move it
 		ADC #8   
@@ -754,6 +779,8 @@ LEFT	DEC XLOC     ; To move it left
 		ADC #8
 		STA HPOSP0+2
 		RTS          ; Back to MAIN - we're done
+	.endp
+ 
  ; ******************************
  ; Now right movement
  ; ******************************
@@ -767,9 +794,9 @@ RIGHT	INC XLOC     ; To move it right
 		RTS          ; Back to MAIN - we're done
 		
 
-; ******************************
-; Load custom character set
-; ******************************
+		; ******************************
+		; Load custom character set
+		; ******************************
 	.proc load_chset
 		LDA #0
 		STA TMP1
@@ -829,8 +856,8 @@ loopc3	LDA cactus3,y
 		RTS
 	.endp
 
-; Display Cactus
-DisplayCactus
+		; Display Cactus
+	.proc DisplayCactus
 		; Clear the previous cactus
 		LDA #clr&255
 		STA STRADR
@@ -848,8 +875,7 @@ DisplayCactus
 		ADC CTPOS1
 		ADC #1
 		PHA
-		JSR puts
-		
+		JSR puts		
 		; print 1 char of cactus per column
 		LDA #c1&255
 		STA STRADR
@@ -876,6 +902,7 @@ cont	LDA #1
 		PHA 
 		JSR puts
 		RTS
+	.endp
 
 	.proc wait
 loop	lda vcount
@@ -914,7 +941,7 @@ INNER   DEY
         BNE INNER
         DEX
         BNE OUTER
-	RTS
+		RTS
 	.endp
 
 player0 .BYTE 0,0,0,0,0,0,0,0
