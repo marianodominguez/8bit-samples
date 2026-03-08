@@ -770,7 +770,7 @@ DOWN1	LDA (YLOC),Y ; Get top byte
 		; ******************************
 		; Now side-to-side - left first
 		; ******************************
-	.proc LEFT
+	LEFT
 		DEC XLOC     ; To move it left
 		LDA XLOC     ; Get it
 		STA HPOSP0   ; Move it
@@ -779,7 +779,6 @@ DOWN1	LDA (YLOC),Y ; Get top byte
 		ADC #8
 		STA HPOSP0+2
 		RTS          ; Back to MAIN - we're done
-	.endp
  
  ; ******************************
  ; Now right movement
