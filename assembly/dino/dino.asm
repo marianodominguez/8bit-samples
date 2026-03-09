@@ -44,6 +44,7 @@ P0PL EQU $D00C
 P1PL EQU $D00D
 P2PL EQU $D00E
 P3PL EQU $D00F
+RANDOM EQU $D20A
 
 ; other var
 ; *********************************************
@@ -59,7 +60,7 @@ XLOC   	EQU   $FA
 YLOC   	EQU   $FB ; $FC
 YLOC1  	EQU   $F1 ; $F2
 YLOC2  	EQU   $F3 ; $F4
-CHSET  	EQU   $F5 		;C5 HI
+CHSET  	EQU   $F5 ; $F6 HI
 CTPOS1 	EQU $F7		; cactus position
 CTPOS2 	EQU $F9
 CTLOC1 	EQU $C3 ; $C4      ; Cactus location
@@ -77,22 +78,24 @@ STRADR 	EQU   $E8      ; Address of string to print
 MAXLEN 	EQU   $EA       ; Maximum length of string
 JMPPOS 	EQU   $EB		; jump position
 JMPIDX 	EQU   $ED		; jump index
-JMPNG  	EQU   $EF		; is the dino jumping?
-TICKER EQU  $C0		; intro tick counter (1 byte)
-TMP3   	EQU $C1 ; $C2
+JMPNG 	EQU   $EF		; is the dino jumping?
+
+TICKER 	EQU $C0		; intro tick counter (1 byte)
+TMP3 	EQU $C1 ; $C2
 SNDVOICE EQU $C7      ; 0..3
 SNDPITCH EQU $C8      ; 0..255
-SNDDIST  EQU $C9      ; 0..14 (even only)
-SNDVOL   EQU $CA      ; 1..15 (0 = silence)
-RANDOM EQU $D20A
-LEVEL EQU $CB
+SNDDIST EQU $C9      ; 0..14 (even only)
+SNDVOL 	EQU $CA      ; 1..15 (0 = silence)
+
+LEVEL 	EQU $CB
+DIST 	EQU $CC
 
 RTCLOK	EQU $12
 vcount	EQU $d40b
 
-SCRELO EQU $80			; Score
+SCRELO 	EQU $80			; Score
 SCREMID EQU $81
-SCREHI EQU $82
+SCREHI 	EQU $82
 SCTICKR EQU $83
 
 	ORG $2400
@@ -185,6 +188,8 @@ GAME_START
 		STA CTPOS1
 		LDA #255
 		STA CTPOS2
+		LDA #6
+		STA DIST
 MAINLOOP
 		JSR play_step_sound
 		CLC
@@ -194,34 +199,39 @@ MAINLOOP
 		CMP #1
 		BCC skip_move
 		DEC CTPOS1
+		CLC
+		LDA CTPOS2
+		SBC CTPOS1
+		CMP DIST
+		BCC skip_inc
 		DEC CTPOS2
+skip_inc
+		CLC
 		LDA CTPOS1   ; if cactus is too close to the left side of the screen
-		CMP #50
-		BNE cc2
-		LDA #250
-		STA CTPOS1  ; move cactus to the right side of the screen
-
+		CMP #20
+		BCC cc2
+		LDA #255
+		STA CTPOS1
+		
 cc2		CLC
 		LDA CTPOS2
-		CMP #50
-		BNE skip_reset		; if greater than 50, keep going
-		LDA #250
-		STA CTPOS2
-
+		CMP #20
+		BCC skip_reset		; if greater than 50, keep going
+		LDA #255
+		STA CTPOS2  ; move cactus to the right side of the screen
 		LDA RANDOM  ; random byte 0-255
 		
 		LSR          ; divide by 2 0-128
 		LSR          ; divide again 0-64
 		CLC
-		ADC #24+50      ; minimum distance between cacti 24-88
-		LDX #0
-loop	SBC LEVEL
-		INX
-		CPX #5
-		BNE loop
+		ADC #34      ; minimum distance between cacti 34-100
+		SBC LEVEL     ;level 1: 33, level 10: 24
 
-st		ADC CTPOS1
-		STA CTPOS2
+;debug set 50 distance
+		LDA #50
+		
+		STA DIST
+
 skip_reset
 		CLC
 		LDA #0
@@ -332,24 +342,27 @@ skip
 		ADC #0			; propagate carry
 		STA SCREHI
 		CLC
-		LDA SCRELO
-		CMP #100
+		LDX SCRELO
+		CPX #0
 		BNE skip_level
-		INC LEVEL
+		CPX #100
+		BNE skip_level
+		CPX #200
+		BNE skip_level
+		CLC
 		LDA LEVEL
 		CMP #10
-		BCC skip_level
-		LDA #10
-		STA LEVEL ; MAX LEVEL 10
+		BCS skip_level
+		INC LEVEL ; MAX LEVEL 10
+		JSR play_hit_sound
 skip_level
-
-		LDA #$0E
+		CLC
+		LDA #10
 		ADC LEVEL
-		ADC LEVEL		
+		ADC LEVEL
 		STA PCOLR0
 		STA PCOLR0+1
 		STA PCOLR0+2
-
 		RTS
 	.endp
 
@@ -446,7 +459,7 @@ skip_level
 		STA CTPOS1
 		LDA #19
 		STA CTPOS2
-		LDA #1
+		LDA #0
 		STA LEVEL
 		RTS
 	.endp		
@@ -770,7 +783,7 @@ DOWN1	LDA (YLOC),Y ; Get top byte
 		; ******************************
 		; Now side-to-side - left first
 		; ******************************
-	LEFT
+LEFT
 		DEC XLOC     ; To move it left
 		LDA XLOC     ; Get it
 		STA HPOSP0   ; Move it
