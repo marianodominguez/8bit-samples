@@ -344,12 +344,14 @@ skip
 		CLC
 		LDX SCRELO
 		CPX #0
-		BNE skip_level
+		BEQ inc_level
 		CPX #100
-		BNE skip_level
+		BEQ inc_level
 		CPX #200
-		BNE skip_level
+		BEQ inc_level
 		CLC
+		JMP skip_level
+inc_level	
 		LDA LEVEL
 		CMP #10
 		BCS skip_level
