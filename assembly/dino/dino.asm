@@ -167,7 +167,6 @@ module
 		JSR puts
 
 GAME_START
-
 		LDA #blanks&255
 		STA STRADR
 		LDA #blanks/256
@@ -180,6 +179,7 @@ GAME_START
 
 		; *** Start actual game here ***
 		LDA #0
+		STA LEVEL
 		STA TICKER
 		STA SCRELO
 		STA SCREMID
@@ -199,25 +199,20 @@ MAINLOOP
 		CMP #1
 		BCC skip_move
 		DEC CTPOS1
-		CLC
-		LDA CTPOS2
-		SBC CTPOS1
-		CMP DIST
-		BCC skip_inc
 		DEC CTPOS2
 skip_inc
 		CLC
 		LDA CTPOS1   ; if cactus is too close to the left side of the screen
 		CMP #20
-		BCC cc2
+		BNE cc2
 		LDA #255
 		STA CTPOS1
 		
 cc2		CLC
 		LDA CTPOS2
 		CMP #20
-		BCC skip_reset		; if greater than 50, keep going
-		LDA #255
+		BNE skip_reset		; if greater than 50, keep going
+		LDA #250
 		STA CTPOS2  ; move cactus to the right side of the screen
 		LDA RANDOM  ; random byte 0-255
 		
@@ -226,9 +221,6 @@ cc2		CLC
 		CLC
 		ADC #34      ; minimum distance between cacti 34-100
 		SBC LEVEL     ;level 1: 33, level 10: 24
-
-;debug set 50 distance
-		LDA #50
 		
 		STA DIST
 
@@ -306,7 +298,7 @@ collide
 		JSR puts
 wait_start
 		; wait for start key
-		LDA $D01F
+		LDA CONSOL
 		CMP #6
 		BNE skip
 		JMP start.GAME_START
@@ -354,13 +346,12 @@ skip
 inc_level	
 		LDA LEVEL
 		CMP #10
-		BCS skip_level
+		BCC skip_level
 		INC LEVEL ; MAX LEVEL 10
 		JSR play_hit_sound
 skip_level
 		CLC
-		LDA #10
-		ADC LEVEL
+		LDA #4
 		ADC LEVEL
 		STA PCOLR0
 		STA PCOLR0+1
