@@ -93,10 +93,12 @@ DIST 	EQU $CC
 RTCLOK	EQU $12
 vcount	EQU $d40b
 
+SCTICKR EQU $83
+LEVELTICK EQU $84
+; score equates
 SCRELO 	EQU $80			; Score
 SCREMID EQU $81
 SCREHI 	EQU $82
-SCTICKR EQU $83
 
 	ORG $2400
 
@@ -173,6 +175,10 @@ GAME_START
 		STA STRADR+1
 		LDA #19
 		STA MAXLEN
+		LDA #0
+		STA COLWN
+		LDA lvl_colors
+		STA COLBK
 		LDA #1 ; top row offset
 		PHA
 		JSR puts
@@ -180,6 +186,7 @@ GAME_START
 		; *** Start actual game here ***
 		LDA #0
 		STA LEVEL
+		STA LEVELTICK
 		STA TICKER
 		STA SCRELO
 		STA SCREMID
@@ -333,26 +340,23 @@ skip
 		LDA SCREHI
 		ADC #0			; propagate carry
 		STA SCREHI
-		CLC
-		LDX SCRELO
-		CPX #0
-		BEQ inc_level
-		CPX #100
-		BEQ inc_level
-		CPX #200
-		BEQ inc_level
-		CLC
-		JMP skip_level
-inc_level	
+		INC LEVELTICK
+		LDA LEVELTICK
+		CMP #100
+		BNE skip_level_inc
+		LDA #0
+		STA LEVELTICK
 		LDA LEVEL
 		CMP #10
-		BCC skip_level
-		INC LEVEL ; MAX LEVEL 10
+		BCS skip_level_inc
+		INC LEVEL
 		JSR play_hit_sound
-skip_level
+		LDX LEVEL
+		LDA lvl_colors,X
+		STA COLBK
+skip_level_inc
 		CLC
-		LDA #4
-		ADC LEVEL
+		LDA #$0E
 		STA PCOLR0
 		STA PCOLR0+1
 		STA PCOLR0+2
@@ -982,5 +986,5 @@ gameover 	.BYTE "*** GAME OVER ***",$9B
 jumpseq	.BYTE 2,4,8,12,16,12,12,4,2,0
 NAME    .BYTE c"S:",$9B
 tabpp  .BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
-
+lvl_colors .BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 	 	run start 	;Define run address

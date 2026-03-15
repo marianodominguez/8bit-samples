@@ -1,13 +1,6 @@
+
+
 ; *** PRINT a String ***
-; Caller pushes: col (first), then row (second, popped first)
-; STRADR = string address, MAXLEN = max chars
-; GR.2 split screen: 20 bytes per row
-;
-; Stack on entry (after JSR):
-;   SP+1 = return lo
-;   SP+2 = return hi
-;   SP+3 = row
-;   SP+4 = col
 ;
         .proc putstring
         ; Save return address
