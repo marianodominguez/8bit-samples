@@ -15,11 +15,29 @@ ICAX1 	EQU    $034A
 ICAX2 	EQU    $034B
 CIOV  	EQU    $E456
 GRACTL 	EQU	   $D01D
+NMIEN	EQU $D40E
+VVBLKI EQU $0222
+VVBLKD EQU $0224
+VDSLST EQU $0200
 
 ; sys equates
 RAMTOP 	EQU  106
 PMBASE 	EQU  54279
 PCOLR0 	EQU  704
+
+COLOR0=$02C4
+COLOR1=$02C5
+COLOR2=$02C6
+COLOR3=$02C7
+COLOR4=$02C8
+
+COLPF0 EQU $D016
+COLPF1 EQU $D017
+COLPF2 EQU $D018
+COLPF3 EQU $D019
+COLBK EQU $D01A
+SETVBV EQU $E45C
+
 SAVMSC 	EQU  $58
 CHARSET1 	EQU $E000
 CHBAS  		EQU  $2F4
@@ -45,6 +63,9 @@ P1PL EQU $D00D
 P2PL EQU $D00E
 P3PL EQU $D00F
 RANDOM EQU $D20A
+WSYNC EQU $D40A
+NMIEN_DLI EQU $40 
+NMIEN_VBI EQU $80
 
 ; other var
 ; *********************************************
@@ -52,8 +73,7 @@ RANDOM EQU $D20A
 ; *********************************************
 
 COLWN 	EQU 710
-COLPF3 	EQU 711		; Color PF3
-COLBK 	EQU 712
+
 NSTEP 	EQU 10
 
 XLOC   	EQU   $FA
@@ -80,6 +100,7 @@ JMPPOS 	EQU   $EB		; jump position
 JMPIDX 	EQU   $ED		; jump index
 JMPNG 	EQU   $EF		; is the dino jumping?
 
+
 TICKER 	EQU $C0		; intro tick counter (1 byte)
 TMP3 	EQU $C1 ; $C2
 SNDVOICE EQU $C7      ; 0..3
@@ -99,6 +120,8 @@ LEVELTICK EQU $84
 SCRELO 	EQU $80			; Score
 SCREMID EQU $81
 SCREHI 	EQU $82
+TITLE_SHOWN EQU $85	; flag to track if title has been shown
+zero 	EQU $86
 
 	ORG $2400
 
@@ -125,7 +148,7 @@ module
 		JSR init_gra
 		JSR pm_init
 		JSR load_players
-			
+
 		; print fence 
 		LDA #fence&255
 		STA STRADR
@@ -139,7 +162,6 @@ module
 		LDA #140 ;fence bottom row offset
 		PHA
 		JSR puts
-
 		JSR load_chset
 
 		ldx #<music.module
@@ -167,7 +189,6 @@ module
 		LDA #100 
 		PHA
 		JSR puts
-
 GAME_START
 		LDA #blanks&255
 		STA STRADR
@@ -178,7 +199,9 @@ GAME_START
 		LDA #0
 		STA COLWN
 		LDA lvl_colors
-		STA COLBK
+		STA COLOR4
+		SBC #2
+		STA COLOR2
 		LDA #1 ; top row offset
 		PHA
 		JSR puts
@@ -198,7 +221,6 @@ GAME_START
 		LDA #6
 		STA DIST
 MAINLOOP
-		JSR play_step_sound
 		CLC
 		INC SCTICKR
 		INC TICKER
@@ -249,10 +271,11 @@ skip_reset
 		STA HPOSM0
 		LDA #0
 		STA TICKER     ; Low byte
-		JSR stop_sound
 skip_move
 		CLC
-		JSR wait_lp
+		JSR play_step_sound
+		JSR delay
+		JSR stop_sound
 		LDA SCTICKR
 		CMP #10
 		BNE skip_inc_score
@@ -354,7 +377,9 @@ skip
 		JSR play_hit_sound
 		LDX LEVEL
 		LDA lvl_colors,X
-		STA COLBK
+		STA COLOR4
+		SBC #2
+		STA COLOR2
 skip_level_inc
 		CLC
 		LDA #$0E
@@ -597,7 +622,7 @@ loop
 		LDA #$C4        ; color green
 		STA PCOLR0+3
 		LDA #$C4        ; color green
-		STA COLPF3
+		STA COLOR3
 		
 		LDA #$0E 		;color white
 		STA PCOLR0
@@ -644,7 +669,7 @@ retk	RTS
 		STA SNDPITCH
 		LDA #12
 		STA SNDDIST
-		LDA #10
+		LDA #100
 		STA SNDVOL
 		JSR play_sound
 		RTS
@@ -914,13 +939,6 @@ cont	LDA #1
 		RTS
 	.endp
 
-	.proc wait
-loop	lda vcount
-	cmp #$20
-	bne loop
-	rts
-	.endp
-
 	.proc wait_lp
 		lda RTCLOK+2    ; Load current timer value
 wait	cmp RTCLOK+2    ; Has it changed yet?
@@ -946,7 +964,7 @@ wait	cmp RTCLOK+2    ; Has it changed yet?
 
 	.proc delay
 		LDX #$FF      ; Outer loop counter
-OUTER   LDY #$FF      ; Inner loop counter
+OUTER   LDY #$0B      ; Inner loop counter
 INNER   DEY
         BNE INNER
         DEX
@@ -983,9 +1001,11 @@ pressstart 	.BYTE " *** PRESS START TO BEGIN ***",$9B
 score 	    .BYTE "   SCORE:                    ",$9B
 gameover 	.BYTE "*** GAME OVER ***",$9B
 ; Snappier, faster peak
-
+title	.BYTE "  THE JUMPY DINO!  ",$9B
 jumpseq	.BYTE 2,4,8,12,16,12,12,4,2,0
 NAME    .BYTE c"S:",$9B
 tabpp  .BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 lvl_colors .BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 	 	run start 	;Define run address
+table .byte 4,20,36,52,68,84,100,116,132,148,164,180,196,212,228,244,148
+jump_a	.word 0

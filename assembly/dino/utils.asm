@@ -1,7 +1,4 @@
-
-
 ; *** PRINT a String ***
-;
         .proc putstring
         ; Save return address
         PLA
