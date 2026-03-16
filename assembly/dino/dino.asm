@@ -15,11 +15,29 @@ ICAX1 	EQU    $034A
 ICAX2 	EQU    $034B
 CIOV  	EQU    $E456
 GRACTL 	EQU	   $D01D
+NMIEN	EQU $D40E
+VVBLKI EQU $0222
+VVBLKD EQU $0224
+VDSLST EQU $0200
 
 ; sys equates
 RAMTOP 	EQU  106
 PMBASE 	EQU  54279
 PCOLR0 	EQU  704
+
+COLOR0=$02C4
+COLOR1=$02C5
+COLOR2=$02C6
+COLOR3=$02C7
+COLOR4=$02C8
+
+COLPF0 EQU $D016
+COLPF1 EQU $D017
+COLPF2 EQU $D018
+COLPF3 EQU $D019
+COLBK EQU $D01A
+SETVBV EQU $E45C
+
 SAVMSC 	EQU  $58
 CHARSET1 	EQU $E000
 CHBAS  		EQU  $2F4
@@ -44,6 +62,10 @@ P0PL EQU $D00C
 P1PL EQU $D00D
 P2PL EQU $D00E
 P3PL EQU $D00F
+RANDOM EQU $D20A
+WSYNC EQU $D40A
+NMIEN_DLI EQU $40 
+NMIEN_VBI EQU $80
 
 ; other var
 ; *********************************************
@@ -51,15 +73,14 @@ P3PL EQU $D00F
 ; *********************************************
 
 COLWN 	EQU 710
-COLPF3 	EQU 711		; Color PF3
-COLBK 	EQU 712
+
 NSTEP 	EQU 10
 
 XLOC   	EQU   $FA
 YLOC   	EQU   $FB ; $FC
 YLOC1  	EQU   $F1 ; $F2
 YLOC2  	EQU   $F3 ; $F4
-CHSET  	EQU   $F5 		;C5 HI
+CHSET  	EQU   $F5 ; $F6 HI
 CTPOS1 	EQU $F7		; cactus position
 CTPOS2 	EQU $F9
 CTLOC1 	EQU $C3 ; $C4      ; Cactus location
@@ -77,23 +98,30 @@ STRADR 	EQU   $E8      ; Address of string to print
 MAXLEN 	EQU   $EA       ; Maximum length of string
 JMPPOS 	EQU   $EB		; jump position
 JMPIDX 	EQU   $ED		; jump index
-JMPNG  	EQU   $EF		; is the dino jumping?
-TICKER EQU  $C0		; intro tick counter (1 byte)
-TMP3   	EQU $C1 ; $C2
+JMPNG 	EQU   $EF		; is the dino jumping?
+
+
+TICKER 	EQU $C0		; intro tick counter (1 byte)
+TMP3 	EQU $C1 ; $C2
 SNDVOICE EQU $C7      ; 0..3
 SNDPITCH EQU $C8      ; 0..255
-SNDDIST  EQU $C9      ; 0..14 (even only)
-SNDVOL   EQU $CA      ; 1..15 (0 = silence)
-RANDOM EQU $D20A
-LEVEL EQU $CB
+SNDDIST EQU $C9      ; 0..14 (even only)
+SNDVOL 	EQU $CA      ; 1..15 (0 = silence)
+
+LEVEL 	EQU $CB
+DIST 	EQU $CC
 
 RTCLOK	EQU $12
 vcount	EQU $d40b
 
-SCRELO EQU $80			; Score
-SCREMID EQU $81
-SCREHI EQU $82
 SCTICKR EQU $83
+LEVELTICK EQU $84
+; score equates
+SCRELO 	EQU $80			; Score
+SCREMID EQU $81
+SCREHI 	EQU $82
+TITLE_SHOWN EQU $85	; flag to track if title has been shown
+zero 	EQU $86
 
 	ORG $2400
 
@@ -120,7 +148,7 @@ module
 		JSR init_gra
 		JSR pm_init
 		JSR load_players
-			
+
 		; print fence 
 		LDA #fence&255
 		STA STRADR
@@ -134,7 +162,6 @@ module
 		LDA #140 ;fence bottom row offset
 		PHA
 		JSR puts
-
 		JSR load_chset
 
 		ldx #<music.module
@@ -162,21 +189,27 @@ module
 		LDA #100 
 		PHA
 		JSR puts
-
 GAME_START
-
 		LDA #blanks&255
 		STA STRADR
 		LDA #blanks/256
 		STA STRADR+1
 		LDA #19
 		STA MAXLEN
+		LDA #0
+		STA COLWN
+		LDA lvl_colors
+		STA COLOR4
+		SBC #2
+		STA COLOR2
 		LDA #1 ; top row offset
 		PHA
 		JSR puts
 
 		; *** Start actual game here ***
 		LDA #0
+		STA LEVEL
+		STA LEVELTICK
 		STA TICKER
 		STA SCRELO
 		STA SCREMID
@@ -185,8 +218,9 @@ GAME_START
 		STA CTPOS1
 		LDA #255
 		STA CTPOS2
+		LDA #6
+		STA DIST
 MAINLOOP
-		JSR play_step_sound
 		CLC
 		INC SCTICKR
 		INC TICKER
@@ -195,33 +229,31 @@ MAINLOOP
 		BCC skip_move
 		DEC CTPOS1
 		DEC CTPOS2
+skip_inc
+		CLC
 		LDA CTPOS1   ; if cactus is too close to the left side of the screen
-		CMP #50
+		CMP #20
 		BNE cc2
-		LDA #250
-		STA CTPOS1  ; move cactus to the right side of the screen
-
+		LDA #255
+		SBC DIST
+		STA CTPOS1
+		
 cc2		CLC
 		LDA CTPOS2
-		CMP #50
+		CMP #20
 		BNE skip_reset		; if greater than 50, keep going
-		LDA #250
-		STA CTPOS2
-
+		LDA #255
+		STA CTPOS2  ; move cactus to the right side of the screen
 		LDA RANDOM  ; random byte 0-255
 		
 		LSR          ; divide by 2 0-128
 		LSR          ; divide again 0-64
 		CLC
-		ADC #24+50      ; minimum distance between cacti 24-88
-		LDX #0
-loop	SBC LEVEL
-		INX
-		CPX #5
-		BNE loop
+		ADC #34      ; minimum distance between cacti 34-100
+		SBC LEVEL     ;level 1: 33, level 10: 24
+		
+		STA DIST
 
-st		ADC CTPOS1
-		STA CTPOS2
 skip_reset
 		CLC
 		LDA #0
@@ -239,10 +271,11 @@ skip_reset
 		STA HPOSM0
 		LDA #0
 		STA TICKER     ; Low byte
-		JSR stop_sound
 skip_move
 		CLC
-		JSR wait_lp
+		JSR play_step_sound
+		JSR delay
+		JSR stop_sound
 		LDA SCTICKR
 		CMP #10
 		BNE skip_inc_score
@@ -296,7 +329,7 @@ collide
 		JSR puts
 wait_start
 		; wait for start key
-		LDA $D01F
+		LDA CONSOL
 		CMP #6
 		BNE skip
 		JMP start.GAME_START
@@ -331,25 +364,28 @@ skip
 		LDA SCREHI
 		ADC #0			; propagate carry
 		STA SCREHI
-		CLC
-		LDA SCRELO
+		INC LEVELTICK
+		LDA LEVELTICK
 		CMP #100
-		BNE skip_level
-		INC LEVEL
+		BNE skip_level_inc
+		LDA #0
+		STA LEVELTICK
 		LDA LEVEL
 		CMP #10
-		BCC skip_level
-		LDA #10
-		STA LEVEL ; MAX LEVEL 10
-skip_level
-
+		BCS skip_level_inc
+		INC LEVEL
+		JSR play_hit_sound
+		LDX LEVEL
+		LDA lvl_colors,X
+		STA COLOR4
+		SBC #2
+		STA COLOR2
+skip_level_inc
+		CLC
 		LDA #$0E
-		ADC LEVEL
-		ADC LEVEL		
 		STA PCOLR0
 		STA PCOLR0+1
 		STA PCOLR0+2
-
 		RTS
 	.endp
 
@@ -446,7 +482,7 @@ skip_level
 		STA CTPOS1
 		LDA #19
 		STA CTPOS2
-		LDA #1
+		LDA #0
 		STA LEVEL
 		RTS
 	.endp		
@@ -586,7 +622,7 @@ loop
 		LDA #$C4        ; color green
 		STA PCOLR0+3
 		LDA #$C4        ; color green
-		STA COLPF3
+		STA COLOR3
 		
 		LDA #$0E 		;color white
 		STA PCOLR0
@@ -633,7 +669,7 @@ retk	RTS
 		STA SNDPITCH
 		LDA #12
 		STA SNDDIST
-		LDA #10
+		LDA #100
 		STA SNDVOL
 		JSR play_sound
 		RTS
@@ -770,7 +806,7 @@ DOWN1	LDA (YLOC),Y ; Get top byte
 		; ******************************
 		; Now side-to-side - left first
 		; ******************************
-	.proc LEFT
+LEFT
 		DEC XLOC     ; To move it left
 		LDA XLOC     ; Get it
 		STA HPOSP0   ; Move it
@@ -779,7 +815,6 @@ DOWN1	LDA (YLOC),Y ; Get top byte
 		ADC #8
 		STA HPOSP0+2
 		RTS          ; Back to MAIN - we're done
-	.endp
  
  ; ******************************
  ; Now right movement
@@ -904,13 +939,6 @@ cont	LDA #1
 		RTS
 	.endp
 
-	.proc wait
-loop	lda vcount
-	cmp #$20
-	bne loop
-	rts
-	.endp
-
 	.proc wait_lp
 		lda RTCLOK+2    ; Load current timer value
 wait	cmp RTCLOK+2    ; Has it changed yet?
@@ -936,7 +964,7 @@ wait	cmp RTCLOK+2    ; Has it changed yet?
 
 	.proc delay
 		LDX #$FF      ; Outer loop counter
-OUTER   LDY #$FF      ; Inner loop counter
+OUTER   LDY #$0B      ; Inner loop counter
 INNER   DEY
         BNE INNER
         DEX
@@ -973,9 +1001,11 @@ pressstart 	.BYTE " *** PRESS START TO BEGIN ***",$9B
 score 	    .BYTE "   SCORE:                    ",$9B
 gameover 	.BYTE "*** GAME OVER ***",$9B
 ; Snappier, faster peak
-
+title	.BYTE "  THE JUMPY DINO!  ",$9B
 jumpseq	.BYTE 2,4,8,12,16,12,12,4,2,0
 NAME    .BYTE c"S:",$9B
 tabpp  .BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
-
+lvl_colors .BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 	 	run start 	;Define run address
+table .byte 4,20,36,52,68,84,100,116,132,148,164,180,196,212,228,244,148
+jump_a	.word 0
