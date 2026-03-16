@@ -213,13 +213,14 @@ skip_inc
 		CMP #20
 		BNE cc2
 		LDA #255
+		SBC DIST
 		STA CTPOS1
 		
 cc2		CLC
 		LDA CTPOS2
 		CMP #20
 		BNE skip_reset		; if greater than 50, keep going
-		LDA #250
+		LDA #255
 		STA CTPOS2  ; move cactus to the right side of the screen
 		LDA RANDOM  ; random byte 0-255
 		
