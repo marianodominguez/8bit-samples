@@ -15,21 +15,21 @@ ICAX1 	EQU    $034A
 ICAX2 	EQU    $034B
 CIOV  	EQU    $E456
 GRACTL 	EQU	   $D01D
-NMIEN	EQU $D40E
-VVBLKI EQU $0222
-VVBLKD EQU $0224
-VDSLST EQU $0200
+NMIEN	EQU    $D40E
+VVBLKI EQU 	   $0222
+VVBLKD EQU 	   $0224
+VDSLST EQU 	   $0200
 
 ; sys equates
 RAMTOP 	EQU  106
 PMBASE 	EQU  54279
 PCOLR0 	EQU  704
 
-COLOR0=$02C4
-COLOR1=$02C5
-COLOR2=$02C6
-COLOR3=$02C7
-COLOR4=$02C8
+COLOR0 	EQU $02C4
+COLOR1 	EQU $02C5
+COLOR2 	EQU $02C6
+COLOR3 	EQU $02C7
+COLOR4 	EQU $02C8
 
 COLPF0 EQU $D016
 COLPF1 EQU $D017
@@ -62,10 +62,12 @@ P0PL EQU $D00C
 P1PL EQU $D00D
 P2PL EQU $D00E
 P3PL EQU $D00F
-RANDOM EQU $D20A
-WSYNC EQU $D40A
-NMIEN_DLI EQU $40 
-NMIEN_VBI EQU $80
+RANDOM 		EQU $D20A
+WSYNC 		EQU $D40A
+NMIEN_DLI 	EQU $40 
+NMIEN_VBI 	EQU $80
+SDLST 		EQU $0230
+
 
 ; other var
 ; *********************************************
@@ -81,10 +83,10 @@ YLOC   	EQU   $FB ; $FC
 YLOC1  	EQU   $F1 ; $F2
 YLOC2  	EQU   $F3 ; $F4
 CHSET  	EQU   $F5 ; $F6 HI
-CTPOS1 	EQU $F7		; cactus position
-CTPOS2 	EQU $F9
-CTLOC1 	EQU $C3 ; $C4      ; Cactus location
-CTLOC2 	EQU $C5 ; $C6      ; Cactus location
+CTPOS1 	EQU   $F7		; cactus position
+CTPOS2 	EQU   $F9
+CTLOC1 	EQU   $C3 ; $C4      ; Cactus location
+CTLOC2 	EQU   $C5 ; $C6      ; Cactus location
 
 INITX  	EQU   $E0       ; Initial X value
 INITY  	EQU   $E1       ; Initial Y value
@@ -106,7 +108,7 @@ TMP3 	EQU $C1 ; $C2
 SNDVOICE EQU $C7      ; 0..3
 SNDPITCH EQU $C8      ; 0..255
 SNDDIST EQU $C9      ; 0..14 (even only)
-SNDVOL 	EQU $CA      ; 1..15 (0 = silence)
+SNDVOL EQU $CA      ; 1..15 (0 = silence)
 
 LEVEL 	EQU $CB
 DIST 	EQU $CC
@@ -114,14 +116,14 @@ DIST 	EQU $CC
 RTCLOK	EQU $12
 vcount	EQU $d40b
 
-SCTICKR EQU $83
-LEVELTICK EQU $84
+SCTICKR 	EQU $83
+LEVELTICK 	EQU $84
 ; score equates
-SCRELO 	EQU $80			; Score
-SCREMID EQU $81
-SCREHI 	EQU $82
+SCRELO 		EQU $80			; Score
+SCREMID 	EQU $81
+SCREHI 		EQU $82
 TITLE_SHOWN EQU $85	; flag to track if title has been shown
-zero 	EQU $86
+zero 		EQU $86
 
 	ORG $2400
 
@@ -273,9 +275,7 @@ skip_reset
 		STA TICKER     ; Low byte
 skip_move
 		CLC
-		JSR play_step_sound
 		JSR delay
-		JSR stop_sound
 		LDA SCTICKR
 		CMP #10
 		BNE skip_inc_score
@@ -284,9 +284,11 @@ skip_move
 		STA SCTICKR
 skip_inc_score
 		JSR READKEY
+		JSR play_step_sound
 		JSR score_msg
 		JSR print_score
-		JSR collision	
+		JSR collision
+		JSR stop_sound
 		JMP MAINLOOP
 	.endp
 
