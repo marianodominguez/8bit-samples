@@ -96,6 +96,55 @@ print_title_done
 		RTS
 	.endp
 
+		; Display Cactus
+	.proc DisplayCactus
+		; Clear the previous cactus
+		LDA #clr&255
+		STA STRADR
+		LDA #clr/256
+		STA STRADR+1
+		LDA #1
+		STA MAXLEN
+		CLC
+		LDA #100
+		ADC CTPOS1
+		ADC #1
+		PHA
+		JSR puts
+		LDA #119
+		ADC CTPOS1
+		ADC #1
+		PHA
+		JSR puts		
+		; print 1 char of cactus per column
+		LDA #c1&255
+		STA STRADR
+		LDA #c1/256
+		STA STRADR+1
+		LDA CTPOS1
+		CMP #1
+		BNE cont
+		LDA #clr&255 ;If reach 0 clear cactus
+		STA STRADR
+		LDA #clr/256
+		STA STRADR+1
+
+cont	LDA #1
+		STA MAXLEN
+		CLC
+		LDA #100
+		ADC CTPOS1 ; top row offset
+		PHA
+		JSR puts
+		INC STRADR
+		LDA #119
+		ADC CTPOS1 ; top row offset
+		PHA 
+		JSR puts
+		RTS
+	.endp
+
+
 	.proc install_dli
 
 		; --- Patch OS display list: set DLI trigger bit ($80) on screen lines ---
