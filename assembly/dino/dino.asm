@@ -258,12 +258,9 @@ cc2		CLC
 		LDA #255
 		STA CTPOS2  ; move cactus to the right side of the screen
 		LDA RANDOM  ; random byte 0-255
-		
-		LSR          ; divide by 2 0-128
-		LSR          ; divide again 0-64
-		LSR          ; divide again 0-32
+		AND #$1F      ; limit to 0-31
 		CLC
-		ADC #41      ; minimum distance between cacti 41-57
+		ADC #41      ; minimum distance between cacti 41-72
 		SBC LEVEL     ;level 1: 40, level 10: 31
 		
 		STA DIST
@@ -357,13 +354,13 @@ skip
 		STA SNDVOICE
 		LDA #$A8
 		STA SNDPITCH
-		LDA #100
+		LDA #10
 		STA SNDDIST
 		LDA #10
 		STA SNDVOL
 		JSR play_sound
 		LDX #$FF      ; Outer loop count
-		LDY #$0B      ; Inner loop count
+		LDY #$FF      ; Inner loop count
 		JSR delay
 		JSR stop_sound
 		RTS
@@ -1025,5 +1022,6 @@ NAME    .BYTE c"S:",$9B
 tabpp  .BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 lvl_colors .BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 	 	run start 	;Define run address
-table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
+;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
+table .byte $6A,$62,$60,$10,$10
 jump_a	.word 0
