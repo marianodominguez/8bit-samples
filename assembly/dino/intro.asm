@@ -111,21 +111,22 @@ print_title_done
 		LDA SDLST+1		; copy DL pointer high byte to TMP3+1
 		STA TMP3+1
 
-		LDY #3			; skip 3 leading $70 blank lines
-		LDA (TMP3),Y		; should be $47 (mode 7 + LMS bit)
-		ORA #$80		; add DLI trigger bit -> $C7
+		; Patch first 4 mode-7 lines with DLI trigger bit ($80)
+		; Line 1: offset 3 ($47 mode 7 + LMS)
+		LDY #3
+		LDA (TMP3),Y
+		ORA #$80
 		STA (TMP3),Y
 
-		LDY #7			; first plain mode byte (after LMS 2-byte addr at offsets 4,5)
+		; Lines 2-4: offsets 6, 7, 8 ($07 plain mode 7)
+		LDY #6
 dli_loop
-		LDA (TMP3),Y		; read display list byte
-		CPY #9		        ; $40+ = JVB variants ($41 plain, $42 LMS+JVB in split-screen)
-		BNE dli_done		; stop on any jump-back opcode
-		ORA #$80		; set DLI trigger bit
+		LDA (TMP3),Y
+		ORA #$80
 		STA (TMP3),Y
 		INY
-		BNE dli_loop		; safety: stop if Y wraps (>255 bytes)
-dli_done
+		CPY #9			; stop after offset 8 (4 lines total)
+		BNE dli_loop
 		
 		; Install DLI at $E000, with IRQ handler at $E002
 		LDA #$0

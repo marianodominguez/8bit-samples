@@ -118,6 +118,7 @@ vcount	EQU $d40b
 
 SCTICKR 	EQU $83
 LEVELTICK 	EQU $84
+STPTICK 	EQU $87
 ; score equates
 SCRELO 		EQU $80			; Score
 SCREMID 	EQU $81
@@ -224,6 +225,8 @@ GAME_START
 		STA DIST
 MAINLOOP
 		CLC
+		JSR stop_sound
+		INC STPTICK
 		INC SCTICKR
 		INC TICKER
 		LDA TICKER
@@ -231,6 +234,14 @@ MAINLOOP
 		BCC skip_move
 		DEC CTPOS1
 		DEC CTPOS2
+		LDA STPTICK
+		CMP #10
+		BNE skip_snd
+		LDA #0
+		STA STPTICK
+		JSR play_step_sound
+skip_snd 
+		NOP
 skip_inc
 		CLC
 		LDA CTPOS1   ; if cactus is too close to the left side of the screen
@@ -250,9 +261,10 @@ cc2		CLC
 		
 		LSR          ; divide by 2 0-128
 		LSR          ; divide again 0-64
+		LSR          ; divide again 0-32
 		CLC
-		ADC #34      ; minimum distance between cacti 34-100
-		SBC LEVEL     ;level 1: 33, level 10: 24
+		ADC #41      ; minimum distance between cacti 41-57
+		SBC LEVEL     ;level 1: 40, level 10: 31
 		
 		STA DIST
 
@@ -275,6 +287,8 @@ skip_reset
 		STA TICKER     ; Low byte
 skip_move
 		CLC
+		LDX #$FF      ; Outer loop count
+		LDY #$0B      ; Inner loop count
 		JSR delay
 		LDA SCTICKR
 		CMP #10
@@ -284,11 +298,9 @@ skip_move
 		STA SCTICKR
 skip_inc_score
 		JSR READKEY
-		JSR play_step_sound
 		JSR score_msg
 		JSR print_score
 		JSR collision
-		JSR stop_sound
 		JMP MAINLOOP
 	.endp
 
@@ -350,6 +362,8 @@ skip
 		LDA #10
 		STA SNDVOL
 		JSR play_sound
+		LDX #$FF      ; Outer loop count
+		LDY #$0B      ; Inner loop count
 		JSR delay
 		JSR stop_sound
 		RTS
@@ -964,9 +978,11 @@ wait	cmp RTCLOK+2    ; Has it changed yet?
 		RTS
 	.endp
 
+	; Delay routine
+	; Input: X = outer loop count, Y = inner loop count
 	.proc delay
-		LDX #$FF      ; Outer loop counter
-OUTER   LDY #$0B      ; Inner loop counter
+		STY TMP1      ; Save inner loop count
+OUTER   LDY TMP1      ; Reset inner loop counter
 INNER   DEY
         BNE INNER
         DEX
@@ -1009,5 +1025,5 @@ NAME    .BYTE c"S:",$9B
 tabpp  .BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 lvl_colors .BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 	 	run start 	;Define run address
-table .byte 4,20,36,52,68,84,100,116,132,148,164,180,196,212,228,244,148
+table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
 jump_a	.word 0
