@@ -125,6 +125,9 @@ SCREMID 	EQU $81
 SCREHI 		EQU $82
 TITLE_SHOWN EQU $85	; flag to track if title has been shown
 zero 		EQU $86
+LEG_FRME	EQU $88
+LEG_LOC1	EQU $89 ; %8a
+LEG_LOC2	EQU $90 ; %91
 
 	ORG $2400
 
@@ -211,6 +214,7 @@ GAME_START
 
 		; *** Start actual game here ***
 		LDA #0
+		STA LEG_FRME
 		STA LEVEL
 		STA LEVELTICK
 		STA TICKER
@@ -240,20 +244,20 @@ MAINLOOP
 		LDA #0
 		STA STPTICK
 		JSR play_step_sound
+		JSR animate_leg
 skip_snd 
 		NOP
 skip_inc
 		CLC
 		LDA CTPOS1   ; if cactus is too close to the left side of the screen
-		CMP #20
+		CMP #10
 		BNE cc2
 		LDA #255
-		SBC DIST
 		STA CTPOS1
 		
 cc2		CLC
 		LDA CTPOS2
-		CMP #20
+		CMP #10
 		BNE skip_reset		; if greater than 50, keep going
 		LDA #255
 		STA CTPOS2  ; move cactus to the right side of the screen
@@ -304,6 +308,82 @@ skip_inc_score
 ; **************************************
 ; Subroutines
 ; **************************************
+
+	.proc animate_leg
+		PHA
+		TYA
+		PHA
+		CLC
+		LDA YLOC1
+		ADC #16
+		STA LEG_LOC2
+		LDA YLOC1+1
+		ADC #0
+		STA LEG_LOC2+1
+
+		CLC
+		LDA YLOC
+		ADC #16
+		STA LEG_LOC1
+		LDA YLOC+1
+		ADC #0
+		STA LEG_LOC1+1
+		
+		CLC
+		LDA LEG_FRME
+		CMP #1
+		BEQ lleg1
+		CMP #2
+		BEQ lleg2
+		CMP #3
+		BEQ lleg3
+
+lleg0	LDY #0
+loop	LDA fr1,Y
+		STA (LEG_LOC1),Y
+		INY
+		CPY #8
+		BNE loop
+		LDA #1
+		STA LEG_FRME
+		JMP end_leg
+
+lleg1	
+		LDY #0
+loop2	LDA leg1,Y
+		STA (LEG_LOC1),Y
+		INY
+		CPY #8
+		BNE loop2
+		LDA #2
+		STA LEG_FRME
+		JMP end_leg
+
+lleg2	LDY #0
+loop3	LDA leg2,Y
+		STA (LEG_LOC2),Y
+		INY
+		CPY #8
+		BNE loop3
+		LDA #3
+		STA LEG_FRME
+		JMP end_leg
+
+lleg3	LDY #0
+loop4	LDA fr2,Y
+		STA (LEG_LOC2),Y
+		INY
+		CPY #8
+		BNE loop4
+		LDA #0
+		STA LEG_FRME
+
+end_leg
+		PLA
+		TYA
+		PLA
+		RTS
+	.endp
 
 	.proc collision
 		CLC

@@ -215,10 +215,6 @@ my_dli	PHA
 		sta WSYNC
 		sta COLBK
 		inc zero
-		;cpx #16
-		;bne skip_reset
-		;ldx #0
-		;stx zero
 skip_reset
 		pla
 		tax
