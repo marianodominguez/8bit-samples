@@ -128,6 +128,7 @@ zero 		EQU $86
 LEG_FRME	EQU $88
 LEG_LOC1	EQU $89 ; %8a
 LEG_LOC2	EQU $90 ; %91
+EYE_LOC		EQU $92
 
 	ORG $2400
 
@@ -196,6 +197,7 @@ module
 		PHA
 		JSR puts
 GAME_START
+		JSR reset_eye
 		LDA #blanks&255
 		STA STRADR
 		LDA #blanks/256
@@ -319,6 +321,33 @@ skip_inc_score
 ; **************************************
 ; Subroutines
 ; **************************************
+	.proc animate_eye
+		LDA YLOC1
+		STA EYE_LOC
+		LDA YLOC1+1
+		STA EYE_LOC+1
+		LDY #0
+loop	LDA eye,Y
+		STA (EYE_LOC),Y
+		INY
+		CPY #8
+		BNE loop
+		RTS
+	.endp
+
+	.proc reset_eye
+		LDA YLOC1
+		STA EYE_LOC
+		LDA YLOC1+1
+		STA EYE_LOC+1
+		LDY #0
+loop	LDA player1,Y
+		STA (EYE_LOC),Y
+		INY
+		CPY #8
+		BNE loop
+		RTS
+	.endp
 
 	.proc animate_leg
 		PHA
@@ -429,6 +458,7 @@ collide
 		LDA #1 ; top row offset
 		PHA
 		JSR puts
+		JSR animate_eye
 wait_start
 		; wait for start key
 		LDA CONSOL
