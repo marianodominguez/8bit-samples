@@ -16,9 +16,9 @@ ICAX2 	EQU    $034B
 CIOV  	EQU    $E456
 GRACTL 	EQU	   $D01D
 NMIEN	EQU    $D40E
-VVBLKI EQU 	   $0222
-VVBLKD EQU 	   $0224
-VDSLST EQU 	   $0200
+VVBLKI  EQU    $0222
+VVBLKD  EQU    $0224
+VDSLST  EQU    $0200
 
 ; sys equates
 RAMTOP 	EQU  106
@@ -35,7 +35,7 @@ COLPF0 EQU $D016
 COLPF1 EQU $D017
 COLPF2 EQU $D018
 COLPF3 EQU $D019
-COLBK EQU $D01A
+COLBK  EQU $D01A
 SETVBV EQU $E45C
 
 SAVMSC 	EQU  $58
@@ -272,7 +272,7 @@ cc2		CLC
 		LDA RANDOM  ; random byte 0-255
 		; test min distance
 		AND #$1F      ; limit to 0-31
-		ADC #24		; value 24-55
+		ADC #24			; value 24-55
 		STA DIST
 		CLC
 		LDX LEVEL
@@ -1089,13 +1089,13 @@ pressstart 	.BYTE " *** PRESS START TO BEGIN ***",$9B
 score 	    .BYTE "   SCORE:                    ",$9B
 gameover 	.BYTE "*** GAME OVER ***",$9B
 ; Snappier, faster peak
-title	.BYTE "  THE JUMPY DINO!  ",$9B
-jumpseq	.BYTE 2,4,8,12,16,12,12,4,2,0
-NAME    .BYTE c"S:",$9B
-tabpp  .BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
-lvl_colors .BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
+title		.BYTE "  THE JUMPY DINO!  ",$9B
+jumpseq		.BYTE 2,4,8,12,16,12,12,4,2,0
+NAME    	.BYTE c"S:",$9B
+tabpp  		.BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
+lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 	 	run start 	;Define run address
 ;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
-table .byte $6A,$62,$60,$10,$10
-min_dist .byte 40,38,36,34,32,30,28,26,24,22,20
-jump_a	.word 0
+table 		.byte $6A,$62,$60,$10,$10
+min_dist 	.byte 40,38,36,34,32,30,28,26,24,22,20
+jump_a		.word 0
