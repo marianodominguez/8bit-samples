@@ -221,7 +221,7 @@ GAME_START
 		STA SCRELO
 		STA SCREMID
 		STA SCREHI     
-		LDA #200
+		LDA #255
 		STA CTPOS1
 		LDA #255
 		STA CTPOS2
@@ -237,7 +237,13 @@ MAINLOOP
 		CMP #1
 		BCC skip_move
 		DEC CTPOS1
+		
+		LDA CTPOS2
+		SBC CTPOS1
+		CMP DIST
+		BCC skip_dec
 		DEC CTPOS2
+skip_dec		
 		LDA STPTICK
 		CMP #10
 		BNE skip_snd
@@ -262,11 +268,16 @@ cc2		CLC
 		LDA #255
 		STA CTPOS2  ; move cactus to the right side of the screen
 		LDA RANDOM  ; random byte 0-255
+		; test min distance
 		AND #$1F      ; limit to 0-31
+		ADC #24		; value 24-55
+		STA DIST
 		CLC
-		ADC #41      ; minimum distance between cacti 41-72
-		SBC LEVEL     ;level 1: 40, level 10: 31
-		
+		LDX LEVEL
+		LDA min_dist,X
+		CMP DIST
+		BCC skip_reset
+		LDA #8
 		STA DIST
 
 skip_reset
@@ -1056,4 +1067,5 @@ lvl_colors .BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 	 	run start 	;Define run address
 ;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
 table .byte $6A,$62,$60,$10,$10
+min_dist .byte 40,38,36,34,32,30,28,26,24,22,20
 jump_a	.word 0
