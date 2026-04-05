@@ -102,7 +102,6 @@ JMPPOS 	EQU   $EB		; jump position
 JMPIDX 	EQU   $ED		; jump index
 JMPNG 	EQU   $EF		; is the dino jumping?
 
-
 TICKER 	EQU $C0		; intro tick counter (1 byte)
 TMP3 	EQU $C1 ; $C2
 SNDVOICE EQU $C7      ; 0..3
@@ -234,18 +233,9 @@ MAINLOOP
 		JSR stop_sound
 		INC STPTICK
 		INC SCTICKR
-		INC TICKER
-		LDA TICKER
-		CMP #1
-		BCC skip_move
-		DEC CTPOS1
-		
-		LDA CTPOS2
-		SBC CTPOS1
-		CMP DIST
-		BCC skip_dec
-		DEC CTPOS2
-skip_dec		
+
+		JSR level_move
+cont
 		LDA STPTICK
 		CMP #10
 		BNE skip_snd
@@ -272,7 +262,7 @@ cc2		CLC
 		LDA RANDOM  ; random byte 0-255
 		; test min distance
 		AND #$1F      ; limit to 0-31
-		ADC #24			; value 24-55
+		ADC #38			; value 38-69	
 		STA DIST
 		CLC
 		LDX LEVEL
@@ -297,8 +287,6 @@ skip_reset
 		STA HPOSM0+1
 		ADC #2
 		STA HPOSM0
-		LDA #0
-		STA TICKER     ; Low byte
 skip_move
 		CLC
 		LDX #$FF      ; Outer loop count
@@ -316,6 +304,35 @@ skip_inc_score
 		JSR print_score
 		JSR collision
 		JMP MAINLOOP
+	.endp
+
+	.proc level_move
+		INC TICKER
+		DEC CTPOS1		
+		LDA CTPOS2
+		SBC CTPOS1
+		CMP DIST
+		BCC skip_dec
+		DEC CTPOS2
+		LDA LEVEL
+		CMP #5
+		BCC skip_dec
+		LDA TICKER
+		CLC
+		LDA #10
+		SBC LEVEL
+		CMP TICKER
+		BNE skip_dec
+		DEC CTPOS1
+		LDA CTPOS2
+		SBC CTPOS1
+		CMP DIST
+		BCC skip_dec
+		DEC CTPOS2
+		LDA #0
+		STA TICKER
+skip_dec
+		RTS
 	.endp
 
 ; **************************************
@@ -508,12 +525,12 @@ skip
 		CMP #10
 		BCS skip_level_inc
 		INC LEVEL
-		JSR play_hit_sound
+		JSR play_level_sound
 		LDX LEVEL
 		LDA lvl_colors,X
 		STA COLOR4
-		SBC #2
-		STA COLOR2
+		;SBC #2
+		;STA COLOR2
 skip_level_inc
 		CLC
 		LDA #$0E
@@ -796,6 +813,35 @@ jp		JSR jump
 retk	RTS			
 	.endp
 
+	.proc play_level_sound
+		LDA #0
+		STA SNDVOICE
+		LDA #$F2
+		STA SNDPITCH
+		LDA #10
+		STA SNDDIST
+		LDA #10
+		STA SNDVOL
+		JSR play_sound
+		LDX #$FF      ; Outer loop count
+		LDY #$FF      ; Inner loop count
+		JSR delay
+		LDA #0
+		STA SNDVOICE
+		LDA #$30
+		STA SNDPITCH
+		LDA #10
+		STA SNDDIST
+		LDA #10
+		STA SNDVOL
+		JSR play_sound
+		LDX #$FF      ; Outer loop count
+		LDY #$FF      ; Inner loop count
+		JSR delay
+		JSR stop_sound
+		RTS
+	.endp
+
 	.proc play_step_sound
 		LDA #0
 		STA SNDVOICE
@@ -950,9 +996,9 @@ LEFT
 		STA HPOSP0+2
 		RTS          ; Back to MAIN - we're done
  
- ; ******************************
- ; Now right movement
- ; ******************************
+		; ******************************
+		; Now right movement
+		; ******************************
 RIGHT	INC XLOC     ; To move it right
 		LDA XLOC     ; Get it
 		STA HPOSP0   ; Move it
@@ -1097,5 +1143,5 @@ lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 	 	run start 	;Define run address
 ;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
 table 		.byte $6A,$62,$60,$10,$10
-min_dist 	.byte 40,38,36,34,32,30,28,26,24,22,20
+min_dist 	.byte 55,50,50,45,45,40,40,40,40,30,30
 jump_a		.word 0
