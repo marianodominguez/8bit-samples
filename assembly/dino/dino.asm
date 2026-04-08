@@ -314,9 +314,6 @@ skip_inc_score
 		CMP DIST
 		BCC skip_dec
 		DEC CTPOS2
-		LDA LEVEL
-		CMP #5
-		BCC skip_dec
 		LDA TICKER
 		CLC
 		LDA #10
