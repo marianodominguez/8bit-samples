@@ -312,22 +312,22 @@ skip_inc_score
 		LDA CTPOS2
 		SBC CTPOS1
 		CMP DIST
-		BCC skip_dec
+		BCC skip
 		DEC CTPOS2
-		LDA TICKER
+skip	LDA TICKER
 		CLC
 		LDA #10
 		SBC LEVEL
 		CMP TICKER
 		BNE skip_dec
+		LDA #0
+		STA TICKER
 		DEC CTPOS1
 		LDA CTPOS2
 		SBC CTPOS1
 		CMP DIST
 		BCC skip_dec
 		DEC CTPOS2
-		LDA #0
-		STA TICKER
 skip_dec
 		RTS
 	.endp
