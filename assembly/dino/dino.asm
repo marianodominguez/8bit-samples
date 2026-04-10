@@ -177,7 +177,7 @@ module
 		jsr music.init_song
 
 		; init intro tick counter
-		LDA #0
+reset	LDA #0
 		STA TICKER
 		LDA #19
 		STA CTPOS1
@@ -223,7 +223,7 @@ GAME_START
 		STA SCRELO
 		STA SCREMID
 		STA SCREHI
-		LDA #10
+		LDA #11
 		STA SPDDELAY   
 		LDA #255
 		STA CTPOS1
@@ -306,7 +306,57 @@ skip_inc_score
 		JSR score_msg
 		JSR print_score
 		JSR collision
+		LDA SCRELO
+		CMP #200
+		BEQ GAME_OVER
 		JMP MAINLOOP
+	.endp
+
+	.proc GAME_OVER
+		JSR stop_sound
+		LDA #win_msg&255
+		STA STRADR
+		LDA #win_msg/256
+		STA STRADR+1
+		LDA #19
+		STA MAXLEN
+		LDA #0
+		PHA
+		LDA #0
+		PHA
+		JSR putstring
+
+		LDA #pressstart&255
+		STA STRADR
+		LDA #pressstart/256
+		STA STRADR+1
+		LDA #16
+		STA MAXLEN
+		LDA #0
+		PHA
+		LDA #13
+		PHA
+		JSR putstring
+
+		JSR wait_lp
+		JSR wait_start
+		LDA #blanks&255
+		STA STRADR
+		LDA #blanks/256
+		STA STRADR+1
+		LDA #19
+		STA MAXLEN
+		LDA #0
+		PHA
+		LDA #0
+		PHA
+		JSR putstring
+		LDA #0
+		PHA
+		LDA #13
+		PHA
+		JSR putstring
+		JMP start.GAME_START
 	.endp
 
 	.proc level_move
@@ -474,16 +524,34 @@ collide
 		LDA #1 ; top row offset
 		PHA
 		JSR puts
+		LDA #pressstart&255
+		STA STRADR
+		LDA #pressstart/256
+		STA STRADR+1
+		LDA #16
+		STA MAXLEN
+		LDA #0
+		PHA
+		LDA #12
+		PHA
+		JSR putstring
 		JSR animate_eye
-wait_start
-		; wait for start key
-		LDA CONSOL
-		CMP #6
-		BNE skip
+		JSR wait_start
 		JMP start.GAME_START
 skip
 		JSR wait_lp
 		JMP wait_start
+	.endp
+
+
+	.proc wait_start
+		; wait for start key
+		LDA CONSOL
+		CMP #6
+		BEQ end
+		JSR wait_lp
+		JMP wait_start
+end		RTS
 	.endp
 
 	.proc play_hit_sound
@@ -635,7 +703,7 @@ skip_level_inc
 		STA CTPOS2
 		LDA #0
 		STA LEVEL
-		LDA #10
+		LDA #11
 		STA SPDDELAY
 		RTS
 	.endp		
@@ -1138,6 +1206,7 @@ score 	    .BYTE "   SCORE:                    ",$9B
 gameover 	.BYTE "*** GAME OVER ***",$9B
 ; Snappier, faster peak
 title		.BYTE "  THE JUMPY DINO!  ",$9B
+win_msg .BYTE "*** MAX SCORE ! ***",$9B
 jumpseq		.BYTE 2,4,8,12,16,12,12,4,2,0
 NAME    	.BYTE c"S:",$9B
 tabpp  		.BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
