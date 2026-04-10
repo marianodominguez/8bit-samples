@@ -109,8 +109,9 @@ SNDPITCH EQU $C8      ; 0..255
 SNDDIST EQU $C9      ; 0..14 (even only)
 SNDVOL EQU $CA      ; 1..15 (0 = silence)
 
-LEVEL 	EQU $CB
-DIST 	EQU $CC
+LEVEL 		EQU $CB
+DIST 		EQU $CC
+SPDDELAY	EQU $CD
 
 RTCLOK	EQU $12
 vcount	EQU $d40b
@@ -221,7 +222,9 @@ GAME_START
 		STA TICKER
 		STA SCRELO
 		STA SCREMID
-		STA SCREHI     
+		STA SCREHI
+		LDA #10
+		STA SPDDELAY   
 		LDA #255
 		STA CTPOS1
 		LDA #255
@@ -316,8 +319,7 @@ skip_inc_score
 		DEC CTPOS2
 skip	LDA TICKER
 		CLC
-		LDA #10
-		SBC LEVEL
+		LDA SPDDELAY
 		CMP TICKER
 		BNE skip_dec
 		LDA #0
@@ -522,6 +524,7 @@ skip
 		CMP #10
 		BCS skip_level_inc
 		INC LEVEL
+		DEC SPDDELAY
 		JSR play_level_sound
 		LDX LEVEL
 		LDA lvl_colors,X
@@ -632,6 +635,8 @@ skip_level_inc
 		STA CTPOS2
 		LDA #0
 		STA LEVEL
+		LDA #10
+		STA SPDDELAY
 		RTS
 	.endp		
 	
@@ -1140,5 +1145,5 @@ lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 	 	run start 	;Define run address
 ;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
 table 		.byte $6A,$62,$60,$10,$10
-min_dist 	.byte 55,50,50,45,45,40,40,40,40,30,30
+min_dist 	.byte 55,50,50,45,45,40,40,35,35,30,24
 jump_a		.word 0
