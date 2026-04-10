@@ -306,8 +306,8 @@ skip_inc_score
 		JSR score_msg
 		JSR print_score
 		JSR collision
-		LDA SCRELO
-		CMP #200
+		LDA SCREHI
+		CMP #$FF
 		BEQ GAME_OVER
 		JMP MAINLOOP
 	.endp
@@ -1214,5 +1214,5 @@ lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 	 	run start 	;Define run address
 ;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
 table 		.byte $6A,$62,$60,$10,$10
-min_dist 	.byte 55,50,50,45,45,40,40,35,35,30,24
+min_dist 	.byte 60,60,50,45,45,40,40,35,35,30,24
 jump_a		.word 0
