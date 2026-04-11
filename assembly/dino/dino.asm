@@ -249,21 +249,24 @@ cont
 skip_snd 
 		NOP
 skip_inc
+
 		CLC
 		LDA CTPOS1   ; if cactus is too close to the left side of the screen
-		CMP #10
-		BNE cc2
+		CMP #8
+		BCS cc2
 		LDA #255
 		STA CTPOS1
 		
 cc2		CLC
 		LDA CTPOS2
-		CMP #10
-		BNE skip_reset		; if greater than 50, keep going
+		CMP #8
+		BCS skip_reset		; if greater than 50, keep going
 		LDA #255
 		STA CTPOS2  ; move cactus to the right side of the screen
+		
 		LDA RANDOM  ; random byte 0-255
 		; test min distance
+		
 		AND #$1F      ; limit to 0-31
 		ADC #38			; value 38-69	
 		STA DIST
@@ -271,7 +274,7 @@ cc2		CLC
 		LDX LEVEL
 		LDA min_dist,X
 		CMP DIST
-		BCC skip_reset
+		BCS skip_reset
 		LDA #8
 		STA DIST
 
@@ -601,10 +604,10 @@ end		RTS
 		;STA COLOR2
 skip_level_inc
 		CLC
-		LDA #$0E
-		STA PCOLR0
-		STA PCOLR0+1
-		STA PCOLR0+2
+		; LDA #$0E
+		; STA PCOLR0
+		; STA PCOLR0+1
+		; STA PCOLR0+2
 		RTS
 	.endp
 
@@ -1205,8 +1208,8 @@ pressstart 	.BYTE " *** PRESS START TO BEGIN ***",$9B
 score 	    .BYTE "   SCORE:                    ",$9B
 gameover 	.BYTE "*** GAME OVER ***",$9B
 ; Snappier, faster peak
-title		.BYTE "  THE JUMPY DINO!  ",$9B
-win_msg .BYTE "*** MAX SCORE ! ***",$9B
+title		.BYTE "  THE JUMPY DINO  ",$9B
+win_msg .BYTE "*** MAX SCORE ***",$9B
 jumpseq		.BYTE 2,4,8,12,16,12,12,4,2,0
 NAME    	.BYTE c"S:",$9B
 tabpp  		.BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
@@ -1214,5 +1217,5 @@ lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 	 	run start 	;Define run address
 ;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
 table 		.byte $6A,$62,$60,$10,$10
-min_dist 	.byte 60,60,50,45,45,40,40,35,35,30,24
+min_dist 	.byte 65,60,60,60,55,55,50,45,45,40,38
 jump_a		.word 0

@@ -28,9 +28,9 @@
 		; auto-jump every ~50 frames (~1 second)
 		INC TICKER
 		LDA TICKER
-		CMP #40
+		CMP #30
 		BEQ move_cactus
-		CMP #50
+		CMP #150
 		BCC intro_no_jump
 		LDA #0
 		STA TICKER
