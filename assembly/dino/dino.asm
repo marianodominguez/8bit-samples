@@ -337,7 +337,7 @@ skip_inc_score
 		STA MAXLEN
 		LDA #0
 		PHA
-		LDA #13
+		LDA #15
 		PHA
 		JSR putstring
 
@@ -351,12 +351,12 @@ skip_inc_score
 		STA MAXLEN
 		LDA #0
 		PHA
-		LDA #0
+		LDA #15
 		PHA
 		JSR putstring
 		LDA #0
 		PHA
-		LDA #13
+		LDA #16
 		PHA
 		JSR putstring
 		JMP start.GAME_START
@@ -524,9 +524,11 @@ collide
 		STA STRADR+1
 		LDA #17
 		STA MAXLEN
-		LDA #1 ; top row offset
+		LDA #0 ; row offset
 		PHA
-		JSR puts
+		LDA #14 ; col offset
+		PHA
+		JSR putstring
 		LDA #pressstart&255
 		STA STRADR
 		LDA #pressstart/256
@@ -535,15 +537,33 @@ collide
 		STA MAXLEN
 		LDA #0
 		PHA
-		LDA #12
+		LDA #15
 		PHA
 		JSR putstring
 		JSR animate_eye
 		JSR wait_start
-		JMP start.GAME_START
+
 skip
 		JSR wait_lp
-		JMP wait_start
+		JSR wait_start
+		LDA #blanks&255
+		STA STRADR
+		LDA #blanks/256
+		STA STRADR+1
+		LDA #17
+		STA MAXLEN
+		LDA #0 ; row offset
+		PHA
+		LDA #14 ; col offset
+		PHA
+		JSR putstring
+		LDA #0 ; row offset
+		PHA
+		LDA #15 ; col offset
+		PHA
+		JSR putstring
+		JMP start.GAME_START
+		RTS
 	.endp
 
 
@@ -1203,7 +1223,7 @@ c2 		.BYTE "!"+128,"!"+129,$9B
 c3 		.BYTE "!"+132,"!"+133,$9B
 clr 	.BYTE " ",$9B
 
-blanks		.BYTE "                    ",$9B
+blanks		.BYTE "                      ",$9B
 pressstart 	.BYTE " *** PRESS START TO BEGIN ***",$9B
 score 	    .BYTE "   SCORE:                    ",$9B
 gameover 	.BYTE "*** GAME OVER ***",$9B
