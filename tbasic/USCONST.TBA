@@ -1,0 +1,20 @@
+10 GRAPHICS 0:DIM A$(40):POKE $C0,0
+20 SCR=PEEK(88)*256:DL=PEEK(560)+256*PEEK(561)
+30 FOR I=0 TO 10:POKE DL+6+I,PEEK(DL+6+I)+128:NEXT I
+35 FOR I=11 TO 20:POKE DL+6+I,2:NEXT I
+40 FOR I=0 TO 39:READ A:POKE 1536+I,A:NEXT I
+50 DATA 72,138,72,162,0,173,11,212,201,10,240,24,24,165,192,105,19,133,192,232,236,11,212,208,246,173,11,212,141,10,212,165,192,141,24,208,104,170,104,64
+60 POKE 512,0:POKE 513,6
+70 POKE 54286,192
+100 FOR I=0 TO 9:READ A$:PRINT A$:NEXT I
+110 data    Preamble of US Constitution
+120 data We the People of the United States
+130 data in Order to form a more perfect Union.
+140 data establish Justice. insure domestic
+150 data Tranquility. provide for the common
+160 data defence. promote the general Welfare
+170 data and secure the Blessings of Liberty
+180 data to ourselves and our Posterity. do
+190 data ordain and establish this Constitution
+200 data for the United States of America.
+300 GOTO 300

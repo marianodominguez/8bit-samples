@@ -1,0 +1,35 @@
+mads 2.1.4
+Source: rainbow.asm
+     1 = 022F			SDMCTL = $022F ;Disable screen DMA 
+     2 = D40B			VCOUNT = $D40B
+     3 = D40A			WSYNC  = $D40A
+     4 = D01A			COLOR4 = $D01A
+     5 = D018			COLOR2 = $D018
+     6 = 0014			RTCLOK = $14
+     7 = 00C0			COLVAL = $C0
+     8
+     9 				    ORG $0600
+    10 FFFF> 0600-0627> 48	    PHA
+    11 0601 8A			    TXA
+    12 0602 48			    PHA
+    13 0603 A2 00		    LDX #0
+    14 0605 AD 0B D4		    LDA VCOUNT
+    15 0608 C9 0A		    CMP #10
+    16 060A F0 18		    BEQ done
+    17 060C 18			    CLC
+    18 060D A5 C0		    LDA COLVAL
+    19 060F			loop 
+    20 060F 69 13		    ADC #19
+    21 0611 85 C0		    STA COLVAL
+    22 0613 E8			    INX
+    23 0614 EC 0B D4		    CPX VCOUNT
+    24 0617 D0 F6		    BNE loop
+    25 0619 AD 0B D4		    LDA VCOUNT
+    26 061C 8D 0A D4		    STA WSYNC
+    27 061F A5 C0		    LDA COLVAL
+    28 0621 8D 18 D0		    STA COLOR2
+    29 0624			done
+    30 0624 68			    PLA
+    31 0625 AA			    TAX    
+    32 0626 68			    PLA
+    33 0627 40			    RTI
