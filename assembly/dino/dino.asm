@@ -43,6 +43,9 @@ CHARSET1 	EQU $E000
 CHBAS  		EQU  $2F4
 KEYPRES 	EQU $2FC
 CONSOL  	EQU $D01F		; Console keys (START=bit0)
+
+PTRIG		EQU $D010
+
 PRIOR		EQU $D01B
 GPRIOR		EQU $26F
 STICK  	EQU   $D300     ; PORTA - Hardware STICK(0) location
@@ -882,6 +885,20 @@ loop
 		LDA JMPNG
 		CMP #1
 		BEQ jp
+		LDA STICK
+		AND #1
+		BNE skip_joy
+		LDA #1
+		STA JMPNG
+		JMP jp
+skip_joy
+		LDA PTRIG
+		AND #1
+		BNE skip_fire
+		LDA #1
+		STA JMPNG
+		JMP jp
+skip_fire
 		LDA KEYPRES
 		CMP #33
 		BNE retk
