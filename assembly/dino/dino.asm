@@ -269,15 +269,16 @@ cc2		CLC
 		
 		LDA RANDOM  ; random byte 0-255
 		; test min distance
-		
+
 		AND #$1F      ; limit to 0-31
-		ADC #38			; value 38-69	
+		ADC #50			; value 50-81	
+		
 		STA DIST
 		CLC
 		LDX LEVEL
 		LDA min_dist,X
 		CMP DIST
-		BCS skip_reset
+		BCC skip_reset
 		LDA #8
 		STA DIST
 
@@ -1254,5 +1255,5 @@ lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 	 	run start 	;Define run address
 ;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
 table 		.byte $6A,$62,$60,$10,$10
-min_dist 	.byte 65,60,60,60,55,55,50,45,45,40,38
+min_dist 	.byte 65,60,55,50,40,35,30,20,20,20,16
 jump_a		.word 0
