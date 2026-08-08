@@ -61,13 +61,21 @@ START            ; Main music playback entry point
     STA tick
     INC note
     LDA note
-    CMP #34
+    CMP #35
     BNE SKIP_RESET
     LDX #0
     STX note
     STX tick
     
 SKIP_RESET
+    SOUND 0,0,0,0
+
+    LDX #0
+DELAY
+    INX
+    CPX #$ff
+    BNE DELAY
+    
     SOUND 0,pitch,10,8 ; Play current note on voice 0
 SKIP
     INC tick
@@ -78,12 +86,17 @@ DEBUG            ; Helper to save A into zero page using Y offset
     RTS
 
 TABLE
-    .BYTE 0,35,40,45,47,53,57,53,72,81, \
-          91,96,108,114,108,144,162,182,193, \
-          217,230,33,230,193,162,136,121,96,81, \
-          68,108,91,72,53
+    .BYTE 35,40,45,47,53,57,53,\
+          72,81,91,96,108,114,108,\
+          144,162,182,193,217,230,66,\
+          230,193,162,136,121,96,81,\
+          68,108,91,72,53,0,0
 TEMPO
-    .BYTE 10,10,10,40,10,10,10,10,10,40,10,10,40,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10
+    .BYTE 10,10,40,10,10,10,10,\
+          10,40,10,10,40,10,10,\
+          10,10,10,10,10,10,10,\
+          10,10,10,10,10,10,10,\
+          10,10,10,10,10,10,40
     RUN VBI
     END
 
