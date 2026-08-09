@@ -61,7 +61,7 @@ START            ; Main music playback entry point
     STA tick
     INC note
     LDA note
-    CMP #35
+    CMP #41
     BNE SKIP_RESET
     LDX #0
     STX note
@@ -71,10 +71,10 @@ SKIP_RESET
     SOUND 0,0,0,0
 
     LDX #0
-DELAY
-    INX
-    CPX #$ff
-    BNE DELAY
+; DELAY
+;     INX
+;     CPX #10
+;     BNE DELAY
     
     SOUND 0,pitch,10,8 ; Play current note on voice 0
 SKIP
@@ -86,23 +86,25 @@ DEBUG            ; Helper to save A into zero page using Y offset
     RTS
 
 TABLE
-    .BYTE 35,40,45,47,53,57,53,\
-          72,81,91,96,108,114,108,\
+    .BYTE 35,40,35,0,40,45,47,53,57,53,0,\
+          72,81,72,0,96,91,114,108,0,\
           144,162,182,193,217,230,66,\
           230,193,162,136,121,96,81,\
           68,108,91,72,53,0,0
 TEMPO
-    .BYTE 10,10,40,10,10,10,10,\
-          10,40,10,10,40,10,10,\
-          10,10,10,10,10,10,10,\
-          10,10,10,10,10,10,10,\
-          10,10,10,10,10,10,40
+    .BYTE 10,\
+          10,10,40,10,10,10,10,20,20,20,\
+          10,\
+          10,10,40,10,20,20,20,20,30,\
+          10,10,40,10,10,10,10,\
+          10,10,40,20,20,20,20,\
+          20,20,20,20,20,20,40
     RUN VBI
     END
 
 ; Song notes sequence in table order:
-; A5, G5, F5, E5, D5, C#5, D5,
-; A4, G4, F4, E4, D4, C#4, D4,
+; A5, G5, A5,, G5, F5, E5, D5, C#5, D5
+; A4, G4, A4, E4, F4, C#4, D4,,
 ; A3, G3, F3, E3, D3, C#3, Bb2,
 ; C#3, E3, G3, Bb3, C#4, E4, G4, Bb4,
 ; D4, F4, A4, D5
