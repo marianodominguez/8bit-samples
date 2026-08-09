@@ -53,10 +53,11 @@ START            ; Main music playback entry point
     STA pitch      ; Store current pitch
 
     LDA TEMPO,X
+    INC tick
     LDY #1
     JSR DEBUG
     CMP tick
-    BNE SKIP
+    BNE PLAY_NOTE
     LDA #0
     STA tick
     INC note
@@ -66,8 +67,14 @@ START            ; Main music playback entry point
     LDX #0
     STX note
     STX tick
-    
+
 SKIP_RESET
+    LDX note
+PLAY_NOTE
+    LDA TABLE,X
+    STA COLOR0+4   ; Change color for visual feedback
+    STA pitch      ; Store current pitch
+
     SOUND 0,0,0,0
 
 ;    LDX #0
@@ -78,7 +85,6 @@ SKIP_RESET
     
     SOUND 0,pitch,10,8 ; Play current note on voice 0
 SKIP
-    INC tick
     JMP XITVBV
 
 DEBUG            ; Helper to save A into zero page using Y offset
@@ -92,12 +98,10 @@ TABLE
           230,193,162,136,121,96,81,\
           68,108,91,72,53,0,0
 TEMPO
-    .BYTE 10,\
-          10,10,40,10,10,10,10,20,20,20,\
-          10,\
+    .BYTE 10,10,40,10,10,10,10,20,20,20,10,\
           10,10,40,10,20,20,20,20,30,\
-          10,10,40,10,10,10,10,\
-          10,10,40,20,20,20,20,\
+          20,20,20,20,20,20,20,\
+          10,10,20,20,20,20,20,\
           20,20,20,20,20,20,40
     RUN VBI
     END
