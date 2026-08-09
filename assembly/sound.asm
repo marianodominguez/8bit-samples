@@ -70,7 +70,7 @@ START            ; Main music playback entry point
 SKIP_RESET
     SOUND 0,0,0,0
 
-    LDX #0
+;    LDX #0
 ; DELAY
 ;     INX
 ;     CPX #10
