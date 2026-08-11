@@ -16,6 +16,8 @@ SAVMSC = $58    ; Zero-page pointer used by DEBUG routine
 pitch = $C0     ; Zero-page temporary pitch value
 note = $C1      ; Zero-page note index
 tick = $C2      ; Zero-page tempo tick counter
+duration = $C3  ; Zero-page note duration value
+state = $C4     ; Zero-page initialization flag
 
 .MACRO SOUND voice,pitch,dist,vol
     LDA :pitch
@@ -25,10 +27,16 @@ tick = $C2      ; Zero-page tempo tick counter
 .ENDM
 
 VBI              ; Vertical blank interrupt handler
+    LDA state
+    BNE SKIP_INIT
+    LDA #1
+    STA state
     LDA #0
     STA tick
     STA note
     STA pitch
+SKIP_INIT
+    LDA #0
     STA AUDCTL
     LDA #3
     STA SKCTL
@@ -43,26 +51,29 @@ WAIT
 
 START            ; Main music playback entry point
     LDX note
-    LDY #41
-    LDA note
-    ADC #16
-    JSR DEBUG
-
+    
     LDA TABLE,X
     STA COLOR0+4   ; Change color for visual feedback
     STA pitch      ; Store current pitch
-
-    LDA TEMPO,X
-    INC tick
-    LDY #1
+    LDY #41
     JSR DEBUG
-    CMP tick
+    INX
+    LDA TABLE,X   ;get duration of note
+    STA duration
+    LDY #1
+    ADC #16
+    JSR DEBUG
+    INC tick
+    LDA tick
+    CMP duration
     BNE PLAY_NOTE
     LDA #0
     STA tick
-    INC note
-    LDA note
-    CMP #41
+    LDX note
+    INX
+    INX
+    STX note
+    CPX #82
     BNE SKIP_RESET
     LDX #0
     STX note
@@ -71,17 +82,6 @@ START            ; Main music playback entry point
 SKIP_RESET
     LDX note
 PLAY_NOTE
-    LDA TABLE,X
-    STA COLOR0+4   ; Change color for visual feedback
-    STA pitch      ; Store current pitch
-
-    SOUND 0,0,0,0
-
-;    LDX #0
-; DELAY
-;     INX
-;     CPX #10
-;     BNE DELAY
     
     SOUND 0,pitch,10,8 ; Play current note on voice 0
 SKIP
@@ -91,18 +91,64 @@ DEBUG            ; Helper to save A into zero page using Y offset
     STA (SAVMSC),Y
     RTS
 
+.MACRO NOTE_PAIR pitch,duration
+    .BYTE :pitch, :duration
+.ENDM
+
+.MACRO REST duration
+    NOTE_PAIR 0, :duration
+.ENDM
+
 TABLE
-    .BYTE 35,40,35,0,40,45,47,53,57,53,0,\
-          72,81,72,0,96,91,114,108,0,\
-          144,162,182,193,217,230,66,\
-          230,193,162,136,121,96,81,\
-          68,108,91,72,53,0,0
-TEMPO
-    .BYTE 10,10,40,10,10,10,10,20,20,20,10,\
-          10,10,40,10,20,20,20,20,30,\
-          20,20,20,20,20,20,20,\
-          10,10,20,20,20,20,20,\
-          20,20,20,20,20,20,40
+    ; First phrase
+    NOTE_PAIR 35,10
+    NOTE_PAIR 40,10
+    NOTE_PAIR 35,40
+    REST 10
+    NOTE_PAIR 40,10
+    NOTE_PAIR 45,10
+    NOTE_PAIR 47,10
+    NOTE_PAIR 53,10
+    NOTE_PAIR 57,20
+    NOTE_PAIR 53,20
+    REST 10
+
+    ; Second phrase
+    NOTE_PAIR 72,10
+    NOTE_PAIR 81,10
+    NOTE_PAIR 72,40
+    REST 10
+    NOTE_PAIR 96,20
+    NOTE_PAIR 91,20
+    NOTE_PAIR 114,20
+    NOTE_PAIR 108,20
+    REST 30
+
+    ; Third phrase
+    NOTE_PAIR 144,10
+    NOTE_PAIR 162,10
+    NOTE_PAIR 182,20
+    NOTE_PAIR 193,20
+    NOTE_PAIR 217,20
+    NOTE_PAIR 230,20
+    NOTE_PAIR 66,20
+    NOTE_PAIR 230,10
+    NOTE_PAIR 193,10
+
+    ; Fourth phrase
+    NOTE_PAIR 162,20
+    NOTE_PAIR 136,20
+    NOTE_PAIR 121,20
+    NOTE_PAIR 96,20
+    NOTE_PAIR 81,20
+    NOTE_PAIR 68,20
+    NOTE_PAIR 108,20
+    NOTE_PAIR 91,20
+    NOTE_PAIR 72,20
+    NOTE_PAIR 53,20
+    REST 20
+    REST 40
+
     RUN VBI
     END
 
