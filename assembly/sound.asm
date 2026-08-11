@@ -59,6 +59,8 @@ START            ; Main music playback entry point
     JSR DEBUG
     INX
     LDA TABLE,X   ;get duration of note
+    CMP #$FF
+    BEQ reset
     STA duration
     LDY #1
     ADC #16
@@ -75,6 +77,7 @@ START            ; Main music playback entry point
     STX note
     CPX #82
     BNE SKIP_RESET
+reset
     LDX #0
     STX note
     STX tick
@@ -147,7 +150,7 @@ TABLE
     NOTE_PAIR 72,20
     NOTE_PAIR 53,20
     REST 20
-    REST 40
+    REST $FF ; this signals end of song, will loop back to start
 
     RUN VBI
     END
