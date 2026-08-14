@@ -226,7 +226,7 @@ GAME_START
 		STA SCRELO
 		STA SCREMID
 		STA SCREHI
-		LDA #11
+		LDA #5
 		STA SPDDELAY   
 		LDA #255
 		STA CTPOS1
@@ -243,7 +243,7 @@ MAINLOOP
 		JSR level_move
 cont
 		LDA STPTICK
-		CMP #10
+		CMP #11
 		BNE skip_snd
 		LDA #0
 		STA STPTICK
@@ -270,17 +270,11 @@ cc2		CLC
 		LDA RANDOM  ; random byte 0-255
 		; test min distance
 
-		AND #$1F      ; limit to 0-31
-		ADC #50			; value 50-81	
-		
-		STA DIST
 		CLC
 		LDX LEVEL
 		LDA min_dist,X
-		CMP DIST
-		BCC skip_reset
-		LDA #8
 		STA DIST
+		; TODO: add randomization to cactus distance
 
 skip_reset
 		CLC
@@ -366,28 +360,35 @@ skip_inc_score
 		JMP start.GAME_START
 	.endp
 
+; move the cacti, skip if delay is not reached
+
 	.proc level_move
-		INC TICKER
-		DEC CTPOS1		
+		LDA TICKER
+		CMP SPDDELAY
+		BNE skip_dec
+		LDA #0
+		STA TICKER
+
+		DEC CTPOS1
+		DEC CTPOS1
 		LDA CTPOS2
 		SBC CTPOS1
 		CMP DIST
 		BCC skip
 		DEC CTPOS2
-skip	LDA TICKER
-		CLC
-		LDA SPDDELAY
-		CMP TICKER
-		BNE skip_dec
-		LDA #0
-		STA TICKER
+		DEC CTPOS2
+
+skip
+		DEC CTPOS1
 		DEC CTPOS1
 		LDA CTPOS2
 		SBC CTPOS1
 		CMP DIST
 		BCC skip_dec
 		DEC CTPOS2
+		DEC CTPOS2
 skip_dec
+		INC TICKER
 		RTS
 	.endp
 
@@ -619,19 +620,22 @@ end		RTS
 		CMP #10
 		BCS skip_level_inc
 		INC LEVEL
-		DEC SPDDELAY
+		LDX LEVEL
+		CPX #5
+		BCS max_speed
+		LDA lvl_speed,X
+		STA SPDDELAY
+		JMP level_speed_done
+max_speed
+		LDA #1
+		STA SPDDELAY
+level_speed_done
 		JSR play_level_sound
 		LDX LEVEL
 		LDA lvl_colors,X
 		STA COLOR4
-		;SBC #2
-		;STA COLOR2
 skip_level_inc
 		CLC
-		; LDA #$0E
-		; STA PCOLR0
-		; STA PCOLR0+1
-		; STA PCOLR0+2
 		RTS
 	.endp
 
@@ -730,7 +734,7 @@ skip_level_inc
 		STA CTPOS2
 		LDA #0
 		STA LEVEL
-		LDA #11
+		LDA #5
 		STA SPDDELAY
 		RTS
 	.endp		
@@ -1252,6 +1256,7 @@ jumpseq		.BYTE 2,4,8,12,16,12,12,4,2,0
 NAME    	.BYTE c"S:",$9B
 tabpp  		.BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
+lvl_speed 	.BYTE 5,4,3,2,1,1,1,1,1,1,1
 	 	run start 	;Define run address
 ;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
 table 		.byte $6A,$62,$60,$10,$10
