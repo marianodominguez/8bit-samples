@@ -128,27 +128,39 @@ TABLE
     REST 30
 
     ; Third phrase
-    NOTE_PAIR 144,10
-    NOTE_PAIR 162,10
-    NOTE_PAIR 182,20
-    NOTE_PAIR 193,20
-    NOTE_PAIR 217,20
-    NOTE_PAIR 230,20
-    NOTE_PAIR 66,20
-    NOTE_PAIR 230,10
-    NOTE_PAIR 193,10
+    NOTE_PAIR 72,10
+    NOTE_PAIR 81,10
+    NOTE_PAIR 72,40
+    REST 10
+    NOTE_PAIR 81,10
+    NOTE_PAIR 91,10
+    NOTE_PAIR 96,10
+    NOTE_PAIR 114,20
+    NOTE_PAIR 108,20
+    REST 10
+
+    NOTE_PAIR 144,20
+    NOTE_PAIR 114,20
+    NOTE_PAIR 96,20 
+    NOTE_PAIR 81,20
+    NOTE_PAIR 57,20 ;b
+    NOTE_PAIR 47,30
+    NOTE_PAIR 40,20
+    NOTE_PAIR 47,20
+    NOTE_PAIR 42,40
+    
 
     ; Fourth phrase
-    NOTE_PAIR 162,20
-    NOTE_PAIR 136,20
-    NOTE_PAIR 121,20
-    NOTE_PAIR 96,20
-    NOTE_PAIR 81,20
-    NOTE_PAIR 68,20
-    NOTE_PAIR 108,20
-    NOTE_PAIR 91,20
-    NOTE_PAIR 72,20
-    NOTE_PAIR 53,20
+    ; NOTE_PAIR 162,20
+    ; NOTE_PAIR 136,20
+    ; NOTE_PAIR 121,20
+    ; NOTE_PAIR 96,20
+    ; NOTE_PAIR 81,20
+    ; NOTE_PAIR 68,20
+    ; NOTE_PAIR 108,20
+    ; NOTE_PAIR 91,20
+    ; NOTE_PAIR 72,20
+    ; NOTE_PAIR 53,20
     REST 20
     REST $FF ; this signals end of song, will loop back to start
 
@@ -163,9 +175,18 @@ TABLE
 ; D4, F4, A4, D5
 
 ; Pitch constants (approximate values):
-; C3 243, C#3 230, D3 217, D#3 204, E3 193, F3 182, F#3 172,
-; G3 162, G#3 153, A3 144, A#3 136, B3 128,
-; C4 121, C#4 114, D4 108, D#4 102, E4 96, F4 91, F#4 85,
-; G4 81, G#4 76, A4 72, A#4 68, B4 64,
+; Higher octaves
+; A5 35, A#5 33, B5 31, C6 30, C#6 28, D6 27, D#6 25, E6 24, F6 22,
+; F#6 21, G6 20, G#6 19, A6 18, A#6 17, B6 16
+;
+; Mid octaves
 ; C5 60, C#5 57, D5 53, D#5 50, E5 47, F5 45, F#5 42, G5 40, G#5 37,
 ; A5 35, A#5 33, B5 31
+; C4 121, C#4 114, D4 108, D#4 102, E4 96, F4 91, F#4 85, G4 81, G#4 76,
+; A4 72, A#4 68, B4 64
+;
+; Lower octaves
+; C3 243, C#3 230, D3 217, D#3 204, E3 193, F3 182, F#3 172, G3 162, G#3 153,
+; A3 144, A#3 136, B3 128
+; C2 255, C#2 240, D2 230, D#2 220, E2 210, F2 200, F#2 190, G2 180, G#2 170,
+; A2 160, A#2 150, B2 140
