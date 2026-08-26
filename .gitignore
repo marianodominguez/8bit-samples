@@ -14,3 +14,4 @@
 *.xex
 tmp/
 bin
+__pycache__
