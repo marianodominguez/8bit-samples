@@ -79,7 +79,6 @@ SDLST 		EQU $0230
 
 COLWN 	EQU 710
 
-NSTEP 	EQU 10
 
 XLOC   	EQU   $FA
 YLOC   	EQU   $FB ; $FC
@@ -369,13 +368,14 @@ skip_inc_score
 	.proc level_move
 		LDA TICKER
 		CMP SPDDELAY
-		BNE skip_dec
+		BCC skip_dec
 		LDA #0
 		STA TICKER
 
 		DEC CTPOS1
 		DEC CTPOS1
 		LDA CTPOS2
+		SEC
 		SBC CTPOS1
 		CMP DIST
 		BCC skip
@@ -386,6 +386,7 @@ skip
 		DEC CTPOS1
 		DEC CTPOS1
 		LDA CTPOS2
+		SEC
 		SBC CTPOS1
 		CMP DIST
 		BCC chk_extra
@@ -403,6 +404,7 @@ extra_lp
 		DEC CTPOS1
 		DEC CTPOS1
 		LDA CTPOS2
+		SEC
 		SBC CTPOS1
 		CMP DIST
 		BCC no_ct2
@@ -519,7 +521,7 @@ loop4	LDA fr2,Y
 
 end_leg
 		PLA
-		TYA
+		TAY
 		PLA
 		RTS
 	.endp
@@ -1047,7 +1049,7 @@ jmove_up
 		RTS
 jstep_done
 		INC JMPIDX
-		LDA #NSTEP
+		LDA #JMPLEN
 		CMP JMPIDX
 		BNE jxit
 		LDA #0
@@ -1103,7 +1105,7 @@ jxit	RTS
  ; Now move player appropriately,
  ; starting with upward movement.
  ; ******************************
-UP		LDY JMPIDX        ; Setup for moving byte 1
+UP		LDY #1        ; Setup for moving byte 1
 		DEC YLOC      ; Now 1 less than YLOC
 		DEC YLOC1
 		DEC YLOC2
@@ -1312,7 +1314,8 @@ gameover 	.BYTE "*** GAME OVER ***",$9B
 ; Snappier, faster peak
 title		.BYTE "  THE JUMPY DINO  ",$9B
 win_msg .BYTE "*** MAX SCORE ***",$9B
-jumpseq		.BYTE 2,4,8,12,16,12,12,4,2,0
+jumpseq		.BYTE 4,8,12,16,20,20,20,20,20,20,20,20,16,12,8,4,0
+JMPLEN		EQU *-jumpseq
 NAME    	.BYTE c"S:",$9B
 tabpp  		.BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
