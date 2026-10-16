@@ -132,6 +132,8 @@ LEG_FRME	EQU $88
 LEG_LOC1	EQU $89 ; %8a
 LEG_LOC2	EQU $90 ; %91
 EYE_LOC		EQU $92
+LVLSNDST	EQU $93		; level sound state: 0=off, 1=note1, 2=note2
+LVLSNDTK	EQU $94		; level sound frame counter
 
 	ORG $2400
 
@@ -226,6 +228,8 @@ GAME_START
 		STA SCRELO
 		STA SCREMID
 		STA SCREHI
+		STA LVLSNDST
+		STA LVLSNDTK
 		LDA #5
 		STA SPDDELAY   
 		LDA #255
@@ -236,7 +240,7 @@ GAME_START
 		STA DIST
 MAINLOOP
 		CLC
-		JSR stop_sound
+		JSR update_sound
 		INC STPTICK
 		INC SCTICKR
 
@@ -384,9 +388,30 @@ skip
 		LDA CTPOS2
 		SBC CTPOS1
 		CMP DIST
+		BCC chk_extra
+		DEC CTPOS2
+		DEC CTPOS2
+
+chk_extra
+		; Extra speed boost for levels 5+
+		LDX LEVEL
+		CPX #5
 		BCC skip_dec
+		LDY lvl_extra,X
+		BEQ skip_dec
+extra_lp
+		DEC CTPOS1
+		DEC CTPOS1
+		LDA CTPOS2
+		SBC CTPOS1
+		CMP DIST
+		BCC no_ct2
 		DEC CTPOS2
 		DEC CTPOS2
+no_ct2
+		DEY
+		BNE extra_lp
+
 skip_dec
 		INC TICKER
 		RTS
@@ -928,7 +953,13 @@ jp		JSR jump
 retk	RTS			
 	.endp
 
+	; Non-blocking: just trigger state machine
 	.proc play_level_sound
+		LDA #1
+		STA LVLSNDST
+		LDA #0
+		STA LVLSNDTK
+		; Start first note immediately
 		LDA #0
 		STA SNDVOICE
 		LDA #$F2
@@ -938,9 +969,41 @@ retk	RTS
 		LDA #10
 		STA SNDVOL
 		JSR play_sound
-		LDX #$FF      ; Outer loop count
-		LDY #$FF      ; Inner loop count
-		JSR delay
+		RTS
+	.endp
+
+	; Called every frame from MAINLOOP
+	; Advances level sound state machine, or stops sound if idle
+	.proc update_sound
+		LDA LVLSNDST
+		BNE update_lvl
+		; No level sound active, stop any sound
+		JSR stop_sound
+		RTS
+update_lvl
+		INC LVLSNDTK
+		LDA LVLSNDST
+		CMP #1
+		BEQ chk_note1
+		; State 2: wait for second note to finish
+		LDA LVLSNDTK
+		CMP #10
+		BNE done
+		; Done, stop sound
+		LDA #0
+		STA LVLSNDST
+		JSR stop_sound
+		JMP done
+chk_note1
+		; State 1: wait for first note to finish
+		LDA LVLSNDTK
+		CMP #10
+		BNE done
+		; Switch to second note
+		LDA #2
+		STA LVLSNDST
+		LDA #0
+		STA LVLSNDTK
 		LDA #0
 		STA SNDVOICE
 		LDA #$30
@@ -950,10 +1013,7 @@ retk	RTS
 		LDA #10
 		STA SNDVOL
 		JSR play_sound
-		LDX #$FF      ; Outer loop count
-		LDY #$FF      ; Inner loop count
-		JSR delay
-		JSR stop_sound
+done
 		RTS
 	.endp
 
@@ -1257,6 +1317,7 @@ NAME    	.BYTE c"S:",$9B
 tabpp  		.BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 lvl_speed 	.BYTE 5,4,3,2,1,1,1,1,1,1,1
+lvl_extra	.BYTE 0,0,0,0,0,1,2,3,4,5,6
 	 	run start 	;Define run address
 ;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
 table 		.byte $6A,$62,$60,$10,$10
