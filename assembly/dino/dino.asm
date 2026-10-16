@@ -113,7 +113,8 @@ SNDVOL EQU $CA      ; 1..15 (0 = silence)
 
 LEVEL 		EQU $CB
 DIST 		EQU $CC
-SPDDELAY	EQU $CD
+SPEED		EQU $CD		; cactus speed in 1/16 px per loop
+SUBPX		EQU $CE		; sub-pixel accumulator
 
 RTCLOK	EQU $12
 vcount	EQU $d40b
@@ -229,8 +230,9 @@ GAME_START
 		STA SCREHI
 		STA LVLSNDST
 		STA LVLSNDTK
-		LDA #5
-		STA SPDDELAY   
+		STA SUBPX
+		LDA lvl_speed
+		STA SPEED
 		LDA #255
 		STA CTPOS1
 		LDA #255
@@ -366,56 +368,26 @@ skip_inc_score
 ; move the cacti, skip if delay is not reached
 
 	.proc level_move
-		LDA TICKER
-		CMP SPDDELAY
-		BCC skip_dec
-		LDA #0
-		STA TICKER
+		CLC
+		LDA SUBPX
+		ADC SPEED
+		STA SUBPX
+step
+		LDA SUBPX
+		CMP #16
+		BCC done		; less than 1 px accumulated
+		SBC #16			; carry is set here
+		STA SUBPX
 
-		DEC CTPOS1
 		DEC CTPOS1
 		LDA CTPOS2
 		SEC
 		SBC CTPOS1
 		CMP DIST
-		BCC skip
+		BCC step
 		DEC CTPOS2
-		DEC CTPOS2
-
-skip
-		DEC CTPOS1
-		DEC CTPOS1
-		LDA CTPOS2
-		SEC
-		SBC CTPOS1
-		CMP DIST
-		BCC chk_extra
-		DEC CTPOS2
-		DEC CTPOS2
-
-chk_extra
-		; Extra speed boost for levels 5+
-		LDX LEVEL
-		CPX #5
-		BCC skip_dec
-		LDY lvl_extra,X
-		BEQ skip_dec
-extra_lp
-		DEC CTPOS1
-		DEC CTPOS1
-		LDA CTPOS2
-		SEC
-		SBC CTPOS1
-		CMP DIST
-		BCC no_ct2
-		DEC CTPOS2
-		DEC CTPOS2
-no_ct2
-		DEY
-		BNE extra_lp
-
-skip_dec
-		INC TICKER
+		JMP step
+done
 		RTS
 	.endp
 
@@ -648,15 +620,8 @@ end		RTS
 		BCS skip_level_inc
 		INC LEVEL
 		LDX LEVEL
-		CPX #5
-		BCS max_speed
 		LDA lvl_speed,X
-		STA SPDDELAY
-		JMP level_speed_done
-max_speed
-		LDA #1
-		STA SPDDELAY
-level_speed_done
+		STA SPEED
 		JSR play_level_sound
 		LDX LEVEL
 		LDA lvl_colors,X
@@ -761,8 +726,9 @@ skip_level_inc
 		STA CTPOS2
 		LDA #0
 		STA LEVEL
-		LDA #5
-		STA SPDDELAY
+		STA SUBPX
+		LDA lvl_speed
+		STA SPEED
 		RTS
 	.endp		
 	
@@ -1319,8 +1285,8 @@ JMPLEN		EQU *-jumpseq
 NAME    	.BYTE c"S:",$9B
 tabpp  		.BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
-lvl_speed 	.BYTE 5,5,4,4,3,3,2,3,1,1,1
-lvl_extra	.BYTE 0,0,0,0,0,0,0,0,0,1,2
+; cactus speed per level, 1/16 px per loop (16 = 1 px/loop)
+lvl_speed 	.BYTE 13,15,17,19,21,23,25,27,29,31,33
 	 	run start 	;Define run address
 ;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
 table 		.byte $6A,$62,$60,$10,$10
