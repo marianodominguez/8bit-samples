@@ -1006,11 +1006,17 @@ done
 		BCS jmove_up        ; A > JMPPOS -> move up
 		JSR DOWN            ; A < JMPPOS -> move down
 		JSR DOWN
+		JSR DOWN
+		JSR DOWN
+		DEC JMPPOS
 		DEC JMPPOS
 		RTS
 jmove_up
 		JSR UP
 		JSR UP
+		JSR UP
+		JSR UP
+		INC JMPPOS
 		INC JMPPOS
 		RTS
 jstep_done
@@ -1280,8 +1286,12 @@ gameover 	.BYTE "*** GAME OVER ***",$9B
 ; Snappier, faster peak
 title		.BYTE "  THE JUMPY DINO  ",$9B
 win_msg .BYTE "*** MAX SCORE ***",$9B
+<<<<<<< HEAD
 jumpseq		.BYTE 4,8,12,14,16,18,18,18,18,18,18,16,14,12,8,4,0
 JMPLEN		EQU *-jumpseq
+=======
+jumpseq		.BYTE 4,8,12,16,20,16,12,8,4,0
+>>>>>>> 071699c (wip: jump logic)
 NAME    	.BYTE c"S:",$9B
 tabpp  		.BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34

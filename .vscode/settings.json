@@ -1,3 +1,9 @@
 {
-    "converter.treatSpacesAsDelimiter": false
+    "converter.treatSpacesAsDelimiter": false,
+    "files.associations": {
+        "*.asm": "mads",
+        "*.s": "asm6502",
+        "*.a65": "asm6502",
+        "*.inc": "asm6502"
+    }
 }
