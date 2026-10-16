@@ -79,7 +79,6 @@ SDLST 		EQU $0230
 
 COLWN 	EQU 710
 
-NSTEP 	EQU 10
 
 XLOC   	EQU   $FA
 YLOC   	EQU   $FB ; $FC
@@ -114,7 +113,8 @@ SNDVOL EQU $CA      ; 1..15 (0 = silence)
 
 LEVEL 		EQU $CB
 DIST 		EQU $CC
-SPDDELAY	EQU $CD
+SPEED		EQU $CD		; cactus speed in 1/16 px per loop
+SUBPX		EQU $CE		; sub-pixel accumulator
 
 RTCLOK	EQU $12
 vcount	EQU $d40b
@@ -132,6 +132,8 @@ LEG_FRME	EQU $88
 LEG_LOC1	EQU $89 ; %8a
 LEG_LOC2	EQU $90 ; %91
 EYE_LOC		EQU $92
+LVLSNDST	EQU $93		; level sound state: 0=off, 1=note1, 2=note2
+LVLSNDTK	EQU $94		; level sound frame counter
 
 	ORG $2400
 
@@ -226,8 +228,11 @@ GAME_START
 		STA SCRELO
 		STA SCREMID
 		STA SCREHI
-		LDA #5
-		STA SPDDELAY   
+		STA LVLSNDST
+		STA LVLSNDTK
+		STA SUBPX
+		LDA lvl_speed
+		STA SPEED
 		LDA #255
 		STA CTPOS1
 		LDA #255
@@ -236,7 +241,7 @@ GAME_START
 		STA DIST
 MAINLOOP
 		CLC
-		JSR stop_sound
+		JSR update_sound
 		INC STPTICK
 		INC SCTICKR
 
@@ -363,32 +368,26 @@ skip_inc_score
 ; move the cacti, skip if delay is not reached
 
 	.proc level_move
-		LDA TICKER
-		CMP SPDDELAY
-		BNE skip_dec
-		LDA #0
-		STA TICKER
+		CLC
+		LDA SUBPX
+		ADC SPEED
+		STA SUBPX
+step
+		LDA SUBPX
+		CMP #16
+		BCC done		; less than 1 px accumulated
+		SBC #16			; carry is set here
+		STA SUBPX
 
 		DEC CTPOS1
-		DEC CTPOS1
 		LDA CTPOS2
+		SEC
 		SBC CTPOS1
 		CMP DIST
-		BCC skip
+		BCC step
 		DEC CTPOS2
-		DEC CTPOS2
-
-skip
-		DEC CTPOS1
-		DEC CTPOS1
-		LDA CTPOS2
-		SBC CTPOS1
-		CMP DIST
-		BCC skip_dec
-		DEC CTPOS2
-		DEC CTPOS2
-skip_dec
-		INC TICKER
+		JMP step
+done
 		RTS
 	.endp
 
@@ -494,7 +493,7 @@ loop4	LDA fr2,Y
 
 end_leg
 		PLA
-		TYA
+		TAY
 		PLA
 		RTS
 	.endp
@@ -621,15 +620,8 @@ end		RTS
 		BCS skip_level_inc
 		INC LEVEL
 		LDX LEVEL
-		CPX #5
-		BCS max_speed
 		LDA lvl_speed,X
-		STA SPDDELAY
-		JMP level_speed_done
-max_speed
-		LDA #1
-		STA SPDDELAY
-level_speed_done
+		STA SPEED
 		JSR play_level_sound
 		LDX LEVEL
 		LDA lvl_colors,X
@@ -734,8 +726,9 @@ skip_level_inc
 		STA CTPOS2
 		LDA #0
 		STA LEVEL
-		LDA #5
-		STA SPDDELAY
+		STA SUBPX
+		LDA lvl_speed
+		STA SPEED
 		RTS
 	.endp		
 	
@@ -928,7 +921,13 @@ jp		JSR jump
 retk	RTS			
 	.endp
 
+	; Non-blocking: just trigger state machine
 	.proc play_level_sound
+		LDA #1
+		STA LVLSNDST
+		LDA #0
+		STA LVLSNDTK
+		; Start first note immediately
 		LDA #0
 		STA SNDVOICE
 		LDA #$F2
@@ -938,9 +937,41 @@ retk	RTS
 		LDA #10
 		STA SNDVOL
 		JSR play_sound
-		LDX #$FF      ; Outer loop count
-		LDY #$FF      ; Inner loop count
-		JSR delay
+		RTS
+	.endp
+
+	; Called every frame from MAINLOOP
+	; Advances level sound state machine, or stops sound if idle
+	.proc update_sound
+		LDA LVLSNDST
+		BNE update_lvl
+		; No level sound active, stop any sound
+		JSR stop_sound
+		RTS
+update_lvl
+		INC LVLSNDTK
+		LDA LVLSNDST
+		CMP #1
+		BEQ chk_note1
+		; State 2: wait for second note to finish
+		LDA LVLSNDTK
+		CMP #10
+		BNE done
+		; Done, stop sound
+		LDA #0
+		STA LVLSNDST
+		JSR stop_sound
+		JMP done
+chk_note1
+		; State 1: wait for first note to finish
+		LDA LVLSNDTK
+		CMP #10
+		BNE done
+		; Switch to second note
+		LDA #2
+		STA LVLSNDST
+		LDA #0
+		STA LVLSNDTK
 		LDA #0
 		STA SNDVOICE
 		LDA #$30
@@ -950,10 +981,7 @@ retk	RTS
 		LDA #10
 		STA SNDVOL
 		JSR play_sound
-		LDX #$FF      ; Outer loop count
-		LDY #$FF      ; Inner loop count
-		JSR delay
-		JSR stop_sound
+done
 		RTS
 	.endp
 
@@ -987,7 +1015,7 @@ jmove_up
 		RTS
 jstep_done
 		INC JMPIDX
-		LDA #NSTEP
+		LDA #JMPLEN
 		CMP JMPIDX
 		BNE jxit
 		LDA #0
@@ -1043,7 +1071,7 @@ jxit	RTS
  ; Now move player appropriately,
  ; starting with upward movement.
  ; ******************************
-UP		LDY JMPIDX        ; Setup for moving byte 1
+UP		LDY #1        ; Setup for moving byte 1
 		DEC YLOC      ; Now 1 less than YLOC
 		DEC YLOC1
 		DEC YLOC2
@@ -1252,11 +1280,13 @@ gameover 	.BYTE "*** GAME OVER ***",$9B
 ; Snappier, faster peak
 title		.BYTE "  THE JUMPY DINO  ",$9B
 win_msg .BYTE "*** MAX SCORE ***",$9B
-jumpseq		.BYTE 2,4,8,12,16,12,12,4,2,0
+jumpseq		.BYTE 4,8,12,14,16,18,18,18,18,18,18,16,14,12,8,4,0
+JMPLEN		EQU *-jumpseq
 NAME    	.BYTE c"S:",$9B
 tabpp  		.BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
-lvl_speed 	.BYTE 5,4,3,2,1,1,1,1,1,1,1
+; cactus speed per level, 1/16 px per loop (16 = 1 px/loop)
+lvl_speed 	.BYTE 13,15,17,19,21,23,25,27,29,31,33
 	 	run start 	;Define run address
 ;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
 table 		.byte $6A,$62,$60,$10,$10
