@@ -1314,13 +1314,13 @@ gameover 	.BYTE "*** GAME OVER ***",$9B
 ; Snappier, faster peak
 title		.BYTE "  THE JUMPY DINO  ",$9B
 win_msg .BYTE "*** MAX SCORE ***",$9B
-jumpseq		.BYTE 4,8,12,16,20,20,20,20,20,20,20,20,16,12,8,4,0
+jumpseq		.BYTE 4,8,12,14,16,18,18,18,18,18,18,16,14,12,8,4,0
 JMPLEN		EQU *-jumpseq
 NAME    	.BYTE c"S:",$9B
 tabpp  		.BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
-lvl_speed 	.BYTE 5,4,3,2,1,1,1,1,1,1,1
-lvl_extra	.BYTE 0,0,0,0,0,1,2,3,4,5,6
+lvl_speed 	.BYTE 5,5,4,4,3,3,2,3,1,1,1
+lvl_extra	.BYTE 0,0,0,0,0,0,0,0,0,1,2
 	 	run start 	;Define run address
 ;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
 table 		.byte $6A,$62,$60,$10,$10

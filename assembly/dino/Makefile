@@ -15,6 +15,7 @@ $(TARGET): $(SOURCE)
 clean:
 	rm -f bin/*
 	rm -rf tmp/*
+	mkdir -p bin
 
 run:
 	atari800 $(TARGET)
