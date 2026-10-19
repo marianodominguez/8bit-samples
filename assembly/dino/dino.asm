@@ -233,12 +233,10 @@ GAME_START
 		STA SUBPX
 		LDA lvl_speed
 		STA SPEED
-		LDA #255
+		LDA #0			; both cacti parked, level_move spawns them
 		STA CTPOS1
-		LDA #255
 		STA CTPOS2
-		LDA #6
-		STA DIST
+		JSR new_dist
 MAINLOOP
 		CLC
 		JSR update_sound
@@ -257,31 +255,6 @@ cont
 skip_snd 
 		NOP
 skip_inc
-
-		CLC
-		LDA CTPOS1   ; if cactus is too close to the left side of the screen
-		CMP #8
-		BCS cc2
-		LDA #255
-		STA CTPOS1
-		
-cc2		CLC
-		LDA CTPOS2
-		CMP #8
-		BCS skip_reset		; if greater than 50, keep going
-		LDA #255
-		STA CTPOS2  ; move cactus to the right side of the screen
-		
-		LDA RANDOM  ; random byte 0-255
-		; test min distance
-
-		CLC
-		LDX LEVEL
-		LDA min_dist,X
-		STA DIST
-		; TODO: add randomization to cactus distance
-
-skip_reset
 		CLC
 		LDA #0
 		STA HITCLR  ; clear hit flag
@@ -365,7 +338,11 @@ skip_inc_score
 		JMP start.GAME_START
 	.endp
 
-; move the cacti, skip if delay is not reached
+; move the cacti 1 px for every 16 SPEED units accumulated
+; a cactus that passes the left edge is parked at 0 (off screen)
+; cactus 1 leads: it respawns at 255 once cactus 2 is parked
+; cactus 2 follows: it respawns at 255 once cactus 1 is DIST px
+; away from the right edge (DIST=8 -> cacti next to each other)
 
 	.proc level_move
 		CLC
@@ -379,15 +356,62 @@ step
 		SBC #16			; carry is set here
 		STA SUBPX
 
+		; cactus 1
+		LDA CTPOS1
+		BEQ chk1
 		DEC CTPOS1
+		LDA CTPOS1
+		CMP #8
+		BCS c2
+		LDA #0
+		STA CTPOS1		; park it
+		JMP c2
+chk1	LDA CTPOS2
+		BNE c2			; wait for cactus 2 to leave
+		LDA #255
+		STA CTPOS1
+		JSR new_dist
+
+		; cactus 2
+c2		LDA CTPOS2
+		BEQ chk2
+		DEC CTPOS2
 		LDA CTPOS2
+		CMP #8
+		BCS step
+		LDA #0
+		STA CTPOS2		; park it
+		JMP step
+chk2	LDA CTPOS1
+		BEQ step		; wait for cactus 1 to spawn
+		LDA #255
 		SEC
 		SBC CTPOS1
 		CMP DIST
 		BCC step
-		DEC CTPOS2
+		LDA #255
+		STA CTPOS2
 		JMP step
 done
+		RTS
+	.endp
+
+	; distance for the next cactus spawn, from current level
+	.proc new_dist
+		LDX LEVEL
+		LDA min_dist,X		
+		STA DIST
+		LDA RANDOM
+		AND #$0F ; RANDOM 0-128
+		LSR ; 0-64
+		ADC DIST
+		STA DIST
+		LDA RANDOM ; every 10 or so collapse cacti
+		CMP #64
+		BCS return
+		LDA #8
+		STA DIST
+return		
 		RTS
 	.endp
 
@@ -1292,9 +1316,10 @@ NAME    	.BYTE c"S:",$9B
 tabpp  		.BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 ; cactus speed per level, 1/16 px per loop (16 = 1 px/loop)
-lvl_speed 	.BYTE 19,21,23,26,32,38,42,46,50,55
+lvl_speed 	.BYTE 19,21,23,26,32,38,42,46,50,55,60
 	 	run start 	;Define run address
 ;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
 table 		.byte $6A,$62,$60,$10,$10
 min_dist 	.byte 65,60,55,50,40,35,30,20,20,20,16
+
 jump_a		.word 0
