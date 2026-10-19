@@ -1286,13 +1286,13 @@ gameover 	.BYTE "*** GAME OVER ***",$9B
 ; Snappier, faster peak
 title		.BYTE "  THE JUMPY DINO  ",$9B
 win_msg .BYTE "*** MAX SCORE ***",$9B
-jumpseq		.BYTE 4,8,12,14,16,18,18,18,18,18,18,16,14,12,8,4,0
+jumpseq		.BYTE 2,4,6,8,12,14,16,16,16,16,16,16,16,16,16,14,12,8,6,4,0
 JMPLEN		EQU *-jumpseq
 NAME    	.BYTE c"S:",$9B
 tabpp  		.BYTE 156,78,52,39			;line counter spacing table for instrument speed from 1 to 4
 lvl_colors 	.BYTE $83,$81,$90,$36,$32,0,$55,$52,$30,$32,$34
 ; cactus speed per level, 1/16 px per loop (16 = 1 px/loop)
-lvl_speed 	.BYTE 13,15,17,19,21,23,25,27,29,31,33
+lvl_speed 	.BYTE 19,21,23,26,32,38,42,46,50,55
 	 	run start 	;Define run address
 ;table .byte 212,228,244,148,196,4,20,36,52,68,84,100,116,132,148,164,180
 table 		.byte $6A,$62,$60,$10,$10
