@@ -399,21 +399,22 @@ done
 	; distance for the next cactus spawn, from current level
 	.proc new_dist
 		LDX LEVEL
-		LDA min_dist,X		
-		STA DIST
 		LDA RANDOM
-		AND #$0F ; RANDOM 0-128
-		LSR ; 0-64
-		ADC DIST
+		AND #$3F		; 0-63 extra px
+		CLC
+		ADC min_dist,X
 		STA DIST
-		LDA RANDOM ; every 10 or so collapse cacti
-		CMP #64
+		CPX #1			; no collapse on first levels
+		BCC return
+		LDA RANDOM		; ~2 in 10 collapse cacti together
+		CMP #52
 		BCS return
 		LDA #8
 		STA DIST
-return		
+return
 		RTS
 	.endp
+
 
 ; **************************************
 ; Subroutines
