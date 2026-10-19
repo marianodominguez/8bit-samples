@@ -1309,7 +1309,7 @@ pressstart 	.BYTE " *** PRESS START TO BEGIN ***",$9B
 score 	    .BYTE "   SCORE:                    ",$9B
 gameover 	.BYTE "*** GAME OVER ***",$9B
 ; Snappier, faster peak
-title		.BYTE "  THE JUMPY DINO  ",$9B
+title		.BYTE " THE JUMPY DINO 2.0",$9B
 win_msg .BYTE "*** MAX SCORE ***",$9B
 jumpseq		.BYTE 2,4,6,8,12,14,16,16,16,16,16,16,16,16,16,14,12,8,6,4,0
 JMPLEN		EQU *-jumpseq
